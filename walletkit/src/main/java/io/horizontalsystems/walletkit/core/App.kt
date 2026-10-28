@@ -235,7 +235,10 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
         // Debug builds run LeakCanary's heap analysis in a separate process, which also
         // creates this Application. Starting the wallet there would sync kits and open
         // databases a second time, so only the main process initializes.
-        if (getProcessName() != packageName) return
+        // getProcessName() can return null on some devices/ROMs; treat null as "main process"
+        // so the wallet still initializes instead of leaving App.instance unset.
+        val processName = try { getProcessName() } catch (_: Throwable) { null }
+        if (processName != null && processName != packageName) return
 
         if (!BuildConfig.DEBUG) {
             //Disable logging for lower levels in Release build

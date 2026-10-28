@@ -32,16 +32,33 @@ import io.horizontalsystems.walletkit.core.providers.IAppConfigProvider
  * :app only supplies the flavor/BuildConfig-backed configuration.
  */
 class MainApp : App() {
+    override fun onCreate() {
+        try {
+            super.onCreate()
+        } catch (e: Throwable) {
+            StartupTrace.log("App.onCreate crashed", e)
+            try {
+                StartupCrashActivity.show(this, "App.onCreate crashed:\n\n${e.stackTraceToString()}")
+            } catch (_: Throwable) {}
+            // Do not rethrow: let the user read the error instead of a system crash dialog.
+            return
+        }
+    }
+
     override fun attachBaseContext(base: Context) {
         // Installed before anything else so that a failure in Application.onCreate is recorded.
         StartupTrace.init(base)
         val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, error ->
             StartupTrace.log("UNCAUGHT exception on thread ${thread.name}", error)
-            // Only the main process shows the crash screen; helper processes (e.g. LeakCanary) stay silent.
-            if (getProcessName() == base.packageName) {
+            try {
                 StartupCrashActivity.show(base, "Thread: ${thread.name}\n\n${error.stackTraceToString()}")
-            }
+            } catch (_: Throwable) {}
+            // Do not call previousHandler: it kills the process and prevents the crash screen
+            // from being shown long enough to read.
+        }
+        super.attachBaseContext(base)
+    }
             previousHandler?.uncaughtException(thread, error)
         }
         super.attachBaseContext(base)
