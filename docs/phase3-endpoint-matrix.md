@@ -8,6 +8,10 @@ This document is the release gate for Tariffia Wallet's external dependencies. I
 
 Phase 3 must not be considered complete while a required production path still depends on a Horizontal Systems-controlled, Horizontal Systems-branded, or unresolved-license service.
 
+## Current Release Status
+
+As of 2026-10-28, the release is **blocked**. Code-side USwap, swap, and CrossPay entry points are disabled, but DNS for `tariffia.app` and `dev.tariffia.app` does not resolve, so no Tariffia-hosted endpoint is verified. APP-15 and APP-16 also remain unresolved. See `docs/hosting.md` for the required deployment and `docs/release-checklist.md` for the release gate.
+
 ## Distribution Decision
 
 - v1 targets **Google Play** and a **directly distributed APK**.
@@ -30,23 +34,23 @@ A dependency is not harmless merely because it is only used on a secondary scree
 
 | ID | Surface | Source | Current target | Class | Required action | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| APP-01 | Company and app website | `app/build.gradle.kts` | `https://tariffia.app` | R0 | Publish and verify the public site | Pending |
-| APP-02 | Analytics information link | `app/build.gradle.kts` | `https://tariffia.app/analytics` | R0 | Publish the page or remove the link | Pending |
+| APP-01 | Company and app website | `app/build.gradle.kts` | `https://tariffia.app` | R0 | Publish and verify the public site | Blocked: DNS NXDOMAIN |
+| APP-02 | Analytics information link | `app/build.gradle.kts` | `https://tariffia.app/analytics` | R0 | Publish the page or remove the link | Blocked: DNS NXDOMAIN |
 | APP-03 | Source repository | `app/build.gradle.kts` | `komvalut/tariffia-wallet` | R0 | Keep public repository available | Verified |
 | APP-04 | Security/report email | `app/build.gradle.kts` | `support@tariffia.app` | R0 | Verify mailbox, ownership, and response process | Pending |
 | APP-05 | Release notes | `app/build.gradle.kts` | GitHub releases API for `komvalut/tariffia-wallet` | R0 | Verify rate limits and release-tag format | Pending |
-| APP-06 | App Links and passkey host | `APP_LINKS_HOST` | `dev.tariffia.app`, `tariffia.app` | R0 | Configure DNS, HTTPS, and `.well-known` | Pending |
+| APP-06 | App Links and passkey host | `APP_LINKS_HOST` | `dev.tariffia.app`, `tariffia.app` | R0 | Configure DNS, HTTPS, and `.well-known` | Blocked: DNS NXDOMAIN |
 | APP-07 | WalletConnect project | `WALLET_CONNECT_PROJECT_ID` | Empty unless supplied | R0 | Create a Tariffia Reown project and inject through CI | Pending |
-| APP-08 | WalletConnect metadata | `app/build.gradle.kts` | `https://tariffia.app`, `/icon.png` | R0 | Host the final metadata page and icon | Pending |
+| APP-08 | WalletConnect metadata | `app/build.gradle.kts` | `https://tariffia.app`, `/icon.png` | R0 | Host the final metadata page and icon | Blocked: DNS NXDOMAIN |
 | APP-09 | Passkey relying party | `PASSKEY_RP_ID`, `PASSKEY_RP_NAME` | Falls back to `APP_LINKS_HOST` | R0 | Set explicitly for production; verify assetlinks | Pending |
-| APP-10 | FAQ | `FAQ_URL` | `https://tariffia.app/faq.json` | R0 | Publish the reviewed, versioned JSON asset | Pending |
-| APP-11 | Guides | `GUIDES_URL` | `https://tariffia.app/guides/index.json` | R0 | Publish the reviewed, versioned guide index and content | Pending |
-| APP-12 | Coin catalogue | `COINS_JSON_URL` | `https://tariffia.app/data/coins.json` | R0 | Publish a pinned, reviewed copy with a compatible schema | Pending |
-| APP-13 | Provider coin catalogue | `PROVIDER_COINS_JSON_URL` | `https://tariffia.app/data/provider-coins.json` | R0 | Publish a pinned, reviewed copy with a compatible schema | Pending |
-| APP-14 | Market data API | `MARKET_API_BASE_URL` | `https://tariffia.app/api`, `https://dev.tariffia.app/api` | R0 | Implement or disable the Tariffia market API; no HS fallback | Pending |
+| APP-10 | FAQ | `FAQ_URL` | `https://tariffia.app/faq.json` | R0 | Publish the reviewed, versioned JSON asset | Blocked: DNS NXDOMAIN |
+| APP-11 | Guides | `GUIDES_URL` | `https://tariffia.app/guides/index.json` | R0 | Publish the reviewed, versioned guide index and content | Blocked: DNS NXDOMAIN |
+| APP-12 | Coin catalogue | `COINS_JSON_URL` | `https://tariffia.app/data/coins.json` | R0 | Publish a pinned, reviewed copy with a compatible schema | Blocked: DNS NXDOMAIN |
+| APP-13 | Provider coin catalogue | `PROVIDER_COINS_JSON_URL` | `https://tariffia.app/data/provider-coins.json` | R0 | Publish a pinned, reviewed copy with a compatible schema | Blocked: DNS NXDOMAIN |
+| APP-14 | Market data API | `MARKET_API_BASE_URL` | `https://tariffia.app/api`, `https://dev.tariffia.app/api` | R0 | Implement or disable the Tariffia market API; no HS fallback | Blocked: DNS NXDOMAIN |
 | APP-15 | Market and asset CDN | Image URLs in `walletkit` screens | `cdn.blocksdecoded.com` | R2 | Self-host reviewed assets or replace the provider | Pending |
 | APP-16 | Allbridge integration | `AllBridgeTracker.kt` | `allbridge.blocksdecoded.com` | R2/R3 | Confirm ownership/license; replace or disable the feature | Pending |
-| APP-17 | USwap API | `USWAP_API_BASE_URL`, `SWAP_ENABLED` | `https://tariffia.app/api/v3/`; swap flag is false | R0 | Keep disabled until a Tariffia swap backend exists; no HS calls | Code disabled; runtime pending |
+| APP-17 | USwap API | `USWAP_API_BASE_URL`, `SWAP_ENABLED` | `https://tariffia.app/api/v3/`; swap flag is false | R0 | Keep disabled until a Tariffia swap backend exists; no HS calls | Code hard-disabled; runtime pending |
 | APP-18 | USwap credentials | `USWAP_API_KEY` | Empty; upstream key variables removed | R0 | Do not reintroduce HS keys; add a Tariffia key only with the new backend | Code removed |
 | APP-19 | Ethereum RPC | `BLOCKS_DECODED_ETHEREUM_RPC` | `ethereum-rpc.publicnode.com` | R1 | Rename the setting and keep the independent endpoint | Verified |
 | APP-20 | Address risk provider | `CHAINALYSIS_BASE_URL` | Chainalysis public API | R1 | Review contract, privacy impact, and key ownership | Pending |
@@ -56,6 +60,7 @@ A dependency is not harmless merely because it is only used on a secondary scree
 | APP-24 | WalletConnect relay | `AppConfigProvider` | `relay.walletconnect.com` | R1 | Verify the Tariffia project and relay policy | Pending |
 | APP-25 | Play subscription management package | `SubscriptionServiceGooglePlay.kt` | `context.packageName` | R0 | Verify the Play build resolves `app.tariffia.wallet` | Code updated; build pending |
 | APP-26 | Rate-app store links | `RateAppManager.kt` | `context.packageName`, HTTPS Play Store URL | R0 | Verify the rate prompt opens the Tariffia listing | Code updated; build pending |
+| APP-27 | CrossPay exact-output send | `CrossPayManager.kt`, `CrossPayTabViewModel.kt`, `SendV2Screen.kt` | USwap via `/api/v3/` | R0 | Gate by `SWAP_ENABLED`; hide the tab; no provider resolution when disabled | Code gated; runtime pending |
 
 ## Static Content Hosting
 
@@ -117,7 +122,8 @@ A production release is blocked unless all of the following are true:
 
 - [ ] No required production path uses an R2 dependency.
 - [ ] No required production path uses an R3 dependency.
-- [ ] USwap is removed or hard-disabled with no outbound requests.
+- [x] CrossPay is gated by `SWAP_ENABLED` in the tab filter, tab selection, manager, and provider resolution.
+- [ ] USwap is removed or hard-disabled with no outbound requests, confirmed by a network capture.
 - [ ] Market data is replaced or disabled with no blocksdecoded calls.
 - [ ] FAQ, guides, and coin catalogues are served by Tariffia.
 - [ ] CDN-hosted images are self-hosted or separately approved.
@@ -127,6 +133,23 @@ A production release is blocked unless all of the following are true:
 - [ ] `rg` audit is clean except for attribution, license, dependency names, and historical notices.
 - [ ] Tor remains opt-in, disabled by default, fail-closed, and compatible with the replacement endpoints.
 - [ ] Signing, assetlinks, and App Links checks in `docs/release-checklist.md` pass.
+
+## Current Verification Snapshot
+
+Commands run on 2026-10-28 from the repository root:
+
+```bash
+python3 .github/scripts/check_translations.py
+# 1735 strings checked against 9 locales; all translated
+
+curl -sS -o /dev/null -w '%{http_code}\n' https://tariffia.app/
+# 000 (Could not resolve host)
+
+curl -sS -o /dev/null -w '%{http_code}\n' https://dev.tariffia.app/
+# 000 (Could not resolve host)
+```
+
+Static checks passed, but no host-dependent endpoint, build, signature, or network-capture gate has passed.
 
 ## Verification Commands
 

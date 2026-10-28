@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.core.chain.ChainRegistry
 import io.horizontalsystems.walletkit.core.providers.Translator
 import io.horizontalsystems.walletkit.core.shorten
@@ -123,7 +124,7 @@ fun SendV2Screen(
             when (it) {
                 SendTab.Standard -> true
                 SendTab.Private -> uiState.privateSendSupported
-                SendTab.CrossPay -> true
+                SendTab.CrossPay -> App.instance.isSwapEnabled
             }
         }
 

@@ -2,7 +2,7 @@
 
 Tariffia Wallet is an independent, non-custodial cryptocurrency wallet for Android. It is derived from Unstoppable Wallet Android `0.54.0` and is being developed as a separate application with its own identity, configuration, and release process.
 
-> **Development status:** active pre-release. The application is not ready for production use or mainnet funds. Branding, backend services, and release infrastructure are still being migrated. Swap and private send are disabled in the current build while their backend is replaced.
+> **Development status:** active pre-release. The application is not ready for production use or mainnet funds. Branding, backend services, and release infrastructure are still being migrated. Swap, private send, and CrossPay are disabled in the current build while their backend is replaced.
 
 > **Independence:** Tariffia Wallet is not affiliated with, endorsed by, or supported by Horizontal Systems or the Unstoppable Wallet project.
 
@@ -12,7 +12,7 @@ Tariffia Wallet inherits the upstream multi-chain wallet architecture and is bei
 
 - Non-custodial key storage and wallet backup
 - Multi-chain support, including Bitcoin, EVM networks, Solana, TON, Tron, Monero, Zcash, and others
-- On-chain swaps and WalletConnect support
+- WalletConnect support; on-chain swaps and CrossPay are disabled until the Tariffia backend is available
 - Passkey-based wallet creation and recovery
 - Market data, portfolio tracking, and address monitoring
 
@@ -57,6 +57,8 @@ Tests and lint:
 Build outputs are written under `app/build/outputs/apk/`.
 
 Release signing is enabled only when the `TARIFFIA_KEYSTORE_FILE`, `TARIFFIA_KEYSTORE_PASSWORD`, `TARIFFIA_KEY_ALIAS`, and `TARIFFIA_KEY_PASSWORD` environment variables are present. See [docs/signing.md](docs/signing.md). The `test` signing configuration is for development only and must not be used for published builds.
+
+Release operations: [release checklist](docs/release-checklist.md), [signing](docs/signing.md), [asset links](docs/assetlinks.md), [hosting](docs/hosting.md).
 
 ## Configuration
 

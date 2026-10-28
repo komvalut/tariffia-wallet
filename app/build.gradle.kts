@@ -40,7 +40,7 @@ android {
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.compileSdk.get().toInt()
         versionCode = 185
-        versionName = "0.54.0"
+        versionName = "1.0.0-rc1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         resourceConfigurations += listOf("de", "es", "en", "fa", "fr", "ko", "pt", "pt-rBR", "ru", "tr", "zh")
