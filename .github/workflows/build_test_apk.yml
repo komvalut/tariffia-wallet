@@ -6,15 +6,19 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: build-test-apk-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  DEV_RELEASE_TAG: v1.0.0-dev
+  DEV_APK_NAME: tariffia-wallet-v1.0.0-dev.apk
+
 jobs:
   build:
-    name: Build base debug APK
+    name: Build and publish base debug APK
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
@@ -59,26 +63,43 @@ jobs:
             find app/build/outputs/apk -maxdepth 4 -type f -print || true
             exit 1
           fi
-          cp "$APK" tariffia-wallet-debug.apk
-          sha256sum tariffia-wallet-debug.apk | tee tariffia-wallet-debug.apk.sha256
-          SIZE="$(du -h tariffia-wallet-debug.apk | cut -f1)"
-          HASH="$(cut -d' ' -f1 tariffia-wallet-debug.apk.sha256)"
+          cp "$APK" "$DEV_APK_NAME"
+          sha256sum "$DEV_APK_NAME" | tee "$DEV_APK_NAME.sha256"
+          SIZE="$(du -h "$DEV_APK_NAME" | cut -f1)"
+          HASH="$(cut -d' ' -f1 "$DEV_APK_NAME.sha256")"
+          DOWNLOAD_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/download/$DEV_RELEASE_TAG/$DEV_APK_NAME"
           {
             echo "## Tariffia test APK"
             echo
             echo "- Variant: \`baseDebug\`"
             echo "- Package: \`app.tariffia.wallet.dev\`"
-            echo "- File: \`tariffia-wallet-debug.apk\`"
+            echo "- File: \`$DEV_APK_NAME\`"
             echo "- SHA-256: \`$HASH\`"
             echo "- Size: $SIZE"
+            echo "- Direct download: $DOWNLOAD_URL"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload debug APK
-        uses: actions/upload-artifact@v4
+      - name: Publish public development release
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
         with:
-          name: tariffia-wallet-debug-apk
-          path: |
-            tariffia-wallet-debug.apk
-            tariffia-wallet-debug.apk.sha256
-          if-no-files-found: error
-          retention-days: 30
+          tag_name: ${{ env.DEV_RELEASE_TAG }}
+          name: Tariffia Wallet development build
+          body: |
+            Direct APK download:
+
+            https://github.com/${{ github.repository }}/releases/download/${{ env.DEV_RELEASE_TAG }}/${{ env.DEV_APK_NAME }}
+
+            - Package: `app.tariffia.wallet.dev`
+            - Variant: `baseDebug`
+            - Commit: `${{ github.sha }}`
+            - Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            This APK is signed with the public debug/test keystore and is for testing only.
+          files: |
+            ${{ env.DEV_APK_NAME }}
+            ${{ env.DEV_APK_NAME }}.sha256
+          fail_on_unmatched_files: true
+          overwrite_files: true
+          prerelease: true
+          draft: false
