@@ -289,12 +289,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-
-        <!-- Debug-only: shows the text of a startup crash on screen. -->
-        <activity
-            android:name="io.horizontalsystems.walletkit.core.StartupCrashActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppTheme.DayNight" />
     </application>
 
 </manifest>

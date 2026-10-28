@@ -2,7 +2,6 @@ package io.horizontalsystems.bankwallet
 
 import android.content.Context
 import io.horizontalsystems.bankwallet.core.providers.AppConfigProvider
-import io.horizontalsystems.walletkit.core.StartupCrashActivity
 import io.horizontalsystems.walletkit.core.StartupTrace
 import io.horizontalsystems.walletkit.chain.evm.EvmChainPlugin
 import io.horizontalsystems.walletkit.chain.tron.TronChainPlugin
@@ -38,10 +37,6 @@ class MainApp : App() {
         val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, error ->
             StartupTrace.log("UNCAUGHT exception on thread ${thread.name}", error)
-            StartupCrashActivity.show(
-                base,
-                "Thread: ${thread.name}\n\n${error.stackTraceToString()}"
-            )
             previousHandler?.uncaughtException(thread, error)
         }
         super.attachBaseContext(base)
