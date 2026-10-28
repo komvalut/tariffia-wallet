@@ -1,1 +1,1 @@
-Bitcoin, Ethereum, DeFi
+Self-custody crypto wallet for Bitcoin, Ethereum and privacy coins

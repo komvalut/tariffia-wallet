@@ -17,20 +17,21 @@ Release status: **BLOCKED**. The code-side migration is ready for an RC tag, but
 | Check | Result | Evidence |
 | --- | --- | --- |
 | Translation coverage | Pass | `python3 .github/scripts/check_translations.py`: 1735 strings checked against 9 locales, all translated |
-| Static UI branding | Pass | No runtime HS branding in resources; preview-only markdown footer updated to `© Tariffia` |
+| Static UI branding | Pass | No upstream logos or political launcher resources; preview-only markdown footer updated to `© Tariffia` |
+| Release branding/CDN | Pass | `python3 .github/scripts/check_release_branding.py`: no retired branding, CDN references or metadata locales |
 | CrossPay/USwap code gate | Pass | CrossPay tab and manager now require `SWAP_ENABLED`; preview and commit throw an unavailable error when disabled |
 | Tariffia DNS | Fail | `tariffia.app` and `dev.tariffia.app` return `Could not resolve host` |
 | Tariffia HTTPS endpoints | Fail | All checked URLs return HTTP `000` |
-| Asset links | Fail | No host, no deployment, empty fingerprints |
+| Asset links | Fail | No host, no deployment, empty fingerprints; generator/validator added |
 | Release build | Not run | Android SDK unavailable; Java/keytool fails in this environment |
-| Store metadata | Pending | `en-US` copy and icon still need final review; stale screenshots were removed |
+| Store metadata | Partial | `en-US` copy and 512×512 icon are Tariffia-branded; fresh screenshots still require a working build |
 | Network capture | Not run | Requires a built app and a running backend |
 
 Blocking items before removing the RC label:
 
 - Deploy DNS, TLS, asset links, FAQ, guides, coin catalogues, icon, analytics page, and the market API as described in `docs/hosting.md`.
 - Deploy the Tariffia CDN assets described in `docs/hosting.md`, or record an explicit approval.
-- Replace HS store metadata and complete the license/notice review.
+- Capture fresh store screenshots and complete the license/notice review.
 - Create the release keystore, record both channel fingerprints, and deploy asset links.
 - Build from the tag, run the device/network tests, and complete signing and artifact checks.
 
@@ -72,6 +73,7 @@ Blocking items before removing the RC label:
 
 ## 4. App Links and Asset Links
 
+- [x] `docs/assetlinks.md` generator/validator exists: `python3 .github/scripts/generate_assetlinks.py --check --allow-empty`.
 - [ ] `docs/assetlinks.md` has been followed.
 - [ ] `assetlinks/assetlinks.json` contains the Play app-signing and direct release fingerprints.
 - [ ] `assetlinks/assetlinks-dev.json` contains the debug/test fingerprint and current debug package IDs.
@@ -87,6 +89,7 @@ Blocking items before removing the RC label:
 ## 5. Build Verification
 
 - [x] Translation coverage check passed: `python3 .github/scripts/check_translations.py`.
+- [x] Release branding check passed: `python3 .github/scripts/check_release_branding.py`.
 - [ ] A clean build was run from the release tag, not from a dirty worktree.
 - [ ] Unit tests pass.
 - [ ] Lint passes or every remaining warning is reviewed and documented.
@@ -107,8 +110,9 @@ Blocking items before removing the RC label:
 - [ ] The artifact is signed by the expected certificate.
 - [ ] SHA-256 and MD5 checksums were generated from the final artifact.
 - [ ] Release notes, privacy policy, and support links are reachable.
-- [x] Play Store text metadata contains no upstream branding.
+- [x] Play Store text metadata and icon contain no upstream branding.
 - [ ] Fresh screenshots are captured and reviewed after a working build and backend are available.
+- [ ] License and NOTICE entries are reviewed for the shipped assets.
 - [ ] Play subscription management uses the actual `app.tariffia.wallet` package ID.
 - [ ] Rate-app links use the actual package ID and HTTPS, or the prompt is removed.
 - [ ] Play Data Safety and content-rating answers match the actual app behavior.
@@ -140,6 +144,12 @@ Record the exact commands and results here for the RC or production release.
 
 2026-10-28  rg -n 'cdn\.blocksdecoded\.com|allbridge\.blocksdecoded\.com' app walletkit components
             No matches
+
+2026-10-28  python3 .github/scripts/check_release_branding.py
+            Release branding check passed: no retired branding, CDN references or metadata locales.
+
+2026-10-28  python3 .github/scripts/generate_assetlinks.py --check --allow-empty
+            Asset Links validation passed.
 ```
 
 ## 9. Post-Release Verification

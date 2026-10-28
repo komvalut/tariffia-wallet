@@ -13,3 +13,7 @@ gradle/gradle-daemon-jvm.properties
 
 # Working specs, synced to docs-hub instead of git
 /docs/specs/
+
+# Python tooling
+__pycache__/
+*.pyc

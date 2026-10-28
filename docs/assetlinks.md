@@ -15,13 +15,37 @@ The production and development files are separate. Never publish a debug fingerp
 | Production | `tariffia.app` | `assetlinks/assetlinks.json` | `/.well-known/assetlinks.json` |
 | Development | `dev.tariffia.app` | `assetlinks/assetlinks-dev.json` | `/.well-known/assetlinks.json` |
 
-The templates in `docs/templates/` are starting points. They contain placeholders and must not be deployed as-is.
+The JSON files in `assetlinks/` are the deployment sources. Generate them with `.github/scripts/generate_assetlinks.py`; do not hand-edit fingerprints. The files in `docs/templates/` show the expected shape and must not be deployed as-is.
 
 Deployment layout, TLS behavior, cache rules, and the server reference configuration are in `docs/hosting.md`. This document defines the file contents and verification flow; `docs/hosting.md` defines how the host must serve them.
 
 ## Current Deployment Status
 
 As of 2026-10-28, `tariffia.app` and `dev.tariffia.app` do not resolve in DNS, so neither asset links URL exists. The tracked files contain empty fingerprint arrays. Do not deploy placeholders to make a check pass.
+
+## Generate and Validate
+
+The generator writes one environment at a time and normalizes lowercase or `SHA256:`-prefixed input to the required uppercase colon-separated form.
+
+```bash
+# Development: debug/test certificate
+python3 .github/scripts/generate_assetlinks.py \
+  --environment dev \
+  --debug-fingerprint "$DEBUG_SHA256"
+
+# Production: Play app-signing and direct release certificates
+python3 .github/scripts/generate_assetlinks.py \
+  --environment release \
+  --play-fingerprint "$PLAY_SHA256" \
+  --direct-fingerprint "$DIRECT_RELEASE_SHA256"
+
+# Strict validation of both files
+python3 .github/scripts/generate_assetlinks.py --check
+```
+
+`--check` fails while either file still has an empty fingerprint array; that is intentional. Use `--check --allow-empty` only to validate JSON structure before fingerprints are available. Pass `--debug-fingerprint`, `--play-fingerprint`, and `--direct-fingerprint` together to cross-check that debug and production certificates were not swapped. The validator rejects placeholders, malformed SHA-256 values, duplicate packages, duplicate release fingerprints, wrong package lists, and fingerprints supplied to the wrong environment.
+
+Obtain the debug certificate with `keytool -list -v` against `app/test.keystore`, the direct release certificate with `apksigner verify --print-certs`, and the Play certificate from Play Console > App integrity. Never commit a keystore password or private key.
 
 ## Required HTTP Behavior
 
