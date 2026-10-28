@@ -427,17 +427,23 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
 
         setAppTheme()
 
-        DAppManager.initialize(
-            params = DAppInitParams(
-                application = this,
-                projectId = appConfig.walletConnectProjectId,
-                relayServerUrl = "wss://${appConfig.walletConnectUrl}?projectId=${appConfig.walletConnectProjectId}",
-                appName = appConfig.walletConnectAppMetaDataName,
-                appUrl = appConfig.walletConnectAppMetaDataUrl,
-                appIcon = appConfig.walletConnectAppMetaDataIcon,
-            ),
-            callback = WCDelegate,
-        )
+        // Without a WalletConnect project ID the relay cannot be opened; skip it so a build
+        // without secrets (e.g. CI test APK) does not start the dApp engine at all.
+        if (appConfig.walletConnectProjectId.isBlank()) {
+            DAppManager.disable()
+        } else {
+            DAppManager.initialize(
+                params = DAppInitParams(
+                    application = this,
+                    projectId = appConfig.walletConnectProjectId,
+                    relayServerUrl = "wss://${appConfig.walletConnectUrl}?projectId=${appConfig.walletConnectProjectId}",
+                    appName = appConfig.walletConnectAppMetaDataName,
+                    appUrl = appConfig.walletConnectAppMetaDataUrl,
+                    appIcon = appConfig.walletConnectAppMetaDataIcon,
+                ),
+                callback = WCDelegate,
+            )
+        }
 
         wcSessionManager = WCSessionManager(accountManager, WCSessionStorage(appDatabase))
 

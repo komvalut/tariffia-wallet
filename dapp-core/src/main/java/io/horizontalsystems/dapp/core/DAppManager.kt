@@ -12,6 +12,11 @@ object DAppManager {
         DAppManager.service = service
     }
 
+    /** Keeps dApp support off when the build has no WalletConnect project ID. */
+    fun disable() {
+        service = DAppServiceEmpty()
+    }
+
     fun initialize(params: DAppInitParams, callback: DAppServiceCallback) {
         try {
             service.initialize(params, callback)
