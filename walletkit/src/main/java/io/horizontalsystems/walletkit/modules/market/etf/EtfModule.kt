@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.core.TariffiaCdn
 import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.core.stats.StatPeriod
 import io.horizontalsystems.walletkit.entities.Currency
@@ -73,13 +74,13 @@ object EtfModule {
         BtcTab(
             R.string.MarketEtf_BitcoinEtf,
             "btc",
-            "https://cdn.blocksdecoded.com/header-images/ETF_bitcoin@3x.png",
+            TariffiaCdn.headerImage("ETF_bitcoin"),
             "Bitcoin"
         ),
         EthTab(
             R.string.MarketEtf_EthereumEtf,
             "eth",
-            "https://cdn.blocksdecoded.com/header-images/ETF_ethereum@3x.png",
+            TariffiaCdn.headerImage("ETF_ethereum"),
             "Ethereum"
         );
     }

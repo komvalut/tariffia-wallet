@@ -2,6 +2,7 @@ package io.horizontalsystems.walletkit.modules.market.etf
 
 import androidx.lifecycle.viewModelScope
 import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.core.TariffiaCdn
 import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.core.ViewModelUiState
 import io.horizontalsystems.walletkit.core.managers.CurrencyManager
@@ -143,7 +144,7 @@ class EtfViewModel(
 
     private fun etfViewItem(rankedEtf: RankedEtf, listTimePeriod: EtfListTimePeriod) = EtfViewItem(
         title = rankedEtf.etf.ticker,
-        iconUrl = "https://cdn.blocksdecoded.com/etf-tresuries/${rankedEtf.etf.ticker}@3x.png",
+        iconUrl = TariffiaCdn.etfTreasury(rankedEtf.etf.ticker),
         subtitle = rankedEtf.etf.name,
         value = rankedEtf.etf.totalAssets?.let {
             App.numberFormatter.formatFiatShort(it, currencyManager.baseCurrency.symbol, 0)

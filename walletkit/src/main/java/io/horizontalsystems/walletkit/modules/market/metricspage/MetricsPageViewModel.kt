@@ -2,6 +2,7 @@ package io.horizontalsystems.walletkit.modules.market.metricspage
 
 import androidx.lifecycle.viewModelScope
 import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.core.TariffiaCdn
 import io.horizontalsystems.walletkit.core.ViewModelUiState
 import io.horizontalsystems.walletkit.core.collectSafely
 import io.horizontalsystems.walletkit.core.managers.CurrencyManager
@@ -70,7 +71,7 @@ class MetricsPageViewModel(
     private val header = MarketModule.Header(
         title = Translator.getString(title),
         description = Translator.getString(description),
-        icon = ImageSource.Remote("https://cdn.blocksdecoded.com/header-images/$icon@3x.png")
+        icon = ImageSource.Remote(TariffiaCdn.headerImage(icon))
     )
 
     override fun createState(): MetricsPageModule.UiState {

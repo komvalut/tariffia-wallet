@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.core.TariffiaCdn
 import io.horizontalsystems.walletkit.helpers.DateHelper
 import io.horizontalsystems.walletkit.modules.coin.audits.CoinAuditsModule.AuditViewItem
 import io.horizontalsystems.walletkit.modules.coin.audits.CoinAuditsModule.AuditorViewItem
@@ -60,6 +61,6 @@ class CoinAuditsViewModel(
     }
 
     private fun logoUrl(name: String): String =
-        "https://cdn.blocksdecoded.com/auditor-icons/$name@3x.png"
+        TariffiaCdn.auditorIcon(name)
 
 }

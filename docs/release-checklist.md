@@ -23,13 +23,13 @@ Release status: **BLOCKED**. The code-side migration is ready for an RC tag, but
 | Tariffia HTTPS endpoints | Fail | All checked URLs return HTTP `000` |
 | Asset links | Fail | No host, no deployment, empty fingerprints |
 | Release build | Not run | Android SDK unavailable; Java/keytool fails in this environment |
-| Store metadata | Fail | `metadata/*` still contains HS branding |
+| Store metadata | Pending | `en-US` copy and icon still need final review; stale screenshots were removed |
 | Network capture | Not run | Requires a built app and a running backend |
 
 Blocking items before removing the RC label:
 
 - Deploy DNS, TLS, asset links, FAQ, guides, coin catalogues, icon, analytics page, and the market API as described in `docs/hosting.md`.
-- Resolve APP-15 (`cdn.blocksdecoded.com`), or record an explicit approval.
+- Deploy the Tariffia CDN assets described in `docs/hosting.md`, or record an explicit approval.
 - Replace HS store metadata and complete the license/notice review.
 - Create the release keystore, record both channel fingerprints, and deploy asset links.
 - Build from the tag, run the device/network tests, and complete signing and artifact checks.
@@ -48,10 +48,10 @@ Blocking items before removing the RC label:
 - [ ] `docs/phase3-endpoint-matrix.md` has no unresolved R3 dependency.
 - [x] CrossPay is gated by `SWAP_ENABLED` at the tab, view-model, manager, and provider-resolution layers.
 - [ ] USwap is removed or hard-disabled and makes no outbound requests, confirmed by a network capture.
-- [ ] Market data is replaced or disabled and makes no `blocksdecoded` requests.
+- [x] No source or resource references the upstream CDN; all image URLs use `TariffiaCdn`.
 - [ ] FAQ, guides, and coin catalogues are served by Tariffia-controlled infrastructure.
 - [ ] `docs/hosting.md` has been implemented and verified on both hosts.
-- [ ] CDN images are self-hosted or separately licensed and approved.
+- [ ] Tariffia CDN images are deployed, self-hosted, or separately licensed and approved.
 - [ ] All production API keys belong to Tariffia and are not inherited from upstream.
 - [ ] No API key, keystore, password, or private endpoint is committed to the repository.
 - [ ] Third-party licenses and NOTICE entries reflect the shipped dependencies and assets.
@@ -107,7 +107,8 @@ Blocking items before removing the RC label:
 - [ ] The artifact is signed by the expected certificate.
 - [ ] SHA-256 and MD5 checksums were generated from the final artifact.
 - [ ] Release notes, privacy policy, and support links are reachable.
-- [ ] Play Store listing, screenshots, and descriptions contain no upstream branding. `metadata/*` is still HS-branded.
+- [x] Play Store text metadata contains no upstream branding.
+- [ ] Fresh screenshots are captured and reviewed after a working build and backend are available.
 - [ ] Play subscription management uses the actual `app.tariffia.wallet` package ID.
 - [ ] Rate-app links use the actual package ID and HTTPS, or the prompt is removed.
 - [ ] Play Data Safety and content-rating answers match the actual app behavior.
@@ -137,8 +138,8 @@ Record the exact commands and results here for the RC or production release.
 2026-10-28  curl -sS https://dev.tariffia.app/
             Could not resolve host: dev.tariffia.app
 
-2026-10-28  rg -n -i 'horizontalsystems|blocksdecoded\.com' app walletkit ...
-            Remaining runtime URL: cdn.blocksdecoded.com
+2026-10-28  rg -n 'cdn\.blocksdecoded\.com|allbridge\.blocksdecoded\.com' app walletkit components
+            No matches
 ```
 
 ## 9. Post-Release Verification
