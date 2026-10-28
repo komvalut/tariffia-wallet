@@ -20,8 +20,6 @@ interface IAppConfigProvider {
     val appWebPageLink: String
     val analyticsLink: String
     val appGithubLink: String
-    val appTwitterLink: String
-    val appTelegramLink: String
     val reportEmail: String
     val releaseNotesUrl: String
     val mempoolSpaceUrl: String
@@ -31,13 +29,8 @@ interface IAppConfigProvider {
     val walletConnectAppMetaDataName: String
     val walletConnectAppMetaDataUrl: String
     val walletConnectAppMetaDataIcon: String
-    val simplexSupportChat: String
-    val nymVpnLink: String
-    val telegramSupportChat: String
-    val labsSimplexSwapBotLink: String
-    val labsTelegramSwapBotLink: String
-    val labsSignalSwapBotLink: String
-    val labsSwapWebLink: String
+    val passkeyRpId: String
+    val passkeyRpName: String
     val blocksDecodedEthereumRpc: String
     val twitterBearerToken: String
     val etherscanApiKey: List<String>
@@ -57,7 +50,6 @@ interface IAppConfigProvider {
     val fiatDecimal: Int
     val feeRateAdjustForCurrencies: List<String>
     val currencies: List<Currency>
-    val donateAddresses: Map<BlockchainType, String>
     val spamCoinValueLimits: Map<String, BigDecimal>
     val spamCoinsWithoutMicroDust: Set<String>
     val chainalysisBaseUrl: String

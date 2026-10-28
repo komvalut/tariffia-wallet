@@ -71,7 +71,7 @@
     <string name="Language_Czech">کشور چک</string>
     <string name="Language_Portuguese">پرتغالی</string>
     <!--Rate App-->
-    <string name="RateApp_Description_Rate_This_App">آیا از کارکردن با توقف ناپذیر لذت می برید؟ نظرات و ایده های خود را برای پیشبرد بیشتر با ما به اشتراک بگذارید.</string>
+    <string name="RateApp_Description_Rate_This_App">از Tariffia Wallet راضی هستید؟ بازخورد شما به بهبود آن کمک می‌کند.</string>
     <string name="RateApp_Button_RateIt">امتیاز بدهید</string>
     <string name="RateApp_Button_NotNow">الان نه</string>
     <!--Restore-->
@@ -282,10 +282,10 @@
     <string name="TransactionInfo_SpeedUp">افزایش سرعت</string>
     <string name="StatusInfo_Pending">در حالت معلق</string>
     <string name="StatusInfo_Processing">پردازش</string>
-    <string name="StatusInfo_PendingDescription">این تراکنش هنوز در بلاک چین تایید نشده است. تراکنش هایی که با تنظیم کارمزد توصیه شده یا بالاتر ارسال می شوند، معمولاً ظرف چند دقیقه پردازش می شوند. تراکنش هایی که با کارمزد پایین ارسال می شوند ممکن است به مدت چند ساعت یا حتی چند روز معلق بمانند و حتی رد شوند. به خاطر داشته باشید که وضعیت تراکنش فردی در رابطه با کیف پول غیرقابل توقف معمولاً با تاخیر کوتاهی به روز رسانی می شود.</string>
+    <string name="StatusInfo_PendingDescription">این تراکنش هنوز در بلاک چین تایید نشده است. تراکنش هایی که با تنظیم کارمزد توصیه شده یا بالاتر ارسال می شوند، معمولاً ظرف چند دقیقه پردازش می شوند. تراکنش هایی که با کارمزد پایین ارسال می شوند ممکن است به مدت چند ساعت یا حتی چند روز معلق بمانند و حتی رد شوند. به خاطر داشته باشید که وضعیت تراکنش فردی در رابطه با کیف پول Tariffia معمولاً با تاخیر کوتاهی به روز رسانی می شود.</string>
     <string name="StatusInfo_ProcessingDescription">این تراکنش قبلاً در بلاک چین گنجانده شده است اما نهایی نشده است. در این مرحله، برای پرداخت‌های کوچک‌تر می‌توان تراکنش را کامل‌تر در نظر گرفت. برای پرداخت‌های بزرگ‌تر، توصیه می‌شود منتظر بمانید تا وضعیت تراکنش تکمیل شود.</string>
     <string name="StatusInfo_ConfirmedDescription">تراکنش تکمیل شده و دائمی و غیرقابل برگشت تلقی می شود.</string>
-    <string name="StatusInfo_FailedDescription">تراکنش پردازش نشده است و هیچ انتقال ارزشی صورت نگرفته است. با توجه به به دلیل رد شدن، برخی از تراکنش های ناموفق ممکن است هزینه تراکنش را کسر کنند. تراکنش‌هایی که با تراکنش دیگری جایگزین یا کنسل شده‌اند، کارمزد تراکنش را کسر نمی‌کنند و همچنین به عنوان تراکنش ناموفق در نظر گرفته می شوند. برنامه غیرقابل توقف نمی تواند دلیل تراکنش های ناموفق را نشان دهد، اما خود کاربران می توانند آن را در یک کاوشگر بلوک عمومی برای مثال etherscan.io جستجو کنند.</string>
+    <string name="StatusInfo_FailedDescription">تراکنش پردازش نشده است و هیچ انتقال ارزشی صورت نگرفته است. با توجه به به دلیل رد شدن، برخی از تراکنش های ناموفق ممکن است هزینه تراکنش را کسر کنند. تراکنش‌هایی که با تراکنش دیگری جایگزین یا کنسل شده‌اند، کارمزد تراکنش را کسر نمی‌کنند و همچنین به عنوان تراکنش ناموفق در نظر گرفته می شوند. برنامه Tariffia نمی تواند دلیل تراکنش های ناموفق را نشان دهد، اما خود کاربران می توانند آن را در یک کاوشگر بلوک عمومی برای مثال etherscan.io جستجو کنند.</string>
     <!-- Transaction Info Options -->
     <string name="TransactionInfoOptions_SpeedUp_Title">افزایش سرعت</string>
     <string name="TransactionInfoOptions_SpeedUp_Button">ارسال مجدد</string>
@@ -304,7 +304,7 @@
     <string name="SettingsCurrency_Title">ارز مرجع</string>
     <string name="SettingsCurrency_Other">غیره</string>
     <string name="SettingsCurrency_DisclaimerTitle">سلب مسئولیت</string>
-    <string name="SettingsCurrency_DisclaimerText">The exchange rate data provided by a third party service Coingecko.com\n\nUnstoppable wallet app doesn\'t guarantee these values are always correct and match market data. The chance for inconsistency is higher if you select any base currency other than %s.</string>
+    <string name="SettingsCurrency_DisclaimerText">The exchange rate data provided by a third party service Coingecko.com\n\nTariffia wallet app doesn\'t guarantee these values are always correct and match market data. The chance for inconsistency is higher if you select any base currency other than %s.</string>
     <!--Settings-->
     <string name="Settings_Title">تنظيمات</string>
     <string name="Settings_BaseCurrency">ارز مرجع</string>
@@ -319,7 +319,6 @@
     <string name="SettingsSecurity_AutoLock_After1Hour">۱ ساعت</string>
     <!--Address Checker-->
     <!--Banners-->
-    <!--Why Donate Page-->
     <!--Setting Subscription -->
     <!--Premium Screens-->
     <string name="Appearance_AppIcon">نماد برنامه</string>
@@ -344,7 +343,7 @@
     <string name="SettingsSecurity_EnablePin">رمز عبور</string>
     <string name="SettingsSecurity_EditPin">تغییر رمزعبور</string>
     <string name="SettingsSecurity_ManageKeys">مدیریت کیف پول ها</string>
-    <string name="SettingsSecurity_AppRestartWarning">این اقدام کیف پول غیر قابل توقف را مجدداً راه اندازی می کند.</string>
+    <string name="SettingsSecurity_AppRestartWarning">این اقدام Tariffia Wallet را دوباره راه‌اندازی می‌کند.</string>
     <string name="SettingsSecurity_SortingShuffle">مخلوط کردن</string>
     <string name="SettingsSecurity_SortingShuffleDescription">فهرست بندی تصادفی</string>
     <string name="SettingsSecurity_SortingBip69">BIP69 قطعی</string>
@@ -438,7 +437,6 @@
     <!-- Blockchain Settings -->
     <string name="CoinSettings_BitcoinCashCoinType_Type0_Description">رایج قبل از ۲۰۱۸</string>
     <string name="CoinSettings_BitcoinCashCoinType_Type145_Description">رایج بعد از ۲۰۱۸</string>
-    <!-- Nym VPN -->
     <!-- Tor -->
     <string name="Tor_Connection_Enable">فعال کردن Tor</string>
     <string name="Tor_Connection_Disable">Tor را غیرفعال کنید</string>
@@ -614,7 +612,7 @@
     <string name="BackupManager_MergeDescription">مخاطبین ذخیره شده با داده‌های پشتیبان جایگزین خواهند شد.</string>
     <string name="AddZanoNode_AddNode">افزودن گره</string>
     <string name="AddZanoNode_NodeUrl">URL گره</string>
-    <string name="ZanoNodeSettings_Description">گره‌ای را انتخاب کنید که برنامه Unstoppable برای همگام‌سازی کیف پول(ها) استفاده کند.</string>
+    <string name="ZanoNodeSettings_Description">گره‌ای را انتخاب کنید که برنامه Tariffia برای همگام‌سازی کیف پول(ها) استفاده کند.</string>
     <string name="LocalBackup_ProtectBackup">حفاظت پشتیبان</string>
     <string name="LocalBackup_ProtectBackupDescription">یک رمز عبور برای حفاظت از فایل پشتیبان خود ایجاد کنید.</string>
     <string name="LocalBackup_BackupName">نام پشتیبان</string>
@@ -671,7 +669,7 @@
     <string name="SwapTerms_RiskRestrictions_Info">برخی مسیرها ممکن است swapها را رد کنند یا دسترسی به وجوه را محدود کنند. هنگام انتخاب یک مسیر به امتیازات مسیر توجه کنید.</string>
     <string name="SwapTerms_RiskRestrictions_Highlight">امتیازات مسیر</string>
     <string name="SwapTerms_UserResponsibility_Info">من خطرات احتمالی را بررسی کرده‌ام و مسئولیت انتخاب مسیر خود را می‌پذیرم.</string>
-    <string name="ZcashEndpointSettings_Description">سرور lightwallet را انتخاب کنید که برنامه Unstoppable باید برای همگام‌سازی کیف پول Zcash استفاده کند.</string>
+    <string name="ZcashEndpointSettings_Description">سرور lightwallet را انتخاب کنید که برنامه Tariffia باید برای همگام‌سازی کیف پول Zcash استفاده کند.</string>
     <string name="AddZcashEndpoint_AddEndpoint">افزودن نقطه پایانی</string>
     <string name="AddZcashEndpoint_EndpointUrl">URL نقطه پایانی</string>
     <string name="AddZcashEndpoint_Warning_UrlExists">نقطه پایانی با این URL از قبل وجود دارد</string>
@@ -698,7 +696,7 @@
     <string name="PasskeyTerms_DeviceDependency">وابستگی به دستگاه</string>
     <string name="PasskeyTerms_DeviceDependency_Description">دسترسی به دستگاه شما نیاز دارد. از دست دادن دسترسی ممکن است به از دست رفتن دارایی‌ها منجر شود.</string>
     <string name="PasskeyTerms_LimitedAccess_Description">ممکن است روی همه دستگاه‌ها یا پلتفرم‌ها کار نکند.</string>
-    <string name="PasskeyTerms_Responsibility_Description">مسئولیت دسترسی به دستگاهتان بر عهده شماست. در صورت از دست رفتن دسترسی، Unstoppable نمی‌تواند این کیف‌پول را بازیابی کند.</string>
+    <string name="PasskeyTerms_Responsibility_Description">شما مسئول دسترسی به دستگاه خود هستید. در صورت از دست رفتن دسترسی، Tariffia نمی‌تواند این کیف پول را بازیابی کند.</string>
     <string name="CoinPage_Buy">خریدن</string>
     <string name="CoinPage_Sell">فروختن</string>
     <string name="MoneroNodeSettings_AutoSelectDescription">استفاده خودکار از سریع‌ترین گره</string>
@@ -932,7 +930,7 @@
     <string name="Restore_RecoveryPhrase">عبارت بازیابی</string>
     <string name="Restore_PrivateKey">کلید خصوصی</string>
     <string name="Restore_PrivateKeyHint">کلید خصوصی EVM، کلید خصوصی TRON، کلید ریشه BIP32، کلید مخفی Stellar یا کلید خصوصی توسعه‌یافته حساب را وارد کنید</string>
-    <string name="Restore_NonStandard_Description">این صفحه سازوکار ویژه‌ای برای بازیابی کیف پول در اختیار کاربران Unstoppable قرار می‌دهد که کیف پول غیراستاندارد دارند. چنین کیف پول‌هایی ممکن است در نسخه‌های 0.27 تا 0.28 Unstoppable با عبارت بازیابی غیرانگلیسی و/یا نویسه‌ای خاص در عبارت عبور کیف پول (مثلاً نشانه‌های آوایی) ساخته شده باشند.\n\nاگر شما از کاربران آسیب‌دیده هستید، پس از بازیابی چنین کیف پولی در نسخه 0.29 یا بالاتر، موجودی کیف پول شما 0 نمایش داده می‌شود. این صفحه به شما امکان می‌دهد دسترسی به کیف پول غیراستاندارد خود را بازیابی کنید. پس از بازیابی، توصیه می‌شود کیف پول جدیدی (مطابق با استاندارد) بسازید و دارایی‌ها را به آن منتقل کنید.</string>
+    <string name="Restore_NonStandard_Description">این صفحه کیف پول‌هایی را بازیابی می‌کند که با عبارت بازیابی غیراستاندارد ساخته شده‌اند. چنین کیف پول‌هایی ممکن است از عبارت غیرانگلیسی یا عبارت عبوری با نویسه‌های خاص (مثلاً نشانه‌های اعراب) استفاده کنند.\n\nاگر پس از بازیابی چنین کیف پولی موجودی 0 نمایش داده می‌شود، این صفحه می‌تواند دسترسی را بازگرداند. پس از بازیابی، یک کیف پول استاندارد جدید بسازید و دارایی‌های خود را به آن منتقل کنید.</string>
     <string name="Restore_Bip_Recommended">(پیشنهادی)</string>
     <string name="Restore_PrivateKey_InvalidKey">کلید نامعتبر</string>
     <string name="SelectContacts_All">همه</string>
@@ -1129,7 +1127,7 @@
     <string name="Balance_Receive_SubaddressesTransactions">تراکنش‌ها: %s</string>
     <string name="Balance_Zcash_UnshieldedBalanceDetected_Info_Title">ZEC شفاف شناسایی شد</string>
     <string name="Balance_Zcash_UnshieldedBalance_Info_Title">مقدار شفاف</string>
-    <string name="Balance_Zcash_UnshieldedBalance_Info_Description">مقداری ZEC در یک آدرس شفاف دارید. برای استفاده از آن در Unstoppable، باید برای حفظ کامل حریم خصوصی محافظت‌شده (shielded) شود.</string>
+    <string name="Balance_Zcash_UnshieldedBalance_Info_Description">مقداری ZEC در یک آدرس شفاف دارید. برای استفاده از آن در Tariffia، باید برای حفظ کامل حریم خصوصی محافظت‌شده (shielded) شود.</string>
     <string name="Balance_Zcash_Transparent">شفاف</string>
     <string name="Send_EnterAddress">آدرس را وارد کنید</string>
     <string name="Send_Fee_Info">هزینه تخمینی پردازش این تراکنش در بلاکچین.</string>
@@ -1200,7 +1198,7 @@
     <string name="FeeSettings_RiskOfGettingStuck">برای اطمینان از اجرای سریع تراکنش، حداکثر نرخ کارمزد (منهای حداکثر انعام ماینر) باید بالاتر از نرخ کارمزد پایه فعلی باشد. در غیر این صورت تراکنش ممکن است تا برقراری این شرط در انتظار بماند.</string>
     <string name="FeeSettings_FeeRate">نرخ کارمزد (SAT/BYTE)</string>
     <string name="FeeSettings_FeeRate_RecommendedInfo">این مقدار پیشنهادی برای قرار گرفتن در 2 بلاک بعدی است</string>
-    <string name="FeeSettings_FeeRate_Info">هنگام ارسال تراکنش باید کارمزد شبکه بپردازید. هرچه شبکه شلوغ‌تر باشد، کارمزد بالاتر است. \n\nUnstoppable Wallet کارمزد بهینه‌ای پیشنهاد می‌کند تا تراکنش شما در زمان معقولی تأیید شود. می‌توانید این مقدار را افزایش یا کاهش دهید. \n\nتنظیم کارمزد بسیار پایین ممکن است باعث شود تراکنش شما مدت زیادی در انتظار بماند یا حتی رد شود. برای تأیید سریع‌تر، کارمزد بالاتری تعیین کنید.</string>
+    <string name="FeeSettings_FeeRate_Info">هنگام ارسال تراکنش باید کارمزد شبکه بپردازید. هرچه شبکه شلوغ‌تر باشد، کارمزد بالاتر است. \n\nTariffia Wallet کارمزد بهینه‌ای پیشنهاد می‌کند تا تراکنش شما در زمان معقولی تأیید شود. می‌توانید این مقدار را افزایش یا کاهش دهید. \n\nتنظیم کارمزد بسیار پایین ممکن است باعث شود تراکنش شما مدت زیادی در انتظار بماند یا حتی رد شود. برای تأیید سریع‌تر، کارمزد بالاتری تعیین کنید.</string>
     <string name="FeeInfo_TronFee_Description">هزینه تخمینی ارسال این تراکنش در شبکه. (بدون کسر انرژی، پهنای باند و کارمزد فعال‌سازی)</string>
     <string name="FeeInfo_TronActivationFee_Title">کارمزد فعال‌سازی</string>
     <string name="FeeInfo_TronActivationFee_Description">این آدرس فعال نیست. انتقال TRX یا توکن‌های TRC-10 به آدرس یک حساب غیرفعال، آن حساب را فعال می‌کند.</string>
@@ -1382,13 +1380,8 @@
     <string name="Settings_Subscription">اشتراک</string>
     <string name="Settings_AutoLock">قفل خودکار</string>
     <string name="Settings_AutoLock_Description">برنامه را پس از مدت زمان انتخاب‌شده به طور خودکار قفل می‌کند.</string>
-    <string name="Settings_JoinUnstoppables">به Unstoppables بپیوندید</string>
     <string name="Settings_Support">پشتیبانی</string>
     <string name="Settings_VipSupport">پشتیبانی ویژه</string>
-    <string name="Settings_Donate">حمایت مالی</string>
-    <string name="Settings_DonateToken">حمایت با %s</string>
-    <string name="Settings_Donate_Addresses">آدرس‌ها</string>
-    <string name="Settings_Donate_DonationAddresses">آدرس‌های حمایت مالی</string>
     <string name="SettingsSecurity_AutoLock_Immediate">بلافاصله</string>
     <string name="SettingsSecurity_AutoLock_After1Min">1 دقیقه</string>
     <string name="SettingsSecurity_AutoLock_After5Min">5 دقیقه</string>
@@ -1397,26 +1390,6 @@
     <string name="SettingsBanner_Premium">Premium</string>
     <string name="SettingsBanner_PremiumBannerDescription">تجربه خود را با امکانات Premium ارتقا دهید!</string>
     <string name="SettingsBanner_PremiumTryFee">امتحان رایگان</string>
-    <string name="SettingsBanner_GameDescription">آزمون‌ها را بگذرانید، وظایف را انجام دهید و توکن کسب کنید!</string>
-    <string name="SettingsBanner_BePartOfTheFuture">بخشی از آینده امور مالی خصوصی باشید</string>
-    <string name="SettingsBanner_SupportTheProject">از پروژه حمایت کنید!</string>
-    <string name="SettingsBanner_DonateTitle">از جنبش Unstoppable حمایت کنید</string>
-    <string name="SettingsBanner_DonateSubtitle">بخشی از آینده‌ی مالی خصوصی باشید</string>
-    <string name="SettingsBanner_DonateUnstoppableHasBeenFreeFromDayOne">«Unstoppable Wallet از روز اول رایگان، بدون تبلیغات و متن‌باز بوده است — و همین‌طور خواهد ماند.»</string>
-    <string name="SettingsBanner_DonateByJoiningMovement">با پیوستن به جنبش Unstoppable، از مالی باز و خصوصی حمایت می‌کنید:</string>
-    <string name="SettingsBanner_DonateUnstoppableWalletTeam">تیم Unstoppable Wallet</string>
-    <string name="SettingsBanner_DonateYourSupportIsCommitment">حمایت شما فقط باز کردن قابلیت‌ها نیست — تعهدی است به حریم خصوصی، آزادی و دسترسی آزاد برای همه.</string>
-    <string name="SettingsBanner_DonateItHelpsWalletToBeAdFree">این حمایت کمک می‌کند کیف پول بدون تبلیغات، امن و واقعاً مستقل بماند — برای شما و صدها هزار نفری که در سراسر جهان به آن متکی هستند.</string>
-    <string name="SettingsBanner_DonateExclusivelyOnFDroid">فقط در F-Droid</string>
-    <string name="SettingsBanner_DonateUnstoppableWalletGivesYouAdvancedFeatures">Unstoppable Wallet قابلیت‌های پیشرفته را در اختیار شما می‌گذارد — بدون اشتراک، بدون محدودیت:</string>
-    <string name="SettingsBanner_DonateFeatureFullAnalytics">تحلیل و داده‌های کامل درباره توکن‌ها</string>
-    <string name="SettingsBanner_DonateFeaturePrivacy">حالت حریم خصوصی و حالت اضطرار</string>
-    <string name="SettingsBanner_DonateFeatureSignals">سیگنال‌ها برای معامله با اطمینان</string>
-    <string name="SettingsBanner_DonateFeatureAddress">بررسی فهرست سیاه آدرس‌ها</string>
-    <string name="SettingsBanner_DonateFeatureAdvanced">جستجو و فیلترهای پیشرفته دارایی‌ها</string>
-    <string name="SettingsBanner_DonateFeaturePriority">دسترسی اولویت‌دار به پشتیبانی</string>
-    <string name="SettingsBanner_DonateEveryBitOfSupportMatters">هر ذره حمایت اهمیت دارد.</string>
-    <string name="SettingsBanner_DonateBySupportingUnstoppableWalletYouHelpGrow">با حمایت از Unstoppable Wallet، به ما کمک می‌کنید رشد کنیم، بهتر شویم و مستقل بمانیم.</string>
     <string name="SettingsSubscription_Active">فعال</string>
     <string name="SettingsSubscription_GetPremium">دریافت Premium</string>
     <string name="SettingsSubscription_RestorePurchase">بازیابی خرید</string>
@@ -1492,7 +1465,7 @@
     <string name="BackupManager_CustomRpc">RPC سفارشی</string>
     <string name="BackupManager_AppSettingsTitle">تنظیمات برنامه</string>
     <string name="BackupManager_AppSettingsDescription">زبان، ارز، ظاهر …</string>
-    <string name="Privacy_Information">Unstoppable داده‌های شخصی مانند موجودی‌ها یا آدرس‌های کیف پول شما را جمع‌آوری نمی‌کند. ما فقط از داده‌های ناشناس برای بهبود برنامه استفاده می‌کنیم.</string>
+    <string name="Privacy_Information">Tariffia Wallet داده‌های شخصی مانند موجودی‌ها یا آدرس‌های کیف پول شما را جمع‌آوری نمی‌کند. داده‌های استفاده ناشناس فقط برای بهبود برنامه به کار می‌روند.</string>
     <string name="ShareUiData">اشتراک‌گذاری داده‌های رابط کاربری</string>
     <string name="ShareUiDataDescription">با این تنظیم می‌توانید تحلیل داده‌ها را خاموش کنید و فعالیت خود را کاملاً خصوصی نگه دارید.</string>
     <string name="EvmNetwork_AddNew">افزودن جدید</string>
@@ -1511,9 +1484,9 @@
     <string name="MoneroNodeSettings_TrustedTitle">ترجیحات نود</string>
     <string name="MoneroNodeSettings_TrustedDescription">نود مورد اعتماد — کیف پول به نود انتخاب‌شده اعتماد می‌کند و از داده‌های آن بدون تأیید اضافی استفاده می‌کند. \n\nروشن → تراکنش‌ها بلافاصله پس از ارسال به‌صورت «در انتظار» نمایش داده می‌شوند (همگام‌سازی سریع‌تر، اما حریم خصوصی کمتر و وابستگی به نود). \n\nخاموش → تراکنش‌ها فقط پس از تأیید شبکه نمایش داده می‌شوند (کندتر، اما امن‌تر و خصوصی‌تر).</string>
     <string name="MoneroNodeSettings_Trusted">مورد اعتماد</string>
-    <string name="MoneroNodeSettings_Description">نودی را انتخاب کنید که برنامه Unstoppable باید برای همگام‌سازی کیف پول(ها) استفاده کند.</string>
+    <string name="MoneroNodeSettings_Description">نودی را انتخاب کنید که برنامه Tariffia باید برای همگام‌سازی کیف پول(ها) استفاده کند.</string>
     <string name="BtcBlockchainSettings_RestoreSourceChangeWarning">پس از تغییر منبع، کیف پول باید دوباره همگام‌سازی شود.</string>
-    <string name="BtcBlockchainSettings_RestoreSourceSettingsDescription">منبعی را انتخاب کنید که برنامه Unstoppable باید برای همگام‌سازی کیف پول(ها) استفاده کند.</string>
+    <string name="BtcBlockchainSettings_RestoreSourceSettingsDescription">منبعی را انتخاب کنید که برنامه Tariffia باید برای همگام‌سازی کیف پول(ها) استفاده کند.</string>
     <string name="BtcBlockchainSettings_InputsOutputs">ورودی‌ها/خروجی‌ها</string>
     <string name="SettingsSecurity_DisablePin">غیرفعال کردن رمز عبور</string>
     <string name="SettingsSecurity_TorConnectionDescription">اینترنت خود را هنگام استفاده از این برنامه کاملاً ناشناس کنید. توجه: در برخی موارد قابلیت WalletConnect برای برنامه‌های DeFi ممکن است بسیار کند باشد یا اصلاً کار نکند.</string>
@@ -1551,7 +1524,6 @@
     <string name="SettingsTerms_LegalObligations">شما به‌تنهایی مسئول امنیت دارایی‌های خود، رفتار خود و رعایت قوانین حاکم در حوزه قضایی خود و همچنین در سطح جهانی هستید.</string>
     <string name="SettingsTerms_UserResponsibility">با ادامه دادن، می‌پذیرید که امنیت دارایی‌های شما و رعایت قوانین در نهایت مسئولیت خود شماست.</string>
     <string name="SettingsShare_Title">اشتراک‌گذاری</string>
-    <string name="SettingsShare_Text">Be Unstoppable</string>
     <string name="SettingsLaunchScreen_Auto">خودکار</string>
     <string name="SettingsLaunchScreen_Watchlist">علاقه‌مندی‌ها</string>
     <string name="Hud_Text_AddressCopied">آدرس کپی شد</string>
@@ -1560,8 +1532,8 @@
     <string name="Hud_Removed_From_Wallet">از کیف پول حذف شد</string>
     <string name="Hud_Removed">حذف شد</string>
     <string name="ManageCoins_Search">نام، کد یا آدرس قرارداد</string>
-    <string name="ManageCoins_BipsDescription">کیف پول‌های %1$s می‌توانند از 4 قالب رایج آدرس برای دریافت پرداخت‌های ورودی استفاده کنند:\n\n\n\n- BIP-44 (قدیمی‌تر)\n\n- BIP-49\n\n- BIP-84 (توصیه‌شده)\n\n- BIP-86 (جدیدترین)\n\n\n\nکیف پول Unstoppable از هر 4 قالب پشتیبانی می‌کند، اما استفاده از کیف پول %2$s با قالب BIP-84 را توصیه می‌کند. کیف پول‌هایی که با این قالب کار می‌کنند هنگام ارسال تراکنش‌های %3$s کمترین کارمزد را می‌پردازند.</string>
-    <string name="ManageCoins_BchTypeDescription">کیف پول‌های Bitcoin Cash می‌توانند از 2 قالب آدرس برای دریافت پرداخت‌های ورودی استفاده کنند:\n\n\n\n- TYPE0 (قدیمی‌تر)\n\n- TYPE145 (جدیدتر)\n\n\n\nکیف پول Unstoppable از هر دو پشتیبانی می‌کند، اما استفاده از کیف پول Bitcoin Cash با قالب TYPE145 را توصیه می‌کند.</string>
+    <string name="ManageCoins_BipsDescription">کیف پول‌های %1$s می‌توانند از 4 قالب رایج آدرس برای دریافت پرداخت‌های ورودی استفاده کنند:\n\n\n\n- BIP-44 (قدیمی‌تر)\n\n- BIP-49\n\n- BIP-84 (توصیه‌شده)\n\n- BIP-86 (جدیدترین)\n\n\n\nکیف پول Tariffia از هر 4 قالب پشتیبانی می‌کند، اما استفاده از کیف پول %2$s با قالب BIP-84 را توصیه می‌کند. کیف پول‌هایی که با این قالب کار می‌کنند هنگام ارسال تراکنش‌های %3$s کمترین کارمزد را می‌پردازند.</string>
+    <string name="ManageCoins_BchTypeDescription">کیف پول‌های Bitcoin Cash می‌توانند از 2 قالب آدرس برای دریافت پرداخت‌های ورودی استفاده کنند:\n\n\n\n- TYPE0 (قدیمی‌تر)\n\n- TYPE145 (جدیدتر)\n\n\n\nکیف پول Tariffia از هر دو پشتیبانی می‌کند، اما استفاده از کیف پول Bitcoin Cash با قالب TYPE145 را توصیه می‌کند.</string>
     <string name="ManageCoins_ContractAddress">آدرس قرارداد</string>
     <string name="ManageAccounts_AddWallet">افزودن کیف پول</string>
     <string name="ManageAccounts_CreateNewWalletDescription">برای شروع یک کیف پول جدید بسازید یا یکی دیگر اضافه کنید.</string>
@@ -1636,7 +1608,7 @@
     <string name="PrivateKeys_Bip32RootKeyDescription">کلید خصوصی اصلی کیف پول. کنترل کامل همه حساب‌ها و دارایی‌های مشتق‌شده را می‌دهد.</string>
     <string name="PrivateKeys_AccountExtendedPrivateKey">کلید خصوصی گسترش‌یافته حساب</string>
     <string name="PrivateKeys_AccountExtendedPrivateKeyDescription">کنترل کامل Bitcoin و سایر دارایی‌های مبتنی بر UTXO (مانند Litecoin، Bitcoin Cash، Dash) در این کیف پول را می‌دهد.</string>
-    <string name="PrivateKeys_NeverShareWarning">هرگز این کلید را با کسی به اشتراک نگذارید. تیم پشتیبانی Unstoppable Wallet هرگز آن را از شما نمی‌خواهد.</string>
+    <string name="PrivateKeys_NeverShareWarning">هرگز این کلید را با کسی به اشتراک نگذارید. هیچ نماینده پشتیبانی معتبری هرگز آن را از شما نمی‌خواهد.</string>
     <string name="PrivateKeys_MoneroPrivateKey">کلیدهای خصوصی Monero</string>
     <string name="PrivateKeys_MoneroPrivateKeyDescription">کنترل کامل دارایی‌های Monero (XMR) در این کیف پول، از جمله امکان خرج کردن وجوه، را می‌دهد.</string>
     <string name="MoneroKeyType">نوع</string>
@@ -1731,7 +1703,7 @@
     <string name="CoinPage_FastLength">طول سریع</string>
     <string name="CoinPage_SlowLength">طول کند</string>
     <string name="CoinPage_SignalSmoothing">هموارسازی سیگنال</string>
-    <string name="CoinPage_IndicatorsAlertText">اندیکاتورها فقط برای کاربران پرمیوم Unstoppable Wallet در دسترس هستند.</string>
+    <string name="CoinPage_IndicatorsAlertText">اندیکاتورها فقط برای کاربران پریمیوم Tariffia Wallet در دسترس هستند.</string>
     <string name="CoinPage_AiGeneratedText">این توضیح با هوش مصنوعی و بر اساس منابع مرجع ارائه‌شده برای این رمزارز تولید شده و ممکن است دارای خطا باشد.</string>
     <string name="CoinPage_MarketsLabel_Verified">تأییدشده</string>
     <string name="CoinPage_MarketsVerifiedMenu_Verified">تأییدشده</string>
@@ -1877,12 +1849,11 @@
     <string name="BalanceSyncError_Text">خطای همگام‌سازی</string>
     <string name="BalanceSyncError_ChangableSourceErrorText">دریافت داده از منبع فعلی ناموفق بود. می‌توانید دوباره تلاش کنید یا منبع همگام‌سازی دیگری انتخاب کنید.</string>
     <string name="BalanceSyncError_ErrorText">دریافت داده از منبع فعلی ناموفق بود. لطفاً بعداً دوباره تلاش کنید.</string>
-    <string name="ReleaseNotes_JoinUnstoppables">به UNSTOPPABLES بپیوندید</string>
     <string name="Hud_Text_LearnMore">به‌زودی</string>
     <string name="Hud_Text_Activate">فعال‌سازی</string>
     <string name="Widget_EnableAutostartWarning">برای اطمینان از عملکرد درست این ویجت، باید اجرای خودکار را فعال کنید.</string>
-    <string name="Alert_CustomKeyboardIsUsed">به نظر می‌رسد دستگاه شما از صفحه‌کلیدی غیر از صفحه‌کلید پیش‌فرض استفاده می‌کند. Unstoppable توصیه می‌کند صفحه‌کلید پیش‌فرض دستگاه را انتخاب کنید، زیرا صفحه‌کلیدهای شخص ثالث ممکن است داده‌های ورودی کاربران را جمع‌آوری و افشا کنند. \n\nاگر می‌خواهید همچنان از صفحه‌کلید دلخواه خود استفاده کنید، دکمه «رد کردن» را بزنید.</string>
-    <string name="Alert_DeviceIsRootedWarning">تیم Unstoppable توصیه می‌کند برنامه را فقط روی گوشی‌های روت‌نشده (جیلبریک‌نشده) اجرا کنید.\n\nتوجه داشته باشید که هنگام استفاده از دستگاه روت‌شده، برنامه دیگر نمی‌تواند امنیت رمزارزهای شما را در برابر بدافزارها تضمین کند.</string>
+    <string name="Alert_CustomKeyboardIsUsed">به نظر می‌رسد دستگاه شما از صفحه‌کلیدی غیرپیش‌فرض استفاده می‌کند. Tariffia انتخاب صفحه‌کلید پیش‌فرض را توصیه می‌کند، زیرا صفحه‌کلیدهای شخص ثالث ممکن است ورودی‌های شما را جمع‌آوری و افشا کنند.\n\nاگر می‌خواهید از صفحه‌کلید دلخواه خود استفاده کنید، روی «رد کردن» بزنید.</string>
+    <string name="Alert_DeviceIsRootedWarning">Tariffia اجرای برنامه را فقط روی گوشی‌های روت‌نشده (جیلبریک‌نشده) توصیه می‌کند.\n\nدر دستگاه روت‌شده، برنامه دیگر نمی‌تواند امنیت رمزارز شما را در برابر بدافزار تضمین کند.</string>
     <string name="Unlock_Title">باز کردن قفل</string>
     <string name="Unlock_EnterPasscode">رمز عبور را وارد کنید</string>
     <string name="Unlock_AttemptsLeft">تلاش‌های باقی‌مانده: %s</string>
@@ -1925,13 +1896,6 @@
     <string name="Action_Clear">پاک کردن</string>
     <string name="Send_Utxos_Auto">خودکار</string>
     <string name="TorPage_ConnectingProgress">در حال اتصال به Tor… %d%%</string>
-    <string name="UnstoppableLabs_SimplexSwapBot">ربات سواپ SimpleX</string>
-    <string name="UnstoppableLabs_SimplexSwapBot_Description">سواپ سریع و آسان رمزارز با SimpleX.</string>
-    <string name="UnstoppableLabs_TelegramSwapBot">ربات سواپ Telegram</string>
-    <string name="UnstoppableLabs_TelegramSwapBot_Description">سواپ رمزارز بدون خروج از Telegram.</string>
-    <string name="UnstoppableLabs_SignalSwapBot">ربات سواپ Signal</string>
-    <string name="UnstoppableLabs_SignalSwapBot_Description">سواپ خصوصی رمزارز درست در Signal.</string>
-    <string name="UnstoppableLabs_SwapWeb_Description">سواپ رمزارز مستقیماً از مرورگر شما.</string>
     <string name="NearSend_ReceiverRegistration">ثبت گیرنده</string>
     <string name="NearSend_StorageDepositTooHigh">این توکن برای ثبت گیرنده سپرده‌ای غیرعادی بالا درخواست می‌کند و ممکن است کلاهبرداری باشد.</string>
     <string name="NearSend_StorageDepositChanged">کارمزد ثبت گیرنده تغییر کرده است. کارمزد جدید را بررسی کنید و دوباره ارسال کنید.</string>

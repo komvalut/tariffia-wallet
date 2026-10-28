@@ -27,13 +27,6 @@ class MainSettingsViewModel(
     private val appConfigProvider: IAppConfigProvider,
 ) : ViewModelUiState<MainSettingUiState>() {
 
-    val fdroidSupportLink by lazy {
-        appConfigProvider.simplexSupportChat
-    }
-    val vipSupportLink by lazy {
-        appConfigProvider.telegramSupportChat
-    }
-
     val appVersion: String
         get() {
             var appVersion = systemInfoManager.appVersion
@@ -48,11 +41,6 @@ class MainSettingsViewModel(
 
     val walletConnectSupportState: WCManager.SupportState
         get() = wcManager.getWalletConnectSupportState()
-
-    // Donating means sending, so a watch account is not offered it. Only a known watch
-    // account hides the cell; while accounts are still loading there is nothing to hide.
-    private val donateEnabled: Boolean
-        get() = accountManager.activeAccount?.isWatchAccount != true
 
     private val appWebPageLink = appConfigProvider.appWebPageLink
     private val hasNonStandardAccount: Boolean
@@ -134,7 +122,6 @@ class MainSettingsViewModel(
             wcCounterType = wcCounterType,
             showPremiumBanner = showPremiumBanner,
             hasSubscription = hasSubscription,
-            donateEnabled = donateEnabled,
         )
     }
 
@@ -162,5 +149,4 @@ data class MainSettingUiState(
     val wcCounterType: CounterType?,
     val showPremiumBanner: Boolean,
     val hasSubscription: Boolean,
-    val donateEnabled: Boolean,
 )

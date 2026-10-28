@@ -109,7 +109,7 @@ class WCManager(
     }
 
     // WalletConnect can arrive either as a raw `wc:` URI (QR scan / clipboard) or wrapped in the
-    // app's own scheme by the dApp / Web3Modal, e.g. `unstoppable.money://wc?uri=<URL-encoded wc:>`.
+    // app's own scheme by the dApp / Web3Modal, e.g. `tariffia://wc?uri=<URL-encoded wc:>`.
     // Returns the embedded `wc:` pairing URI, or null if the deeplink isn't a WalletConnect one.
     fun getWalletConnectUri(deepLink: Uri): String? {
         val deeplinkString = deepLink.toString()

@@ -18,24 +18,15 @@ class AppConfigProvider(localStorage: ILocalStorage) : IAppConfigProvider {
     override val appWebPageLink = BuildConfig.APP_WEB_PAGE_LINK
     override val analyticsLink = BuildConfig.ANALYTICS_LINK
     override val appGithubLink = BuildConfig.APP_GITHUB_LINK
-    override val appTwitterLink = BuildConfig.APP_TWITTER_LINK
-    override val appTelegramLink = BuildConfig.APP_TELEGRAM_LINK
     override val reportEmail = BuildConfig.REPORT_EMAIL
     override val releaseNotesUrl = BuildConfig.RELEASE_NOTES_URL
     override val mempoolSpaceUrl: String = "https://mempool.space"
     override val blockCypherUrl: String = "https://api.blockcypher.com"
     override val walletConnectUrl = "relay.walletconnect.com"
-    override val walletConnectProjectId = BuildConfig.WALLET_CONNECT_V2_KEY
+    override val walletConnectProjectId = BuildConfig.WALLET_CONNECT_PROJECT_ID
     override val walletConnectAppMetaDataName = BuildConfig.WALLET_CONNECT_APP_META_DATA_NAME
     override val walletConnectAppMetaDataUrl = BuildConfig.WALLET_CONNECT_APP_META_DATA_URL
     override val walletConnectAppMetaDataIcon = BuildConfig.WALLET_CONNECT_APP_META_DATA_ICON
-    override val simplexSupportChat = "https://smp11.simplex.im/g#yTrDh716RZCNYsdPSDrqMMlHnqZlW4XJGnFTugBrsAI"
-    override val nymVpnLink = "https://nymtechnologies.pxf.io/N9vnr1"
-    override val telegramSupportChat = "https://t.me/m/1TNZ9JE4MTNi"
-    override val labsSimplexSwapBotLink = "https://unstoppable.money/simplex"
-    override val labsTelegramSwapBotLink = "https://unstoppable.money/telegram"
-    override val labsSignalSwapBotLink = "https://unstoppable.money/signal"
-    override val labsSwapWebLink = "https://swap.unstoppable.money"
 
     override val blocksDecodedEthereumRpc = BuildConfig.BLOCKS_DECODED_ETHEREUM_RPC
     override val twitterBearerToken = BuildConfig.TWITTER_BEARER_TOKEN
@@ -53,6 +44,8 @@ class AppConfigProvider(localStorage: ILocalStorage) : IAppConfigProvider {
     override val udnApiKey = BuildConfig.UDN_API_KEY
     override val thorchainApiKey = BuildConfig.THORCHAIN_API_KEY
     override val appLinksHost = BuildConfig.APP_LINKS_HOST
+    override val passkeyRpId = BuildConfig.PASSKEY_RP_ID.ifBlank { appLinksHost }
+    override val passkeyRpName = BuildConfig.PASSKEY_RP_NAME
 
     override val fiatDecimal: Int = 2
     override val feeRateAdjustForCurrencies: List<String> = listOf("USD", "EUR")
@@ -78,60 +71,6 @@ class AppConfigProvider(localStorage: ILocalStorage) : IAppConfigProvider {
         Currency("USD", "$", 2, R.drawable.icon_32_flag_usa),
         Currency("ZAR", "R", 2, R.drawable.icon_32_flag_south_africa),
     )
-
-    override val donateAddresses: Map<BlockchainType, String> by lazy {
-        if (BuildConfig.FDROID_BUILD) {
-            mapOf(
-                BlockchainType.Bitcoin to "bc1qy3ekl877sll3pzw9ramknx0wgyxfhzlccv940y",
-                BlockchainType.BitcoinCash to "bitcoincash:qq0uv2s4nd8g7htpnsp77pwjpfdyrvgncu3tfk252s",
-                BlockchainType.ECash to "ecash:qznldf5phm5dgq6rd2dpxd4qcypm32dyqsgux0v94h",
-                BlockchainType.Litecoin to "ltc1q8x0zcezuz82mhhmclpa2hv2jf8vry66ap08d2w",
-                BlockchainType.Dash to "XcHq4AuSC2CMQuf8wLojDJ9QEFQJShzgvf",
-                BlockchainType.Zcash to "zs1rqg09d8t6utx3znyrzw4jz0y3tdh633yqychhumsm4z69y4dcye9z9aghpvpygzgktnexwnzagl",
-                BlockchainType.Ethereum to "0x2174BFA51C4c5ADa3035f3a9ccEb5DbeE32EE162",
-                BlockchainType.BinanceSmartChain to "0x2174BFA51C4c5ADa3035f3a9ccEb5DbeE32EE162",
-                BlockchainType.Polygon to "0x2174BFA51C4c5ADa3035f3a9ccEb5DbeE32EE162",
-                BlockchainType.Avalanche to "0x2174BFA51C4c5ADa3035f3a9ccEb5DbeE32EE162",
-                BlockchainType.Optimism to "0x2174BFA51C4c5ADa3035f3a9ccEb5DbeE32EE162",
-                BlockchainType.Base to "0x2174BFA51C4c5ADa3035f3a9ccEb5DbeE32EE162",
-                BlockchainType.ZkSync to "0x2174BFA51C4c5ADa3035f3a9ccEb5DbeE32EE162",
-                BlockchainType.RobinhoodChain to "0x2174BFA51C4c5ADa3035f3a9ccEb5DbeE32EE162",
-                BlockchainType.Arc to "0x2174BFA51C4c5ADa3035f3a9ccEb5DbeE32EE162",
-                BlockchainType.ArbitrumOne to "0x2174BFA51C4c5ADa3035f3a9ccEb5DbeE32EE162",
-                BlockchainType.Solana to "EKQVqxaXVJf1QaVUeNynKkJC7rT4abMnWtg5TtqY2S5F",
-                BlockchainType.Gnosis to "0x2174BFA51C4c5ADa3035f3a9ccEb5DbeE32EE162",
-                BlockchainType.Fantom to "0x2174BFA51C4c5ADa3035f3a9ccEb5DbeE32EE162",
-                BlockchainType.Ton to "UQA94iEyQI0iVD0ssowbHGizBEY5uMm9tMz72IecYjA_nnZG",
-                BlockchainType.Tron to "TXkwDeqz77793xYJqxCHuEPiqqj8B8Cf2Z",
-                BlockchainType.Monero to "4B5Dc1VFUpsVxDu8d8y8r44FQAjfmaSL4c3SSydUATpJPGsMkV4qswkenLAY4g9wm98bsvskVZXgDWgW2jA1t31MNcCZ8AZ",
-            ).toList().sortedBy { (key, _) -> key.order }.toMap()
-        } else {
-            mapOf(
-                BlockchainType.Bitcoin to "bc1qy0dy3ufpup9eyeprnd8a6fe2scg2m4rr4peasy",
-                BlockchainType.BitcoinCash to "bitcoincash:qqlwaf0vrvq722pta5jfc83m6cv7569nzya0ry6prk",
-                BlockchainType.ECash to "ecash:qp9cqsjfttdv2x9y0el3ghk7xy4dy07p6saz7w2xvq",
-                BlockchainType.Litecoin to "ltc1qtnyd4vq4yvu4g00jd3nl25w8qftj32dvfanyfx",
-                BlockchainType.Dash to "XqCrPRKwBeW4pNPbNUTQTsnKQ626RNz4no",
-                BlockchainType.Zcash to "zs1r9gf53xg3206g7wlhwwq7lcdrtzalepnvk7kwpm8yxr0z3ng0y898scd505rsekj8c4xgwddz4m",
-                BlockchainType.Ethereum to "0x731352dcF66014156B1560B832B56069e7b38ab1",
-                BlockchainType.BinanceSmartChain to "0x731352dcF66014156B1560B832B56069e7b38ab1",
-                BlockchainType.Polygon to "0x731352dcF66014156B1560B832B56069e7b38ab1",
-                BlockchainType.Avalanche to "0x731352dcF66014156B1560B832B56069e7b38ab1",
-                BlockchainType.Optimism to "0x731352dcF66014156B1560B832B56069e7b38ab1",
-                BlockchainType.Base to "0x731352dcF66014156B1560B832B56069e7b38ab1",
-                BlockchainType.ZkSync to "0x731352dcF66014156B1560B832B56069e7b38ab1",
-                BlockchainType.RobinhoodChain to "0x731352dcF66014156B1560B832B56069e7b38ab1",
-                BlockchainType.Arc to "0x731352dcF66014156B1560B832B56069e7b38ab1",
-                BlockchainType.ArbitrumOne to "0x731352dcF66014156B1560B832B56069e7b38ab1",
-                BlockchainType.Solana to "ELFQmFXqdS6C1zVqZifs7WAmLKovdEPbWSnqomhZoK3B",
-                BlockchainType.Gnosis to "0x731352dcF66014156B1560B832B56069e7b38ab1",
-                BlockchainType.Fantom to "0x731352dcF66014156B1560B832B56069e7b38ab1",
-                BlockchainType.Ton to "UQDgkDkU_3Mtujk2FukZEsiXV9pOhVzkdvvYH8es0tZylTZY",
-                BlockchainType.Tron to "TXKA3SxjLsUL4n6j3v2h85fzb4V7Th6yh6",
-                BlockchainType.Monero to "46ZLVbtaBZFBdztK3L2sJEEwhvKL9B5jbEjBtJWS5DLTAsBS7K4KBpHU3M738qvVcZ1ejUoFichxubCnHLwvGQnu2SWtoeK"
-            ).toList().sortedBy { (key, _) -> key.order }.toMap()
-        }
-    }
 
     // coinCode -> risk threshold (used for dust detection scoring)
     // spam = risk/10 (auto-spam, except spamCoinsWithoutMicroDust), risk = config value (+3 points), danger = risk*5 (+2 points)

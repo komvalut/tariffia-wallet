@@ -53,7 +53,6 @@ import io.horizontalsystems.walletkit.modules.rooteddevice.RootedDeviceModule
 import io.horizontalsystems.walletkit.modules.rooteddevice.RootedDeviceScreen
 import io.horizontalsystems.walletkit.modules.rooteddevice.RootedDeviceViewModel
 import io.horizontalsystems.walletkit.modules.sendtokenselect.SendTokenSelectPage
-import io.horizontalsystems.walletkit.modules.settings.donate.WhyDonatePage
 import io.horizontalsystems.walletkit.modules.settings.main.SettingsScreen
 import io.horizontalsystems.walletkit.modules.tor.TorStatusView
 import io.horizontalsystems.walletkit.modules.transactions.TransactionsViewModel
@@ -94,8 +93,8 @@ private fun MainScreen(
     val activityIntent by mainActivityViewModel.intentLiveData.observeAsState()
     val isLocked by App.pinComponent.isLockedFlow.collectAsStateWithLifecycle()
     // MainScreen stays composed under the unlock overlay, so without this gate a deeplink opened
-    // while the app is locked would be acted on behind the lock screen — referral registration,
-    // TonConnect links, prefilled send flows, the WalletConnect list. The intent is deliberately
+    // while the app is locked would be acted on behind the lock screen — TonConnect links,
+    // prefilled send flows, the WalletConnect list. The intent is deliberately
     // left unconsumed (no intentHandled() call) so this effect re-runs when isLocked flips back.
     // Market deeplinks (widget taps) never get here: Nav3 opens them at the navigation root.
     LaunchedEffect(activityIntent, isLocked) {
@@ -200,13 +199,6 @@ private fun MainScreen(
                 ReleaseNotesPage(ReleaseNotesPage.Input(true))
             )
             viewModel.whatsNewShown()
-        }
-    }
-
-    if (uiState.showDonationPage) {
-        LaunchedEffect(Unit) {
-            navigation.slideFromBottom(WhyDonatePage)
-            viewModel.donationShown()
         }
     }
 

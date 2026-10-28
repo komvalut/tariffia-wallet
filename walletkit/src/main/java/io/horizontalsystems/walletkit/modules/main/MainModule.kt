@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import io.horizontalsystems.walletkit.R
 import io.horizontalsystems.walletkit.core.App
-import io.horizontalsystems.walletkit.core.managers.ActionCompletedDelegate
 import io.horizontalsystems.walletkit.modules.balance.OpenSendTokenSelect
 import io.horizontalsystems.walletkit.modules.nav3.HSPage
 import io.horizontalsystems.walletkit.modules.walletconnect.WCManager
@@ -34,12 +33,9 @@ object MainModule {
                 App.termsManager,
                 App.accountManager,
                 App.releaseNotesManager,
-                App.donationShowManager,
                 App.localStorage,
                 App.wcSessionManager,
                 App.wcManager,
-                App.networkManager,
-                ActionCompletedDelegate,
                 App.lockGate,
             ) as T
         }
@@ -126,7 +122,6 @@ object MainModule {
         val mainNavItems: List<NavigationViewItem>,
         val showRateAppDialog: Boolean,
         val showWhatsNew: Boolean,
-        val showDonationPage: Boolean,
         val torEnabled: Boolean,
         val wcSupportState: WCManager.SupportState?,
         val openSend: OpenSendTokenSelect?,

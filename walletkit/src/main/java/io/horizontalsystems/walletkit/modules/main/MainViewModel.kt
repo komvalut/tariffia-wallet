@@ -1,7 +1,6 @@
 package io.horizontalsystems.walletkit.modules.main
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import io.horizontalsystems.walletkit.IPinComponent
 import io.horizontalsystems.walletkit.R
@@ -10,15 +9,11 @@ import io.horizontalsystems.walletkit.core.chain.ChainRegistry
 import io.horizontalsystems.walletkit.core.IAccountManager
 import io.horizontalsystems.walletkit.core.IBackupManager
 import io.horizontalsystems.walletkit.core.ILocalStorage
-import io.horizontalsystems.walletkit.core.INetworkManager
 import io.horizontalsystems.walletkit.core.IRateAppManager
 import io.horizontalsystems.walletkit.core.ITermsManager
 import io.horizontalsystems.walletkit.core.ViewModelUiState
-import io.horizontalsystems.walletkit.core.managers.ActionCompletedDelegate
 import io.horizontalsystems.walletkit.core.managers.ActiveAccountState
-import io.horizontalsystems.walletkit.core.managers.DonationShowManager
 import io.horizontalsystems.walletkit.core.managers.ReleaseNotesManager
-import io.horizontalsystems.walletkit.core.managers.WalletEventType
 import io.horizontalsystems.walletkit.core.providers.Translator
 import io.horizontalsystems.walletkit.core.stats.StatEvent
 import io.horizontalsystems.walletkit.core.stats.StatPage
@@ -49,12 +44,9 @@ class MainViewModel(
     private val termsManager: ITermsManager,
     private val accountManager: IAccountManager,
     private val releaseNotesManager: ReleaseNotesManager,
-    private val donationShowManager: DonationShowManager,
     private val localStorage: ILocalStorage,
     wcSessionManager: WCSessionManager,
     private val wcManager: WCManager,
-    private val networkManager: INetworkManager,
-    private val actionCompletedDelegate: ActionCompletedDelegate,
     private val lockGate: LockGate,
 ) : ViewModelUiState<MainModule.UiState>() {
 
@@ -99,7 +91,6 @@ class MainViewModel(
     private var mainNavItems = navigationItems()
     private var showRateAppDialog = false
     private var showWhatsNew = false
-    private var showDonationPage = false
     private var wcSupportState: WCManager.SupportState? = null
     private var torEnabled = localStorage.torEnabled
     private var openSendTokenSelect: OpenSendTokenSelect? = null
@@ -171,15 +162,6 @@ class MainViewModel(
             }
         }
 
-        viewModelScope.launch {
-            actionCompletedDelegate.walletEvents.collect { event ->
-                //ContactAddedToRecent event triggered after successful send transaction
-                if (event == WalletEventType.ContactAddedToRecent && donationShowManager.shouldShow()) {
-                    showDonationPage()
-                }
-            }
-        }
-
         updateSettingsBadge()
         updateTransactionsTabEnabled()
     }
@@ -198,7 +180,6 @@ class MainViewModel(
         mainNavItems = mainNavItems,
         showRateAppDialog = showRateAppDialog,
         showWhatsNew = showWhatsNew,
-        showDonationPage = showDonationPage,
         wcSupportState = wcSupportState,
         torEnabled = torEnabled,
         openSend = openSendTokenSelect,
@@ -218,12 +199,6 @@ class MainViewModel(
 
     fun whatsNewShown() {
         showWhatsNew = false
-        emitState()
-    }
-
-    fun donationShown() {
-        donationShowManager.updateDonatePageShownDate()
-        showDonationPage = false
         emitState()
     }
 
@@ -426,32 +401,9 @@ class MainViewModel(
                 tab = MainNavigation.Market
             }
 
-            deeplinkString.startsWith("https://unstoppable.money/referral") -> {
-                val userId: String? = deepLink.getQueryParameter("userId")
-                val referralCode: String? = deepLink.getQueryParameter("referralCode")
-                if (userId != null && referralCode != null) {
-                    registerApp(userId, referralCode)
-                }
-            }
-
             else -> {}
         }
         return Pair(tab, deeplinkPage)
-    }
-
-    private fun registerApp(userId: String, referralCode: String) {
-        viewModelScope.launch {
-            try {
-                val response = networkManager.registerApp(userId, referralCode)
-                if (response.success) {
-                    //do nothing
-                } else {
-                    Log.e("MainViewModel", "registerApp api fail message: ${response.message}")
-                }
-            } catch (e: Exception) {
-                Log.e("MainViewModel", "registerApp error: ", e)
-            }
-        }
     }
 
     private fun syncNavigation() {
@@ -482,12 +434,6 @@ class MainViewModel(
         emitState()
     }
 
-    private suspend fun showDonationPage() {
-        delay(2000)
-        showDonationPage = true
-        emitState()
-    }
-
     private fun updateSettingsBadge() {
         val showDotBadge =
             !(backupManager.allBackedUp && termsManager.allTermsAccepted && pinComponent.isPinSet) || accountManager.hasNonStandardAccount
@@ -511,8 +457,8 @@ class MainViewModel(
     fun handleDeepLink(uri: Uri) {
         val deeplinkString = uri.toString()
 
-        // A wrapped WalletConnect link (e.g. `unstoppable.money://wc?uri=wc:...`) shares the
-        // app's `unstoppable.money` scheme with TonConnect, so it would be swallowed by the
+        // A wrapped WalletConnect link (e.g. `tariffia://wc?uri=wc:...`) shares the
+        // app's `tariffia` scheme with TonConnect, so it would be swallowed by the
         // TonConnect branch below and the WC pairing would never start. Exclude it here and
         // let getNavigationDataForDeeplink() detect it (by `wc:` prefix or host == "wc").
         val isWalletConnectDeeplink = deeplinkString.startsWith("wc:") || uri.host == "wc"

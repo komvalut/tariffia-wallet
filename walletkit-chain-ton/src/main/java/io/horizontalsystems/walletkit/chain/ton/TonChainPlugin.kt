@@ -51,7 +51,7 @@ import kotlinx.coroutines.delay
 import java.util.UUID
 
 class TonChainPlugin(
-    private val appName: String = "unstoppable",
+    private val appName: String = "tariffia",
 ) : ChainPlugin {
 
     override fun sendTransactionData(
@@ -146,9 +146,9 @@ class TonChainPlugin(
 
     override fun isDeepLinkSupported(link: String, fromScanner: Boolean): Boolean =
         if (fromScanner) {
-            link.startsWith("tc:") || link.startsWith("https://unstoppable.money/ton-connect")
+            link.startsWith("tc:") || link.startsWith("https://tariffia.app/ton-connect")
         } else {
-            link.startsWith("unstoppable.money:") || link.startsWith("tc:")
+            link.startsWith("tariffia:") || link.startsWith("tc:")
         }
 
     override suspend fun handleDeepLink(link: String, closeApp: Boolean) {

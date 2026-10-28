@@ -14,10 +14,8 @@ import kotlin.reflect.KClass
 
 /**
  * Send screen for every blockchain type. After a successful send the flow pops back to and
- * including [sendEntryPointDestId], or this page when none is given. [purpose] says what the
- * flow is for and carries its inputs: a plain transfer asks for the recipient, possibly
- * seeded from a payment link, and offers every tab; a donation goes to a fixed address and
- * leaves CrossPay out.
+ * including [sendEntryPointDestId], or this page when none is given. [purpose] carries the
+ * inputs for a plain transfer, possibly seeded from a payment link, and offers every tab.
  */
 @Serializable
 data class SendV2Page(
@@ -46,14 +44,6 @@ data class SendV2Page(
          */
         @Serializable
         data class Transfer(val prefill: Prefill? = null) : Purpose()
-
-        /**
-         * A destination the app itself chose. [address] is taken as is and not shown, the
-         * header reads [title], and CrossPay, with its own token and recipient choice, is
-         * left out.
-         */
-        @Serializable
-        data class Donation(val address: String, val title: String) : Purpose()
     }
 
     /**

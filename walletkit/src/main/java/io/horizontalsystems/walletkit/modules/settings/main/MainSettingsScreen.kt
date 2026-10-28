@@ -54,12 +54,8 @@ import io.horizontalsystems.walletkit.modules.manageaccounts.ManageAccountsPage
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
 import io.horizontalsystems.walletkit.modules.settings.about.AboutPage
 import io.horizontalsystems.walletkit.modules.settings.appearance.AppearancePage
-import io.horizontalsystems.walletkit.modules.settings.banners.DonateBanner
 import io.horizontalsystems.walletkit.modules.settings.banners.SubscriptionBanner
-import io.horizontalsystems.walletkit.modules.settings.donate.DonateTokenSelectPage
-import io.horizontalsystems.walletkit.modules.settings.donate.WhyDonatePage
 import io.horizontalsystems.walletkit.modules.settings.faq.FaqListPage
-import io.horizontalsystems.walletkit.modules.settings.labs.UnstoppableLabsPage
 import io.horizontalsystems.walletkit.modules.settings.main.ui.BannerCarousel
 import io.horizontalsystems.walletkit.modules.settings.privacy.PrivacySettingsPage
 import io.horizontalsystems.walletkit.modules.settings.security.SecuritySettingsPage
@@ -75,16 +71,13 @@ import io.horizontalsystems.walletkit.ui.compose.components.BadgeText
 import io.horizontalsystems.walletkit.ui.compose.components.CellSingleLineLawrenceSection
 import io.horizontalsystems.walletkit.ui.compose.components.CellUniversalLawrenceSection
 import io.horizontalsystems.walletkit.ui.compose.components.HsDivider
-import io.horizontalsystems.walletkit.ui.compose.components.PremiumHeader
 import io.horizontalsystems.walletkit.ui.compose.components.RowUniversal
 import io.horizontalsystems.walletkit.ui.compose.components.VSpacer
 import io.horizontalsystems.walletkit.ui.compose.components.body_leah
 import io.horizontalsystems.walletkit.ui.compose.components.caption_grey
-import io.horizontalsystems.walletkit.ui.compose.components.cell.SectionPremiumUniversalLawrence
 import io.horizontalsystems.walletkit.ui.compose.components.subhead1_grey
 import io.horizontalsystems.walletkit.ui.helpers.LinkHelper
 import io.horizontalsystems.dapp.core.DAppManager
-import io.horizontalsystems.subscriptions.core.PrioritySupport
 
 @Composable
 fun SettingsScreen(
@@ -124,7 +117,6 @@ private fun SettingSections(
 ) {
     val uiState = viewModel.uiState
     val context = LocalContext.current
-    val isFDroidBuild = io.horizontalsystems.walletkit.core.App.appConfigProvider.fdroidBuild
 
     val banners = buildList<@Composable () -> Unit> {
         if (uiState.showPremiumBanner) {
@@ -140,31 +132,9 @@ private fun SettingSections(
                 )
             }
         }
-        if (isFDroidBuild) {
-            add {
-                DonateBanner(
-                    onClick = {
-                        navigation.slideFromBottom(WhyDonatePage)
-                    }
-                )
-            }
-        }
     }
 
     BannerCarousel(banners = banners)
-
-    CellUniversalLawrenceSection(
-        listOf {
-            HsSettingCell(
-                R.string.UnstoppableLabs_Title,
-                R.drawable.flask_24,
-                iconTint = ComposeAppTheme.colors.jacob,
-                onClick = {
-                    navigation.slideFromRight(UnstoppableLabsPage)
-                }
-            )
-        }
-    )
 
     VSpacer(24.dp)
 
@@ -320,37 +290,6 @@ private fun SettingSections(
 
     VSpacer(4.dp)
 
-    if (isFDroidBuild) {
-        PremiumHeader(R.string.Premium_TitleForDroid)
-    } else {
-        PremiumHeader()
-    }
-
-    SectionPremiumUniversalLawrence {
-        HsSettingCell(
-            title = if(isFDroidBuild) R.string.Settings_Support else R.string.Settings_VipSupport,
-            icon = R.drawable.ic_support_yellow_24,
-            iconTint = ComposeAppTheme.colors.jacob,
-            onClick = {
-                if (isFDroidBuild) {
-                    LinkHelper.openLinkInAppBrowser(context, viewModel.fdroidSupportLink)
-                } else {
-                    navigation.paidAction(PrioritySupport) {
-                        LinkHelper.openLinkInAppBrowser(context, viewModel.vipSupportLink)
-                    }
-                }
-
-                stat(
-                    page = StatPage.Settings,
-                    event = StatEvent.OpenPremium(StatPremiumTrigger.VipSupport)
-                )
-            }
-        )
-    }
-
-
-    VSpacer(24.dp)
-
     CellUniversalLawrenceSection(
         listOf({
             HsSettingCell(
@@ -393,53 +332,6 @@ private fun SettingSections(
             )
         })
     )
-
-    VSpacer(24.dp)
-
-    CellUniversalLawrenceSection(
-        listOf({
-            HsSettingCell(
-                R.string.Settings_Telegram,
-                R.drawable.ic_telegram_24,
-                onClick = {
-                    LinkHelper.openLinkInAppBrowser(context, App.appConfigProvider.appTelegramLink)
-
-                    stat(
-                        page = StatPage.Settings,
-                        event = StatEvent.Open(StatPage.ExternalTelegram)
-                    )
-                }
-            )
-        }, {
-            HsSettingCell(
-                R.string.Settings_Twitter,
-                R.drawable.x_logo_24,
-                onClick = {
-                    LinkHelper.openLinkInAppBrowser(context, App.appConfigProvider.appTwitterLink)
-
-                    stat(page = StatPage.Settings, event = StatEvent.Open(StatPage.ExternalTwitter))
-                }
-            )
-        })
-    )
-
-    if (uiState.donateEnabled) {
-        VSpacer(24.dp)
-
-        CellUniversalLawrenceSection(
-            listOf {
-                HsSettingCell(
-                    R.string.Settings_Donate,
-                    R.drawable.ic_heart_24,
-                    onClick = {
-                        navigation.slideFromRight(DonateTokenSelectPage)
-
-                        stat(page = StatPage.Settings, event = StatEvent.Open(StatPage.Donate))
-                    }
-                )
-            }
-        )
-    }
 
     if (BuildConfig.DEBUG) {
         VSpacer(24.dp)

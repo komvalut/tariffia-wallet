@@ -12,7 +12,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Headers
-import retrofit2.http.Query
 import retrofit2.http.Url
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -25,11 +24,6 @@ class NetworkManager : INetworkManager {
 
     override suspend fun getReleaseNotes(host: String, path: String): JsonObject {
         return ServiceChangeLogs.service(host).getReleaseNotes(path)
-    }
-
-    override suspend fun registerApp(userId: String, referralCode: String)
-            : MiniAppRegisterService.RegisterAppResponse {
-        return MiniAppRegisterService.service().registerApp(userId, referralCode)
     }
 
     override suspend fun getWCWhiteList(
@@ -63,28 +57,6 @@ object ServiceChangeLogs {
         @Headers("Content-Type: application/json")
         suspend fun getReleaseNotes(@Url path: String): JsonObject
     }
-}
-
-object MiniAppRegisterService {
-    private val apiUrl = "https://be.unstoppable.money/"
-
-    fun service(): UnstoppableApi {
-        return APIClient.retrofit(apiUrl, 60)
-            .create(UnstoppableApi::class.java)
-    }
-
-    interface UnstoppableApi {
-        @GET("api/v1/tasks/registerApp")
-        suspend fun registerApp(
-            @Query("userId") userId: String,
-            @Query("referralCode") referralCode: String
-        ): RegisterAppResponse
-    }
-
-    data class RegisterAppResponse(
-        val success: Boolean,
-        val message: String
-    )
 }
 
 object ServiceWCWhitelist {

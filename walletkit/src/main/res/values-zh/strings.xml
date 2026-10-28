@@ -109,7 +109,7 @@
     <string name="Language_Portuguese">葡萄牙语</string>
     <!--Rate App-->
     <string name="RateApp_Title_Rate_This_App">GM！</string>
-    <string name="RateApp_Description_Rate_This_App">喜欢Unstoppable？分享反馈和想法以使其更进一步。</string>
+    <string name="RateApp_Description_Rate_This_App">喜欢 Tariffia Wallet？欢迎分享反馈，帮助我们改进。</string>
     <string name="RateApp_Button_RateIt">评价它</string>
     <string name="RateApp_Button_NotNow">暂不</string>
     <string name="Restore_SelectNetwork_Title">选择网络</string>
@@ -130,7 +130,7 @@
     <string name="Restore_PrivateKeyHint">輸入 EVM 私鑰、BIP32 Root Key 或  Account Extended Private Key</string>
     <string name="Restore_PhraseHint">输入12、15、18、21或24个单词</string>
     <string name="Restore_NonStandardRestore">非标准还原</string>
-    <string name="Restore_NonStandard_Description">此页面为拥有非标准钱包的 Unstoppable 用户提供了一种特殊的钱包恢复机制。 通常，此类钱包可以在 Unstoppable 版本 0.27 - 0.28 中使用非英语助记词列表和/或钱包密码短语中的特殊字符（即变音符号）创建。\n\n如果您是受影响的用户，那么在 0.29 或更高版本中恢复此类钱包后，您的钱包余额将显示为 0。 此页面将使您能够恢复对非标准钱包的访问。 恢复后，建议您创建一个新钱包（符合标准）并将资金转移到那里。</string>
+    <string name="Restore_NonStandard_Description">此页面可恢复使用非标准助记词创建的钱包。此类钱包可能使用非英文助记词，或包含特殊字符（例如变音符号）的密码短语。\n\n如果恢复此类钱包后余额显示为 0，此页面可帮助恢复访问。恢复后，请创建新的标准钱包并将资金转入其中。</string>
     <string name="Restore_Bip_Recommended">(平均)</string>
     <string name="Restore_PrivateKey_InvalidKey">错误密钥</string>
     <string name="SelectContacts_All">所有</string>
@@ -472,7 +472,7 @@
     <string name="FeeSettings_FeeRate">费率(SAT/BYTE)</string>
     <string name="FeeSettings_FeeRate_RecommendedInfo">这是击中下2个区块的推荐值</string>
     <string name="FeeSettings_FeeRate_Info">当发送交易时，您必须支付网络费用。网络变得更加繁忙，收费越高。
-        \n\n不可阻挡的钱包建议提供最佳费用以帮助您在合理的时间内确认交易。 您可以增加或减少这个值。
+        \n\nTariffia钱包建议提供最佳费用以帮助您在合理的时间内确认交易。 您可以增加或减少这个值。
         \n\n设置收费太低可能会导致您的交易被长期搁置，甚至被拒绝。 为了更快的确认，请使用更高的费用。</string>
     <!--Fee Info -->
     <string name="FeeInfo_Title">交易速度</string>
@@ -778,10 +778,10 @@
     <string name="StatusInfo_Processing">正在处理</string>
     <string name="StatusInfo_Confirmed">已完成</string>
     <string name="StatusInfo_Failed">失败</string>
-    <string name="StatusInfo_PendingDescription">交易尚未在区块链上得到确认。带有推荐或更高费用设置发送的交易通常会在数分钟内得到处理。以低费用发送的交易将在数小时甚至数天内仍将处于待处理状态，并且可能会被拒绝。请注意，在Unstoppable钱包界面中的个别交易的状态通常将在较短延时内得到更新。</string>
+    <string name="StatusInfo_PendingDescription">交易尚未在区块链上得到确认。带有推荐或更高费用设置发送的交易通常会在数分钟内得到处理。以低费用发送的交易将在数小时甚至数天内仍将处于待处理状态，并且可能会被拒绝。请注意，在Tariffia钱包界面中的个别交易的状态通常将在较短延时内得到更新。</string>
     <string name="StatusInfo_ProcessingDescription">交易已包括在区块链中，但尚未达到永久终结状态。此时，可以安全地考虑以较小金额完成的交易。对于大额支付，建议等待直至交易状态变为已完成。</string>
     <string name="StatusInfo_ConfirmedDescription">交易已完成并被视为永久和不可逆。</string>
-    <string name="StatusInfo_FailedDescription">交易没有得到处理，也没有进行价值转移。根据失败原因的不同，某些失败的交易可能会耗费交易费用。被另一笔交易替换或取消的交易不会耗费交易费用，并且也会出现失败。 Unstoppable应用无法显示交易失败的原因。 但用户可以在如etherscan.io等公共区块探索程序上查看 。</string>
+    <string name="StatusInfo_FailedDescription">交易没有得到处理，也没有进行价值转移。根据失败原因的不同，某些失败的交易可能会耗费交易费用。被另一笔交易替换或取消的交易不会耗费交易费用，并且也会出现失败。 Tariffia应用无法显示交易失败的原因。 但用户可以在如etherscan.io等公共区块探索程序上查看 。</string>
     <!-- Transaction Info Options -->
     <string name="TransactionInfoOptions_SpeedUp_Title">加速</string>
     <string name="TransactionInfoOptions_SpeedUp_Button">重新发送</string>
@@ -831,13 +831,8 @@
     <string name="Settings_Subscription">訂閱</string>
     <string name="Settings_AutoLock">自动锁定</string>
     <string name="Settings_AutoLock_Description">在选定时间后自动锁定应用程序。</string>
-    <string name="Settings_JoinUnstoppables">Be Unstoppable</string>
     <string name="Settings_Support">支持</string>
     <string name="Settings_VipSupport">VIP 支持</string>
-    <string name="Settings_Donate">捐助</string>
-    <string name="Settings_DonateToken">捐赠%s</string>
-    <string name="Settings_Donate_Addresses">地址</string>
-    <string name="Settings_Donate_DonationAddresses">捐款地址</string>
     <string name="SettingsSecurity_AutoLock_Immediate">即时的</string>
     <string name="SettingsSecurity_AutoLock_After1Min">1 分钟</string>
     <string name="SettingsSecurity_AutoLock_After5Min">5 分钟</string>
@@ -849,27 +844,6 @@
     <string name="SettingsBanner_Premium">高級版</string>
     <string name="SettingsBanner_PremiumBannerDescription">使用高級版功能升級您的體驗！</string>
     <string name="SettingsBanner_PremiumTryFee">免費試用</string>
-    <string name="SettingsBanner_GameDescription">通过测试，完成任务，赚取代币！</string>
-    <string name="SettingsBanner_BePartOfTheFuture">成为私人融资未来的一部分</string>
-    <string name="SettingsBanner_SupportTheProject">支持项目！</string>
-    <!--Why Donate Page-->
-    <string name="SettingsBanner_DonateTitle">支持不可阻挡的移动</string>
-    <string name="SettingsBanner_DonateSubtitle">成为私人融资未来的一部分</string>
-    <string name="SettingsBanner_DonateUnstoppableHasBeenFreeFromDayOne">“不可阻挡的钱包从第一天起就是免费的，无广告和开源的——它将继续这样做。”</string>
-    <string name="SettingsBanner_DonateByJoiningMovement">通过加入不可阻挡的移动，您可以申请开放和私人金融：</string>
-    <string name="SettingsBanner_DonateUnstoppableWalletTeam">不可阻止的钱包团队</string>
-    <string name="SettingsBanner_DonateYourSupportIsCommitment">您的支持不仅仅是关于解锁功能 — — 这是对所有人隐私、自由和开放访问权限的承诺。</string>
-    <string name="SettingsBanner_DonateItHelpsWalletToBeAdFree">它有助于使钱包免费、安全和真正独立——对你和全世界成千上万依靠钱包的人来说是如此。</string>
-    <string name="SettingsBanner_DonateExclusivelyOnFDroid">仅在 F-Droid 上</string>
-    <string name="SettingsBanner_DonateUnstoppableWalletGivesYouAdvancedFeatures">不可阻挡的钱包给你高级功能—没有订阅，没有限制：</string>
-    <string name="SettingsBanner_DonateFeatureFullAnalytics">关于令牌的完整分析和数据</string>
-    <string name="SettingsBanner_DonateFeaturePrivacy">隐私模式 &amp; 冒险模式</string>
-    <string name="SettingsBanner_DonateFeatureSignals">充满信心的贸易信号</string>
-    <string name="SettingsBanner_DonateFeatureAddress">地址黑名单检查</string>
-    <string name="SettingsBanner_DonateFeatureAdvanced">高级资产搜索和过滤器</string>
-    <string name="SettingsBanner_DonateFeaturePriority">优先获得支助</string>
-    <string name="SettingsBanner_DonateEveryBitOfSupportMatters">每一点支持都很重要。</string>
-    <string name="SettingsBanner_DonateBySupportingUnstoppableWalletYouHelpGrow">通过支持不可阻挡的钱包，您可以帮助我们成长、改善和保持独立。</string>
     <!--Setting Subscription -->
     <string name="SettingsSubscription_Active">已啟用</string>
     <string name="SettingsSubscription_GetPremium">成为付费会员</string>
@@ -960,7 +934,7 @@
     <string name="BackupManager_AppSettingsTitle">应用设置</string>
     <string name="BackupManager_AppSettingsDescription">语言、 货币、 外观 ...</string>
     <!-- Privacy  -->
-    <string name="Privacy_Information">不可阻挡的不是\n无法收集个人数据，例如您的余额或钱包地址。我们只使用匿名数据来改进应用程序。</string>
+    <string name="Privacy_Information">Tariffia Wallet 不会收集余额或钱包地址等个人数据。匿名使用数据仅用于改进应用。</string>
     <string name="ShareUiData">共享界面数据</string>
     <string name="ShareUiDataDescription">此设置允许您关闭分析并保持您的活动完全隐私。</string>
     <!-- Security Center -->
@@ -985,7 +959,7 @@
         \n\n广播时即时显示为挂起的交易(粉刷同步) 但隐私和对节点的依赖性较低)。
         \n\n\n Off -&gt; 交易仅在网络确认后显示(较慢) 但更加安全和更加私人)。</string>
     <string name="MoneroNodeSettings_Trusted">信任的</string>
-    <string name="MoneroNodeSettings_Description">选择节点不可阻止应用应用于同步钱包(s)。</string>
+    <string name="MoneroNodeSettings_Description">选择节点Tariffia应用应用于同步钱包(s)。</string>
     <!--Btc Blockchain Settings -->
     <string name="BtcBlockchainSettings_RestoreSourceChangeWarning">在更改源后，钱包将必须重新同步自己。</string>
     <string name="BtcBlockchainSettings_RestoreSourceSettingsDescription">通过交易为恢复钱包选择数据源。</string>
@@ -998,7 +972,7 @@
     <string name="SettingsSecurity_DisablePin">禁用密码</string>
     <string name="SettingsSecurity_EditPin">编辑密码</string>
     <string name="SettingsSecurity_ManageKeys">管理钱包</string>
-    <string name="SettingsSecurity_AppRestartWarning">此操作将重新启动本钱包。</string>
+    <string name="SettingsSecurity_AppRestartWarning">此操作将重新启动 Tariffia Wallet。</string>
     <string name="SettingsSecurity_TorConnectionDescription">使用此功能让您的网络完全匿名化。请注意，在某些情况下，DeFi的钱包链接功能可能非常慢或根本不起作用。</string>
     <string name="SettingsSecurity_SortingShuffle">随机排序</string>
     <string name="SettingsSecurity_SortingShuffleDescription">随机索引</string>
@@ -1041,7 +1015,6 @@
     <string name="SettingsTerms_UserResponsibility">通过继续工作，你承认你们的资金安全和法律上的遵守最终是你们的责任。</string>
     <!--Setting_Tell Friends-->
     <string name="SettingsShare_Title">分享</string>
-    <string name="SettingsShare_Text">不可阻止的</string>
     <!--Setting_Contact-->
     <!--Setting_Notifications-->
     <!-- Settings Launch Screen -->
@@ -1078,8 +1051,8 @@
 \n- BIP-84 (推荐)
 \n- BIP-86 (新建)
 \n
-\n虽然无法阻挡的钱包支持他们中的所有4个，但它建议使用 BIP-84 格式操作的 %2$s 钱包。 以此格式操作的钱包在发送 %3$s 交易时可以支付最低费用。</string>
-    <string name="ManageCoins_BchTypeDescription">有2种比特币现金钱包可用于接收应收款的常见地址格式：\n\n- TYPE 0（较旧）\n- TYPE 145（较新）\n\n虽然Unstoppable钱包支持全部两种格式，但是我们建议使用以TYPE 145格式运作的比特币现金钱包。</string>
+\n虽然Tariffia钱包支持他们中的所有4个，但它建议使用 BIP-84 格式操作的 %2$s 钱包。 以此格式操作的钱包在发送 %3$s 交易时可以支付最低费用。</string>
+    <string name="ManageCoins_BchTypeDescription">有2种比特币现金钱包可用于接收应收款的常见地址格式：\n\n- TYPE 0（较旧）\n- TYPE 145（较新）\n\n虽然Tariffia钱包支持全部两种格式，但是我们建议使用以TYPE 145格式运作的比特币现金钱包。</string>
     <string name="ManageCoins_ContractAddress">联系地址</string>
     <!-- Experimental Feature -->
     <!-- Bitcoin Hodling -->
@@ -1283,7 +1256,7 @@
     <string name="PrivateKeys_Bip32RootKeyDescription">钱包的主密钥对所有衍生账户和资产都具有完全控制权。</string>
     <string name="PrivateKeys_AccountExtendedPrivateKey">账户扩展私钥</string>
     <string name="PrivateKeys_AccountExtendedPrivateKeyDescription">在这个钱包中授予对比特币和其他基于 UTXO的资产的完全控制权(例如Litecoin、比特币Cash、Dash)。</string>
-    <string name="PrivateKeys_NeverShareWarning">永远不会与任何人分享您的恢复短语。无法阻止的团队将永远不会要求您的恢复短语。</string>
+    <string name="PrivateKeys_NeverShareWarning">切勿向任何人分享此密钥。任何正规支持人员都不会向您索要它。</string>
     <string name="PrivateKeys_MoneroPrivateKey">单声道私钥</string>
     <string name="PrivateKeys_MoneroPrivateKeyDescription">对这个钱包内的Monero (XMR)资产给予完全控制，包括使用资金的能力。</string>
     <string name="MoneroKeyType">类型</string>
@@ -1330,7 +1303,6 @@
     <!-- Blockchain Settings -->
     <string name="CoinSettings_BitcoinCashCoinType_Type0_Description">2018年之前常用</string>
     <string name="CoinSettings_BitcoinCashCoinType_Type145_Description">2018年之后常用</string>
-    <!-- Nym VPN -->
     <!-- Tor -->
     <string name="Tor_Connection_Enable">启用Tor</string>
     <string name="Tor_Connection_Disable">禁用Tor</string>
@@ -1417,7 +1389,7 @@
     <string name="CoinPage_FastLength">快速长度</string>
     <string name="CoinPage_SlowLength">慢长度</string>
     <string name="CoinPage_SignalSmoothing">信号平滑化</string>
-    <string name="CoinPage_IndicatorsAlertText">指标仅适用于不可阻止的钱包高级用户。</string>
+    <string name="CoinPage_IndicatorsAlertText">指标仅供 Tariffia Wallet 高级版用户使用。</string>
     <string name="CoinPage_AiGeneratedText">这是一个基于给定的加密货币所提供的参考材料生成的 AI 描述。它可能包含错误。</string>
     <string name="CoinPage_MarketsLabel_Verified">验证</string>
     <string name="CoinPage_MarketsVerifiedMenu_Verified">已验证</string>
@@ -1578,7 +1550,6 @@
     <string name="BalanceSyncError_ChangableSourceErrorText">无法从当前源获取数据。您可以重试或切换到不同的同步源。</string>
     <string name="BalanceSyncError_ErrorText">无法从当前源获取数据。请稍后再试。</string>
     <!--Release notes-->
-    <string name="ReleaseNotes_JoinUnstoppables">加入未加入的</string>
     <string name="Hud_Text_LearnMore">即将推出</string>
     <string name="Hud_Text_Activate">激活</string>
     <!--Widget-->
@@ -1588,8 +1559,8 @@
     <string name="Alert_KeysInvalidatedTitle">Android密钥库错误</string>
     <string name="Alert_KeysInvalidatedDescription">因为您的Android锁定屏幕已被更改，所以保存您钱包的加密数据目前已失效。</string>
     <string name="Alert_TitleWarning">警告</string>
-    <string name="Alert_CustomKeyboardIsUsed">您的设备似乎使用了非默认键盘。Unstoppable建议选择设备上的默认键盘，因为第三方键盘可能会收集和暴露用户输入的数据。\n\n如果您要继续使用您的首选键盘，请单击“跳过”（Skip）按钮。</string>
-    <string name="Alert_DeviceIsRootedWarning">Unstoppable团队建议仅在未获取根权限（未越狱）的手机上使用应用。\n\n请注意，使用已获取根权限的设备，应用将难以保证您的加密货币免受来自恶意软件的安全威胁。</string>
+    <string name="Alert_CustomKeyboardIsUsed">您的设备似乎正在使用非默认键盘。Tariffia 建议选择默认键盘，因为第三方键盘可能会收集并泄露您输入的内容。\n\n如果您想继续使用偏好的键盘，请点击“跳过”。</string>
+    <string name="Alert_DeviceIsRootedWarning">Tariffia 建议仅在未获取 root 权限（未越狱）的手机上运行本应用。\n\n在已获取 root 权限的设备上，应用无法再保证您的加密货币免受恶意软件侵害。</string>
     <!--OS Pin-->
     <string name="OSPin_Confirm_Title">电话PIN码</string>
     <string name="OSPin_Confirm_Desciption">此应用要求电话已启用密码（屏幕锁定）。\n\n您可以在Android设置中启用密码。\n\n请注意，禁用操作系统级别的PIN码后，电话的安全存储保障措施将使以前保存的数据无效。您必须恢复您的钱包密钥才能回到您的钱包。</string>
@@ -1657,7 +1628,7 @@
     <string name="BackupManager_CountWallets">%d 个钱包</string>
     <string name="AddZanoNode_AddNode">添加节点</string>
     <string name="AddZanoNode_NodeUrl">节点 URL</string>
-    <string name="ZanoNodeSettings_Description">选择 Unstoppable 应用应使用的节点来同步钱包。</string>
+    <string name="ZanoNodeSettings_Description">选择 Tariffia 应用应使用的节点来同步钱包。</string>
     <string name="LocalBackup_ProtectBackup">保护备份</string>
     <string name="LocalBackup_ProtectBackupDescription">创建密码以保护您的备份文件。</string>
     <string name="LocalBackup_BackupName">备份名称</string>
@@ -1708,7 +1679,7 @@
     <string name="Swap_TopTokens">顶级代币</string>
     <string name="Swap_RecentSearch">最近搜索</string>
     <string name="SwapTerms_RiskRestrictions_Highlight">路由评分</string>
-    <string name="ZcashEndpointSettings_Description">选择 Unstoppable 应用用于同步 Zcash 钱包的轻钱包服务器。</string>
+    <string name="ZcashEndpointSettings_Description">选择 Tariffia 应用用于同步 Zcash 钱包的轻钱包服务器。</string>
     <string name="AddZcashEndpoint_AddEndpoint">添加端点</string>
     <string name="AddZcashEndpoint_EndpointUrl">端点 URL</string>
     <string name="AddZcashEndpoint_Warning_UrlExists">已存在使用此 URL 的端点</string>
@@ -1749,7 +1720,7 @@
     <string name="PasskeyTerms_DeviceDependency">设备依赖</string>
     <string name="PasskeyTerms_DeviceDependency_Description">访问需要您的设备。失去访问权限可能导致资金损失。</string>
     <string name="PasskeyTerms_LimitedAccess_Description">可能无法在所有设备或平台上运行。</string>
-    <string name="PasskeyTerms_Responsibility_Description">您需要对设备的访问权限负责。如果访问权限丢失，Unstoppable 无法恢复此钱包。</string>
+    <string name="PasskeyTerms_Responsibility_Description">您需对设备的访问权限负责。如果访问权限丢失，Tariffia 无法恢复此钱包。</string>
     <string name="Restore_SelectNetwork_EvmPrivateKey_Subtitle">Ethereum、Arbitrum、Optimism…</string>
     <string name="CoinPage_Buy">购买</string>
     <string name="CoinPage_Sell">出售</string>
@@ -1936,13 +1907,6 @@
     <string name="Action_Clear">清除</string>
     <string name="Send_Utxos_Auto">自动</string>
     <string name="TorPage_ConnectingProgress">正在连接 Tor… %d%%</string>
-    <string name="UnstoppableLabs_SimplexSwapBot">SimpleX 兑换机器人</string>
-    <string name="UnstoppableLabs_SimplexSwapBot_Description">通过 SimpleX 快速轻松地兑换加密货币。</string>
-    <string name="UnstoppableLabs_TelegramSwapBot">Telegram 兑换机器人</string>
-    <string name="UnstoppableLabs_TelegramSwapBot_Description">无需离开 Telegram 即可兑换加密货币。</string>
-    <string name="UnstoppableLabs_SignalSwapBot">Signal 兑换机器人</string>
-    <string name="UnstoppableLabs_SignalSwapBot_Description">直接在 Signal 中进行私密加密货币兑换。</string>
-    <string name="UnstoppableLabs_SwapWeb_Description">直接在浏览器中兑换加密货币。</string>
     <string name="NearSend_ReceiverRegistration">接收方注册</string>
     <string name="NearSend_StorageDepositTooHigh">该代币要求为注册接收方支付异常高的押金，可能是诈骗。</string>
     <string name="NearSend_StorageDepositChanged">接收方注册费已变更。请查看新的费用后重新发送。</string>

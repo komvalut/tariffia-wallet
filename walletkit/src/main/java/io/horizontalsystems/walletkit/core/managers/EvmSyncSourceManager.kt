@@ -39,7 +39,7 @@ class EvmSyncSourceManager(
             BlockchainType.Ethereum -> listOf(
                 evmSyncSource(
                     blockchainType,
-                    "Unstoppable",
+                    "PublicNode",
                     listOf(URI(appConfigProvider.blocksDecodedEthereumRpc))
                 ),
                 evmSyncSource(
@@ -54,16 +54,6 @@ class EvmSyncSourceManager(
                     blockchainType,
                     "Binance",
                     listOf(URI("https://bsc-dataseed.binance.org/"), URI("https://bsc-dataseed1.defibit.io/"), URI("https://bsc-dataseed1.ninicoin.io/"), URI("https://bsc-dataseed2.defibit.io/"), URI("https://bsc-dataseed3.defibit.io/"), URI("https://bsc-dataseed4.defibit.io/"), URI("https://bsc-dataseed2.ninicoin.io/"), URI("https://bsc-dataseed3.ninicoin.io/"), URI("https://bsc-dataseed4.ninicoin.io/"), URI("https://bsc-dataseed1.binance.org/"), URI("https://bsc-dataseed2.binance.org/"), URI("https://bsc-dataseed3.binance.org/"), URI("https://bsc-dataseed4.binance.org/"))
-                ),
-                evmSyncSource(
-                    blockchainType,
-                    "BlockRazor",
-                    listOf(URI("https://unstoppable.bsc.blockrazor.xyz"))
-                ),
-                evmSyncSource(
-                    blockchainType,
-                    "48club",
-                    listOf(URI("https://unstoppable.rpc.48.club"))
                 ),
                 evmSyncSource(
                     blockchainType,
@@ -148,11 +138,6 @@ class EvmSyncSourceManager(
             )
 
             BlockchainType.RobinhoodChain -> listOf(
-                evmSyncSource(
-                    blockchainType,
-                    "Unstoppable",
-                    listOf(URI("https://robinhood-rpc.unstoppable.money"))
-                ),
                 evmSyncSource(
                     blockchainType,
                     "Alchemy",

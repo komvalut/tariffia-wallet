@@ -24,8 +24,8 @@ class PasskeyManager {
     }
 
     companion object {
-        private val RP_ID = App.appConfigProvider.appLinksHost
-        private const val RP_NAME = "Unstoppable Wallet"
+        private val RP_ID = App.appConfigProvider.passkeyRpId
+        private val RP_NAME = App.appConfigProvider.passkeyRpName
         private val PRF_SALT_BYTES = "wallet".toByteArray(Charsets.UTF_8)
         private const val B64_FLAGS = Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
     }

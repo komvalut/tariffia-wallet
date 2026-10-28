@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Unstoppable Wallet - A multi-currency crypto wallet Android app supporting Bitcoin, Ethereum, and many other blockchains.
+Tariffia Wallet - A multi-currency crypto wallet Android app supporting Bitcoin, Ethereum, and many other blockchains.
 
 - **Package**: `io.horizontalsystems.bankwallet`
 - **Min SDK**: See `build.gradle` for `min_sdk_version`

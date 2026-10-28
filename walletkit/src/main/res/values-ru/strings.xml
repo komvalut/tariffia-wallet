@@ -110,7 +110,7 @@
     <string name="Language_Portuguese">Португальский</string>
     <!--Rate App-->
     <string name="RateApp_Title_Rate_This_App">ДД!</string>
-    <string name="RateApp_Description_Rate_This_App">Вам нравится Unstoppable? Поделитесь обратной связью и идеями, чтобы продолжить работу.</string>
+    <string name="RateApp_Description_Rate_This_App">Вам нравится Tariffia Wallet? Ваши отзывы помогают нам улучшать приложение.</string>
     <string name="RateApp_Button_RateIt">Оценить</string>
     <string name="RateApp_Button_NotNow">Не сейчас</string>
     <string name="Restore_SelectNetwork_Title">Выберите сеть</string>
@@ -132,7 +132,7 @@
     <string name="Restore_PrivateKeyHint">Введите приватный ключ EVM, BIP32 Root Key или Account Extended Private Key</string>
     <string name="Restore_PhraseHint">Введите фразу восстановления</string>
     <string name="Restore_NonStandardRestore">Нестандартный импорт</string>
-    <string name="Restore_NonStandard_Description">Эта страница предоставляет специальный механизм восстановления кошелька для пользователей Unstoppable, у которых используется нестандартный кошелёк. Такие кошельки могли быть созданы в версии Unstoppable 0.27–0.28 с использованием неанглийской фразы восстановления и/или специального символа в пароле кошелька (например, диакритического знака).\n\nЕсли вы относитесь к числу затронутых пользователей, то после восстановления такого кошелька в версии 0.29 или выше его баланс будет отображаться как 0. Эта страница позволит вам восстановить доступ к нестандартному кошельку. После восстановления рекомендуется создать новый кошелёк (соответствующий стандартам) и перевести на него средства.</string>
+    <string name="Restore_NonStandard_Description">Эта страница восстанавливает кошельки, созданные с нестандартной фразой восстановления. В таких кошельках может использоваться фраза не на английском языке или парольная фраза со специальными символами (например, диакритическими знаками).\n\nЕсли после восстановления такого кошелька баланс показывает 0, эта страница поможет восстановить доступ. После восстановления создайте новый стандартный кошелёк и переведите средства туда.</string>
     <string name="Restore_Bip_Recommended">(рекомендовано)</string>
     <string name="Restore_PrivateKey_InvalidKey">Неверный ключ</string>
     <string name="SelectContacts_All">Все</string>
@@ -364,7 +364,7 @@
     <string name="Balance_Receive_SubaddressesTransactions">Транзакции: %s</string>
     <string name="Balance_Zcash_UnshieldedBalanceDetected_Info_Title">Обнаружен Transparent ZEC</string>
     <string name="Balance_Zcash_UnshieldedBalance_Info_Title">Transparent сумма</string>
-    <string name="Balance_Zcash_UnshieldedBalance_Info_Description">У вас есть ZEC, находящийся на transparent адресе. Чтобы использовать его в Unstoppable, необходимо выполнить shielding для полной приватности.</string>
+    <string name="Balance_Zcash_UnshieldedBalance_Info_Description">У вас есть ZEC, находящийся на transparent адресе. Чтобы использовать его в Tariffia, необходимо выполнить shielding для полной приватности.</string>
     <string name="Balance_Zcash_Transparent">Прозрачный</string>
     <string name="Balance_Zcash_TransparentDescription">Используется для получения средств от бирж или сервисов, которые не поддерживают защищённые адреса.</string>
     <!--Send-->
@@ -474,7 +474,7 @@
     <string name="FeeSettings_FeeRate">Ставка комиссии (SAT/BYTE)</string>
     <string name="FeeSettings_FeeRate_RecommendedInfo">Это рекомендуемое значение для попадания в следующие 2 блока</string>
     <string name="FeeSettings_FeeRate_Info">При отправке транзакции вы должны оплатить сетевую плату. Работник сети, чем больше комиссия.
-        \n\nНеостановимый кошелек предлагает оптимальную комиссию для подтверждения вашей транзакции в разумные сроки. Вы можете увеличить или уменьшить это значение.
+        \n\nTariffia кошелек предлагает оптимальную комиссию для подтверждения вашей транзакции в разумные сроки. Вы можете увеличить или уменьшить это значение.
         \n\nУстановка комиссии может привести к тому, что ваша транзакция будет оставаться в ожидании долгого времени или даже быть отклонена. Для более быстрого подтверждения, используйте более высокую комиссию.</string>
     <!--Fee Info -->
     <string name="FeeInfo_Title">Скорость транзакции</string>
@@ -781,10 +781,10 @@
     <string name="StatusInfo_Processing">В процессе</string>
     <string name="StatusInfo_Confirmed">Выполнено</string>
     <string name="StatusInfo_Failed">Неудачный</string>
-    <string name="StatusInfo_PendingDescription">Транзакция еще не подтверждена в блокчейне. Транзакции, отправленные с рекомендованной или более высокой комиссией, обычно обрабатываются в течение  минут. Транзакции, отправленные с низкой комиссией, могут обрабатываться в течение нескольких часов или дней и даже отклоняться. Учтите, что обновление статуса каждой транзакции, отображаемого в интерфейсе кошелька Unstoppable, обычно происходит с небольшой задержкой. </string>
+    <string name="StatusInfo_PendingDescription">Транзакция еще не подтверждена в блокчейне. Транзакции, отправленные с рекомендованной или более высокой комиссией, обычно обрабатываются в течение  минут. Транзакции, отправленные с низкой комиссией, могут обрабатываться в течение нескольких часов или дней и даже отклоняться. Учтите, что обновление статуса каждой транзакции, отображаемого в интерфейсе кошелька Tariffia, обычно происходит с небольшой задержкой. </string>
     <string name="StatusInfo_ProcessingDescription">Транзакция уже включена в блокчейн, но пока не обработана. На данном этапе транзакции считаются завершенными для небольших платежей. Что касается завершения обработки более крупных транзакций, стоит дождаться смены статуса.</string>
     <string name="StatusInfo_ConfirmedDescription">Транзакция завершена и считается постоянной и необратимой.</string>
-    <string name="StatusInfo_FailedDescription">Транзакция не была обработана и передача средств не произошла. В зависимости от причины неудачи, некоторые неудачные транзакции могут использовать комиссию за транзакцию. Транзакции, которые были заменены или отменены другой транзакцией, не потребляют транзакционные сборы и также будут показаны как \"не удалось\". Приложение Unstoppable не может показать причину неудачных транзакций, но пользователи могут посмотреть это в etherscan.io.</string>
+    <string name="StatusInfo_FailedDescription">Транзакция не была обработана и передача средств не произошла. В зависимости от причины неудачи, некоторые неудачные транзакции могут использовать комиссию за транзакцию. Транзакции, которые были заменены или отменены другой транзакцией, не потребляют транзакционные сборы и также будут показаны как \"не удалось\". Приложение Tariffia не может показать причину неудачных транзакций, но пользователи могут посмотреть это в etherscan.io.</string>
     <!-- Transaction Info Options -->
     <string name="TransactionInfoOptions_SpeedUp_Title">Ускорение</string>
     <string name="TransactionInfoOptions_SpeedUp_Button">Отправить повторно</string>
@@ -816,7 +816,7 @@
     <string name="SettingsCurrency_Title">Базовая валюта</string>
     <string name="SettingsCurrency_Other">ДРУГИЕ</string>
     <string name="SettingsCurrency_DisclaimerTitle">Отказ от ответственности</string>
-    <string name="SettingsCurrency_DisclaimerText">Данные об обменном курсе предоставлены третьим лицом Coingecko.сom\n\n Приложение Unstoppable Wallet не гарантирует, что эти данные всегда верны и соответствуют рыночным. Шанс на несоответствие повышается при выборе базовой валюты, отличающейся от %s.</string>
+    <string name="SettingsCurrency_DisclaimerText">Данные об обменном курсе предоставлены третьим лицом Coingecko.сom\n\n Приложение Tariffia Wallet не гарантирует, что эти данные всегда верны и соответствуют рыночным. Шанс на несоответствие повышается при выборе базовой валюты, отличающейся от %s.</string>
     <!--Settings-->
     <string name="Settings_Title">Настройки</string>
     <string name="Settings_SecurityCenter">Безопасность</string>
@@ -834,13 +834,8 @@
     <string name="Settings_Subscription">Подписка</string>
     <string name="Settings_AutoLock">Автоблокировка</string>
     <string name="Settings_AutoLock_Description">Автоматически блокирует приложение по истечении выбранного времени.</string>
-    <string name="Settings_JoinUnstoppables">Присоединиться к Unstoppables</string>
     <string name="Settings_Support">Поддержка</string>
     <string name="Settings_VipSupport">Поддержка Premium</string>
-    <string name="Settings_Donate">Поддержи нас</string>
-    <string name="Settings_DonateToken">Пожертвовать %s</string>
-    <string name="Settings_Donate_Addresses">Адреса</string>
-    <string name="Settings_Donate_DonationAddresses">Адреса пожертвований</string>
     <string name="SettingsSecurity_AutoLock_Immediate">Немедленно</string>
     <string name="SettingsSecurity_AutoLock_After1Min">1 минута</string>
     <string name="SettingsSecurity_AutoLock_After5Min">5 минут</string>
@@ -852,27 +847,6 @@
     <string name="SettingsBanner_Premium">Премиум</string>
     <string name="SettingsBanner_PremiumBannerDescription">Откройте новые возможности с Премиум-доступом!</string>
     <string name="SettingsBanner_PremiumTryFee">Попробовать БЕСПЛАТНО</string>
-    <string name="SettingsBanner_GameDescription">Пройдите тесты, выполните задачи и заработайте токены!</string>
-    <string name="SettingsBanner_BePartOfTheFuture">Поддержите настоящую финансовую приватность</string>
-    <string name="SettingsBanner_SupportTheProject">Помогите нам оставаться независимыми!</string>
-    <!--Why Donate Page-->
-    <string name="SettingsBanner_DonateTitle">Поддержите движение за конфиденциальность</string>
-    <string name="SettingsBanner_DonateSubtitle">Поддержите настоящую финансовую приватность</string>
-    <string name="SettingsBanner_DonateUnstoppableHasBeenFreeFromDayOne">“Unstoppable кошелек остаётся бесплатным, без рекламы и с открытым исходным кодом - независимым от слежки со стороны Big Tech.”</string>
-    <string name="SettingsBanner_DonateByJoiningMovement">Поддерживая нас, вы защищаете открытые и свободные от слежки финансы:</string>
-    <string name="SettingsBanner_DonateUnstoppableWalletTeam">Команда, ориентированная на конфиденциальность</string>
-    <string name="SettingsBanner_DonateYourSupportIsCommitment">Ваша поддержка - это не просто доступ к функциям, это сопротивление финансовому мониторингу и контролю</string>
-    <string name="SettingsBanner_DonateItHelpsWalletToBeAdFree">Это помогает нам оставаться независимыми, защищая тысячи людей, которые отказываются идти на компромиссы в вопросах конфиденциальности</string>
-    <string name="SettingsBanner_DonateExclusivelyOnFDroid">Доступно только на F-Droid</string>
-    <string name="SettingsBanner_DonateUnstoppableWalletGivesYouAdvancedFeatures">Unstoppable кошелек предоставляет дополнительные возможности — без каких-либо ограничений:</string>
-    <string name="SettingsBanner_DonateFeatureFullAnalytics">Полная аналитика и данные о токенах</string>
-    <string name="SettingsBanner_DonateFeaturePrivacy">Режим конфиденциальности &amp; режим Duress</string>
-    <string name="SettingsBanner_DonateFeatureSignals">Продвинутая защита от фишинга</string>
-    <string name="SettingsBanner_DonateFeatureAddress">Проверка черного списка адресов</string>
-    <string name="SettingsBanner_DonateFeatureAdvanced">Расширенный поиск токенов и фильтры</string>
-    <string name="SettingsBanner_DonateFeaturePriority">Приоритетный доступ к тех.поддержке</string>
-    <string name="SettingsBanner_DonateEveryBitOfSupportMatters">Каждый вклад имеет значение</string>
-    <string name="SettingsBanner_DonateBySupportingUnstoppableWalletYouHelpGrow">Поддерживая Unstoppable кошелёк, вы помогаете нам расти, улучшать и оставаться независимыми.</string>
     <!--Setting Subscription -->
     <string name="SettingsSubscription_Active">Активно</string>
     <string name="SettingsSubscription_GetPremium">Получите премиум</string>
@@ -963,7 +937,7 @@
     <string name="BackupManager_AppSettingsTitle">Настройки приложения</string>
     <string name="BackupManager_AppSettingsDescription">Язык, валюта, внешний вид</string>
     <!-- Privacy  -->
-    <string name="Privacy_Information">Unstoppable не собирает персональные данные, такие как балансы или адреса кошельков. Мы используем анонимные данные только для улучшения приложения.</string>
+    <string name="Privacy_Information">Tariffia Wallet не собирает личные данные, такие как балансы или адреса кошельков. Анонимные данные об использовании применяются только для улучшения приложения.</string>
     <string name="ShareUiData">Поделиться данными UI</string>
     <string name="ShareUiDataDescription">Эта настройка позволяет отключить аналитику UI/UX и обеспечить полную конфиденциальность.</string>
     <!-- Security Center -->
@@ -1001,7 +975,7 @@
     <string name="SettingsSecurity_DisablePin">Отключить код доступа</string>
     <string name="SettingsSecurity_EditPin">Изменить код</string>
     <string name="SettingsSecurity_ManageKeys">Кошельки</string>
-    <string name="SettingsSecurity_AppRestartWarning">Это действие перезапустит Unstoppable кошелек.</string>
+    <string name="SettingsSecurity_AppRestartWarning">Это действие перезапустит Tariffia Wallet.</string>
     <string name="SettingsSecurity_TorConnectionDescription">Во время использования этого приложения полностью анонимизировать ваш интернет. Обратите внимание, что в некоторых случаях функция WalletConnect для DeFi приложений может быть очень медленной или вообще не работать.</string>
     <string name="SettingsSecurity_SortingShuffle">Перемешать</string>
     <string name="SettingsSecurity_SortingShuffleDescription">Случайное индексирование</string>
@@ -1044,7 +1018,6 @@
     <string name="SettingsTerms_UserResponsibility">Продолжая, Вы подтверждаете, что безопасность Ваших средств и правовое соблюдение в конечном счете являются Вашей ответственностью.</string>
     <!--Setting_Tell Friends-->
     <string name="SettingsShare_Title">Поделиться</string>
-    <string name="SettingsShare_Text">Неостановимый</string>
     <!--Setting_Contact-->
     <!--Setting_Notifications-->
     <!-- Settings Launch Screen -->
@@ -1081,13 +1054,13 @@
 \n- BIP-84 (рекомендованный)
 \n- BIP-86 (самый новый)
 \n
-\nХотя кошелек Unstoppable поддерживает все три формата, рекомендуется использовать %2$s кошелек, работающий в формате BIP84. Кошельки, работающие в этом формате, платят наименьшую комиссию при отправке %3$s транзакций.</string>
+\nХотя кошелек Tariffia поддерживает все три формата, рекомендуется использовать %2$s кошелек, работающий в формате BIP84. Кошельки, работающие в этом формате, платят наименьшую комиссию при отправке %3$s транзакций.</string>
     <string name="ManageCoins_BchTypeDescription">Существует 2 формата адресов Bitcoin Cash кошельки могут использовать для приема входящих платежей:
 \n
 \n- TYPE0 (старый)
 \n- TYPE145 (новее)
 \n
-\nно Неостановимый кошелек поддерживает оба из них, он рекомендует использовать кошелек Bitcoin Cash, работающий в формате TYPE145.</string>
+\nно Tariffia кошелек поддерживает оба из них, он рекомендует использовать кошелек Bitcoin Cash, работающий в формате TYPE145.</string>
     <string name="ManageCoins_ContractAddress">АДРЕС КОНТРАКТА</string>
     <!-- Experimental Feature -->
     <!-- Bitcoin Hodling -->
@@ -1291,7 +1264,7 @@
     <string name="PrivateKeys_Bip32RootKeyDescription">Мастер приватный ключ кошелька. Даёт полный контроль над всеми производными счетами и активами.</string>
     <string name="PrivateKeys_AccountExtendedPrivateKey">Account Extended Private Key</string>
     <string name="PrivateKeys_AccountExtendedPrivateKeyDescription">Даёт полный контроль над биткойнами и другими UTXO активами (например, Litecoin, Bitcoin Cash, Dash) в этом кошельке.</string>
-    <string name="PrivateKeys_NeverShareWarning">Никогда ни с кем не делитесь вашей фразой восстановления. Команда Unstoppable никогда не запросит вашу фразу восстановления.</string>
+    <string name="PrivateKeys_NeverShareWarning">Никогда никому не передавайте этот ключ. Ни один добросовестный представитель поддержки никогда его не запросит.</string>
     <string name="PrivateKeys_MoneroPrivateKey">Приватные ключи Monero</string>
     <string name="PrivateKeys_MoneroPrivateKeyDescription">Даёт полный контроль над активами Monero (XMR) в пределах этого кошелька, включая возможность тратить средства.</string>
     <string name="MoneroKeyType">Тип</string>
@@ -1338,7 +1311,6 @@
     <!-- Blockchain Settings -->
     <string name="CoinSettings_BitcoinCashCoinType_Type0_Description">до 2018 года</string>
     <string name="CoinSettings_BitcoinCashCoinType_Type145_Description">после 2018 года</string>
-    <!-- Nym VPN -->
     <!-- Tor -->
     <string name="Tor_Connection_Enable">Включить Tor</string>
     <string name="Tor_Connection_Disable">Отключить Tor</string>
@@ -1425,7 +1397,7 @@
     <string name="CoinPage_FastLength">Быстрая длина</string>
     <string name="CoinPage_SlowLength">Медленная длина</string>
     <string name="CoinPage_SignalSmoothing">Сглаживание сигнала</string>
-    <string name="CoinPage_IndicatorsAlertText">Индикаторы доступны только для неудержимых премиум-пользователей кошелька.</string>
+    <string name="CoinPage_IndicatorsAlertText">Индикаторы доступны только пользователям Tariffia Wallet Premium.</string>
     <string name="CoinPage_AiGeneratedText">Это описание, генерируемое AI, основанное на предоставленном справочном материале для данной криптовалюты. Оно может содержать ошибки.</string>
     <string name="CoinPage_MarketsLabel_Verified">Подтверждено</string>
     <string name="CoinPage_MarketsVerifiedMenu_Verified">Подтверждено</string>
@@ -1586,7 +1558,6 @@
     <string name="BalanceSyncError_ChangableSourceErrorText">Не удалось получить данные из текущего источника. Вы можете повторить попытку или переключиться на другой источник синхронизации.</string>
     <string name="BalanceSyncError_ErrorText">Не удалось получить данные из текущего источника. Пожалуйста, повторите попытку позже.</string>
     <!--Release notes-->
-    <string name="ReleaseNotes_JoinUnstoppables">ПРИСОЕДИНЯЙТЕСЬ</string>
     <string name="Hud_Text_LearnMore">Уже скоро</string>
     <string name="Hud_Text_Activate">Активировать</string>
     <!--Widget-->
@@ -1596,8 +1567,8 @@
     <string name="Alert_KeysInvalidatedTitle">Ошибка Android Keystore</string>
     <string name="Alert_KeysInvalidatedDescription">Зашифрованные данные, держащие ваш кошелек недавно были аннулированы, потому что ваш экран блокировки Android был изменен</string>
     <string name="Alert_TitleWarning">Внимание</string>
-    <string name="Alert_CustomKeyboardIsUsed">Кажется, ваше устройство использует клавиатуру, не являющуюся по умолчанию. Неостановимый рекомендует выбрать на вашем устройстве клавиатуру по умолчанию, поскольку сторонние клавиатуры потенциально могут собирать и раскрывать информацию о пользователях. \n\nнажмите кнопку \'Пропустить\', если вы хотите продолжать использовать предпочитаемую вами клавиатуру.</string>
-    <string name="Alert_DeviceIsRootedWarning">Команда Unstoppable рекомендует запускать приложение только на телефонах, не имеющих рут (не выпущенных на jailbroken).\n\nПожалуйста, обратите внимание, когда вы используете устройство root, приложение больше не может гарантировать безопасность вашего криптовалюты от вредоносного программного обеспечения.</string>
+    <string name="Alert_CustomKeyboardIsUsed">Похоже, на вашем устройстве используется клавиатура, отличная от стандартной. Tariffia рекомендует выбрать стандартную клавиатуру, поскольку сторонние клавиатуры могут собирать и раскрывать вводимые данные.\n\nНажмите «Пропустить», если хотите продолжить пользоваться своей клавиатурой.</string>
+    <string name="Alert_DeviceIsRootedWarning">Tariffia рекомендует запускать приложение только на телефонах без root (не jailbroken).\n\nНа устройстве с root приложение больше не может гарантировать безопасность вашей криптовалюты от вредоносного ПО.</string>
     <!--OS Pin-->
     <string name="OSPin_Confirm_Title">PIN-код телефона</string>
     <string name="OSPin_Confirm_Desciption">Это приложение требует, чтобы на телефоне был включен пароль (экран блокировки).\n\nВы можете включить его в настройках Android.\n\nПожалуйста, обратите внимание, что после того, как вы отключили PIN-код на уровне ОС,  в безопасном хранилище вашего телефона ранее сохраненные данные стали недействительными. Поэтому Вам нужно восстановить ключи, чтобы вернуться к вашему кошельку.</string>
@@ -1665,7 +1636,7 @@
     <string name="BackupManager_CountWallets">кошельки: %d</string>
     <string name="AddZanoNode_AddNode">Добавить узел</string>
     <string name="AddZanoNode_NodeUrl">URL узла</string>
-    <string name="ZanoNodeSettings_Description">Выберите узел, который приложение Unstoppable должно использовать для синхронизации кошелька(ов).</string>
+    <string name="ZanoNodeSettings_Description">Выберите узел, который приложение Tariffia должно использовать для синхронизации кошелька(ов).</string>
     <string name="LocalBackup_ProtectBackup">Защитить резервную копию</string>
     <string name="LocalBackup_ProtectBackupDescription">Создайте пароль для защиты файла резервной копии.</string>
     <string name="LocalBackup_BackupName">Имя резервной копии</string>
@@ -1716,7 +1687,7 @@
     <string name="Swap_TopTokens">Топ токены</string>
     <string name="Swap_RecentSearch">Недавний поиск</string>
     <string name="SwapTerms_RiskRestrictions_Highlight">оценки маршрута</string>
-    <string name="ZcashEndpointSettings_Description">Выберите сервер lightwallet, который приложение Unstoppable должно использовать для синхронизации кошелька(ков) Zcash.</string>
+    <string name="ZcashEndpointSettings_Description">Выберите сервер lightwallet, который приложение Tariffia должно использовать для синхронизации кошелька(ков) Zcash.</string>
     <string name="AddZcashEndpoint_AddEndpoint">Добавить конечную точку</string>
     <string name="AddZcashEndpoint_EndpointUrl">URL конечной точки</string>
     <string name="AddZcashEndpoint_Warning_UrlExists">Конечная точка с этим URL уже существует</string>
@@ -1757,7 +1728,7 @@
     <string name="PasskeyTerms_DeviceDependency">Зависимость от устройства</string>
     <string name="PasskeyTerms_DeviceDependency_Description">Для доступа требуется ваше устройство. Потеря доступа может привести к потере средств.</string>
     <string name="PasskeyTerms_LimitedAccess_Description">Может работать не на всех устройствах или платформах.</string>
-    <string name="PasskeyTerms_Responsibility_Description">Вы несёте ответственность за доступ к вашему устройству. Unstoppable не сможет восстановить этот кошелёк, если доступ будет утерян.</string>
+    <string name="PasskeyTerms_Responsibility_Description">Вы несёте ответственность за доступ к своему устройству. Tariffia не сможет восстановить этот кошелёк при утере доступа.</string>
     <string name="CoinPage_Buy">Купить</string>
     <string name="CoinPage_Sell">Продать</string>
     <string name="MoneroNodeSettings_AutoSelectDescription">Автоматически использовать самый быстрый узел</string>
@@ -1946,13 +1917,6 @@
     <string name="Action_Clear">Очистить</string>
     <string name="Send_Utxos_Auto">Авто</string>
     <string name="TorPage_ConnectingProgress">Подключение Tor… %d%%</string>
-    <string name="UnstoppableLabs_SimplexSwapBot">Своп-бот в SimpleX</string>
-    <string name="UnstoppableLabs_SimplexSwapBot_Description">Быстрые и простые свопы криптовалют в SimpleX.</string>
-    <string name="UnstoppableLabs_TelegramSwapBot">Своп-бот в Telegram</string>
-    <string name="UnstoppableLabs_TelegramSwapBot_Description">Обменивайте криптовалюту, не выходя из Telegram.</string>
-    <string name="UnstoppableLabs_SignalSwapBot">Своп-бот в Signal</string>
-    <string name="UnstoppableLabs_SignalSwapBot_Description">Приватные свопы криптовалют прямо в Signal.</string>
-    <string name="UnstoppableLabs_SwapWeb_Description">Обменивайте криптовалюту прямо в браузере.</string>
     <string name="NearSend_ReceiverRegistration">Регистрация получателя</string>
     <string name="NearSend_StorageDepositTooHigh">Этот токен требует необычно большой депозит для регистрации получателя и может быть мошенническим.</string>
     <string name="NearSend_StorageDepositChanged">Комиссия за регистрацию получателя изменилась. Проверьте новую комиссию и отправьте снова.</string>

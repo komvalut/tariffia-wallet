@@ -97,7 +97,7 @@
     <string name="Language_Portuguese">Portekizce</string>
     <!--Rate App-->
     <string name="RateApp_Title_Rate_This_App">Günaydın!</string>
-    <string name="RateApp_Description_Rate_This_App">Unstoppable kullanmaktan keyif alıyor musunuz? Daha da iyi olması için görüşlerinizi paylaşın.</string>
+    <string name="RateApp_Description_Rate_This_App">Tariffia Wallet\'ı beğendiniz mi? Geri bildiriminiz uygulamayı geliştirmemize yardımcı olur.</string>
     <string name="RateApp_Button_RateIt">Puanla</string>
     <string name="RateApp_Button_NotNow">Şimdi değil</string>
     <!--Restore-->
@@ -114,7 +114,7 @@
     <string name="Restore_PrivateKeyHint">EVM Özel Anahtarını, BIP32 Root Key veya Account Extended Private Key girin</string>
     <string name="Restore_PhraseHint">12, 15, 18, 21 veya 24 kelime girin</string>
     <string name="Restore_NonStandardRestore">Standart Olmayan Geri Yükleme</string>
-    <string name="Restore_NonStandard_Description">Bu sayfa, standart olmayan bir cüzdanı olan Unstoppable kullanıcıları için özel geri yükleme mekanizması sağlar. Genel olarak, bu tür cüzdanlar, İngilizce olmayan bir anımsatma kelimeleri listesi ve/veya cüzdan şifresinde özel bir karakter (yani aksan simgesi) kullanılarak Unstoppable 0.27 - 0.28 sürümünde oluşturulmuş olabilir.\n\n Bu durumdan etkilenen bir kullanıcıysanız, 0.29 sürümüne güncelledikten sonra cüzdan bakiyeniz 0 olarak görüntülenir. Bu sayfa, standart olmayan cüzdanınıza erişimi geri yüklemenizi sağlayacaktır. Geri yüklendikten sonra, yeni bir cüzdan oluşturmanız (standartlarla uyumlu) ve paranızı oraya taşımanız önerilir.</string>
+    <string name="Restore_NonStandard_Description">Bu sayfa, standart olmayan bir kurtarma ifadesiyle oluşturulmuş cüzdanları geri yükler. Bu tür cüzdanlar İngilizce olmayan bir ifade veya özel karakterler (örneğin aksan işaretleri) içeren bir parola kullanabilir.\n\nBöyle bir cüzdanı geri yükledikten sonra bakiye 0 görünüyorsa bu sayfa erişimi geri yükleyebilir. Geri yükledikten sonra yeni bir standart cüzdan oluşturun ve fonlarınızı oraya taşıyın.</string>
     <string name="Restore_Bip_Recommended">(ortalama)</string>
     <string name="Restore_PrivateKey_InvalidKey">Geçersiz Anahtar</string>
     <string name="SelectContacts_All">Hepsi</string>
@@ -546,10 +546,10 @@
     <string name="TransactionInfo_SpeedUpDescription">Bu işlem, önceki işlemi geçersiz kılmak için onu daha yüksek bir ücretle yeniden göndermeye çalışacaktır.</string>
     <string name="StatusInfo_Pending">Devam ediyor</string>
     <string name="StatusInfo_Processing">İşleniyor</string>
-    <string name="StatusInfo_PendingDescription">İşlem henüz blok zincirinde onaylanmadı. Tavsiye edilen veya daha yüksek ücret ayarı ile gönderilen işlemler genellikle birkaç dakika içerisinde işlenir. Düşük bir ücretle gönderilen işlemler birkaç saat, hatta günlerce beklemede kalabilir ve hatta reddedilebilir. Unstoppable cüzdan arayüzündeki bir işlemin durumunun genellikle kısa bir gecikmeyle güncellendiğini de unutmayın.</string>
+    <string name="StatusInfo_PendingDescription">İşlem henüz blok zincirinde onaylanmadı. Tavsiye edilen veya daha yüksek ücret ayarı ile gönderilen işlemler genellikle birkaç dakika içerisinde işlenir. Düşük bir ücretle gönderilen işlemler birkaç saat, hatta günlerce beklemede kalabilir ve hatta reddedilebilir. Tariffia cüzdan arayüzündeki bir işlemin durumunun genellikle kısa bir gecikmeyle güncellendiğini de unutmayın.</string>
     <string name="StatusInfo_ProcessingDescription">İşlem blok zincirine dahil edildi ama kalıcı bir sonuca ulaşmadı. Bu noktada, küçük ödemeler için işlemin tamamlandığını düşünebilirsiniz. Daha büyük ödemeler için ise, işlem durumu tamamlandı olarak değişene kadar beklemeniz önerilir.</string>
     <string name="StatusInfo_ConfirmedDescription">İşlem tamamlandı ve bunun kalıcı ve tersine çevrilemez olduğu kabul edilir.</string>
-    <string name="StatusInfo_FailedDescription">İşlem gerçekleşmedi ve herhangi bir değer transferi yapılmadı. Başarısız olma nedenine bağlı olarak, bazı başarısız işlemler, işlem ücreti tüketebilir. Başka bir işlemle değiştirilen veya iptal edilen işlemler, işlem ücretini tüketmez ve başarısız olarak görüntülenir. Unstoppable uygulaması başarısız işlemlerin nedenini gösteremez, ancak kullanıcılar bunu örneğin etherscan.io gibi herkese açık bir blok gezgininde kendileri arayabilirler.</string>
+    <string name="StatusInfo_FailedDescription">İşlem gerçekleşmedi ve herhangi bir değer transferi yapılmadı. Başarısız olma nedenine bağlı olarak, bazı başarısız işlemler, işlem ücreti tüketebilir. Başka bir işlemle değiştirilen veya iptal edilen işlemler, işlem ücretini tüketmez ve başarısız olarak görüntülenir. Tariffia uygulaması başarısız işlemlerin nedenini gösteremez, ancak kullanıcılar bunu örneğin etherscan.io gibi herkese açık bir blok gezgininde kendileri arayabilirler.</string>
     <!-- Transaction Info Options -->
     <string name="TransactionInfoOptions_SpeedUp_Title">Hızlandır</string>
     <string name="TransactionInfoOptions_SpeedUp_Button">Yeniden Gönder</string>
@@ -577,7 +577,7 @@
     <string name="SettingsCurrency_Title">Para birimi</string>
     <string name="SettingsCurrency_Other">DİĞER</string>
     <string name="SettingsCurrency_DisclaimerTitle">Uyarı</string>
-    <string name="SettingsCurrency_DisclaimerText">Üçüncü taraf bir hizmet olan Coingecko.com tarafından sağlanan döviz kuru verileri.\n\nDurdurulamaz cüzdan uygulaması, bu değerlerin her zaman doğru olduğunu ve piyasa verileriyle eşleştiğini garanti etmez. %s Dışında herhangi bir temel para birimi seçerseniz tutarsızlık olasılığı daha yüksektir.</string>
+    <string name="SettingsCurrency_DisclaimerText">Üçüncü taraf bir hizmet olan Coingecko.com tarafından sağlanan döviz kuru verileri.\n\nTariffia cüzdan uygulaması, bu değerlerin her zaman doğru olduğunu ve piyasa verileriyle eşleştiğini garanti etmez. %s Dışında herhangi bir temel para birimi seçerseniz tutarsızlık olasılığı daha yüksektir.</string>
     <!--Settings-->
     <string name="Settings_Title">Ayarlar</string>
     <string name="Settings_SecurityCenter">Güvenlik</string>
@@ -593,10 +593,6 @@
     <string name="Settings_AppSettings">Görünüm</string>
     <string name="Settings_Subscription">Abonelik</string>
     <string name="Settings_AutoLock">Otomatik kilit</string>
-    <string name="Settings_JoinUnstoppables">Be Unstoppable</string>
-    <string name="Settings_Donate">Bağış yapmak</string>
-    <string name="Settings_DonateToken">Bağış yapmak %s</string>
-    <string name="Settings_Donate_Addresses">Adresler</string>
     <string name="SettingsSecurity_AutoLock_Immediate">Hemen</string>
     <string name="SettingsSecurity_AutoLock_After1Min">1 dakika</string>
     <string name="SettingsSecurity_AutoLock_After5Min">5 dakika</string>
@@ -607,7 +603,6 @@
     <!--Banners-->
     <string name="SettingsBanner_PremiumBannerDescription">Premium özelliklerle deneyiminizi yükseltin!</string>
     <string name="SettingsBanner_PremiumTryFee">ÜCRETSİZ Deneyin</string>
-    <!--Why Donate Page-->
     <!--Setting Subscription -->
     <string name="SettingsSubscription_Active">Aktif</string>
     <string name="SettingsSubscription_RestorePurchase">Satın Almayı Geri Yükle</string>
@@ -696,7 +691,7 @@
     <string name="SettingsSecurity_DisablePin">Şifre Kodunu Devre Dışı Bırak</string>
     <string name="SettingsSecurity_EditPin">Kod Değiştir</string>
     <string name="SettingsSecurity_ManageKeys">Cüzdanları yönet</string>
-    <string name="SettingsSecurity_AppRestartWarning">Bu eylem, Unstoppable Cüzdan\'ı yeniden başlatacak.</string>
+    <string name="SettingsSecurity_AppRestartWarning">Bu işlem Tariffia Wallet\'ı yeniden başlatacak.</string>
     <string name="SettingsSecurity_TorConnectionDescription">Bu uygulamayı kullanırken internetinizi tamamen anonimleştirin. Bazı durumlarda DeFi uygulamaları için WalletConnect özelliğinin çok yavaş olabileceğini veya hiç çalışmayabileceğini unutmayın.</string>
     <string name="SettingsSecurity_SortingShuffle">Karıştır</string>
     <string name="SettingsSecurity_SortingShuffleDescription">Rastgele Dizinleme</string>
@@ -763,13 +758,13 @@
 \n- BIP-84 (önerilen)
 \n- BIP-86 (en yeni)
 \n
-\nDurdurulamaz cüzdan 4 tanesini de desteklerken, BIP-84 formatında çalışan bir %2$s cüzdanı kullanmanızı önerir. Bu biçimde çalışan cüzdanlar, %3$s işlemi gönderirken en düşük ücreti öderler.</string>
+\nTariffia cüzdan 4 tanesini de desteklerken, BIP-84 formatında çalışan bir %2$s cüzdanı kullanmanızı önerir. Bu biçimde çalışan cüzdanlar, %3$s işlemi gönderirken en düşük ücreti öderler.</string>
     <string name="ManageCoins_BchTypeDescription">Bitcoin Cash cüzdanlarının gelen ödemeleri almak için kullanabileceği 2 adres formatı vardır: 
 \n 
 \n- TYPE0 (eski) 
 \n- TYPE145 (daha yeni) 
 \n 
-\nUnstoppable cüzdan her ikisini de desteklerken, TYPE145 formatında çalışan bir Bitcoin Cash cüzdanı kullanmanızı önerir.</string>
+\nTariffia cüzdan her ikisini de desteklerken, TYPE145 formatında çalışan bir Bitcoin Cash cüzdanı kullanmanızı önerir.</string>
     <string name="ManageCoins_ContractAddress">CONTRACT ADRESİ</string>
     <!-- Experimental Feature -->
     <!-- Bitcoin Hodling -->
@@ -955,7 +950,7 @@
     <!-- Private Keys -->
     <string name="PrivateKeys_Title">Gizli Anahtar</string>
     <string name="PrivateKeys_EvmPrivateKey">EVM Özel anahtar</string>
-    <string name="PrivateKeys_NeverShareWarning">Kurtarma ifadenizi asla kimseyle paylaşmayın. Unstoppable ekip asla kurtarma ifadenizi istemez.</string>
+    <string name="PrivateKeys_NeverShareWarning">Bu anahtarı asla kimseyle paylaşmayın. Meşru bir destek temsilcisi bunu asla istemez.</string>
     <!-- Public Keys -->
     <string name="PublicKeys_Title">Genel Anahtarlar</string>
     <string name="PublicKeys_EvmAddress">EVM Adresi</string>
@@ -990,7 +985,6 @@
     <!-- Blockchain Settings -->
     <string name="CoinSettings_BitcoinCashCoinType_Type0_Description">2018 öncesinde yaygın</string>
     <string name="CoinSettings_BitcoinCashCoinType_Type145_Description">2018 sonrasında yaygın</string>
-    <!-- Nym VPN -->
     <!-- Tor -->
     <string name="Tor_Connection_Enable">Tor\'u etkinleştir</string>
     <string name="Tor_Connection_Disable">Tor\'u devre dışı bırak</string>
@@ -1057,7 +1051,7 @@
     <string name="CoinPage_FastLength">Hızlı Uzunluk</string>
     <string name="CoinPage_SlowLength">Yavaş Uzunluk</string>
     <string name="CoinPage_SignalSmoothing">Sinyal Düzleştirme</string>
-    <string name="CoinPage_IndicatorsAlertText">Göstergeler yalnızca Durdurulamaz Cüzdan premium kullanıcıları için mevcuttur.</string>
+    <string name="CoinPage_IndicatorsAlertText">Göstergeler yalnızca Tariffia Wallet Premium kullanıcıları için mevcuttur.</string>
     <string name="CoinPage_AiGeneratedText">Bu, verilen kripto para birimi için sağlanan referans materyale dayanarak yapay zeka tarafından oluşturulmuş bir açıklamadır. Hatalar içerebilir.</string>
     <string name="CoinPage_MarketsLabel_Verified">DOĞRULANMIŞ</string>
     <string name="CoinPage_MarketsVerifiedMenu_Verified">Onaylandı</string>
@@ -1208,7 +1202,6 @@
     <string name="BalanceSyncError_ButtonRetry">Yeniden Dene</string>
     <string name="BalanceSyncError_ButtonChangeSource">Kaynağı Değiştir</string>
     <!--Release notes-->
-    <string name="ReleaseNotes_JoinUnstoppables">KATIL UNSTOPPABLES</string>
     <string name="Hud_Text_LearnMore">Çok Yakında</string>
     <!--Widget-->
     <string name="WidgetList_Config_Title">Türü Seç</string>
@@ -1217,8 +1210,8 @@
     <string name="Alert_KeysInvalidatedTitle">Android anahtar deposu hatası</string>
     <string name="Alert_KeysInvalidatedDescription">Android cihazınızın kilidi değiştirildiğinden cüzdan bilginizi tutan şifreli dosya artık geçersiz</string>
     <string name="Alert_TitleWarning">Uyarı</string>
-    <string name="Alert_CustomKeyboardIsUsed">Cihazınız varsayılan olmayan bir klavye kullanıyor gibi görünüyor. Unstoppable, üçüncü taraf klavyelerin kullanıcıların girdiği verileri toplayıp paylaşabileceği ihtimali nedeniyle, cihazınızda varsayılan klavyeyi seçmenizi önerir.\n\nTercih ettiğiniz klavyeyi kullanmaya devam etmek istiyorsanız \'Atla\' butonuna tıklayın.</string>
-    <string name="Alert_DeviceIsRootedWarning">Unstoppable ekibi, uygulamanın yalnızca root olmayan (jailbreak yapılmamış) telefonlarda çalıştırılmasını önerir.\n\nKöklü bir cihaz kullandığınızda, uygulamanın artık kripto para biriminizin kötü amaçlı yazılımlara karşı güvenliğini garanti edemeyeceğini lütfen unutmayın.</string>
+    <string name="Alert_CustomKeyboardIsUsed">Cihazınız varsayılan olmayan bir klavye kullanıyor gibi görünüyor. Üçüncü taraf klavyeler yazdıklarınızı toplayıp açığa çıkarabildiğinden Tariffia varsayılan klavyeyi seçmenizi önerir.\n\nTercih ettiğiniz klavyeyi kullanmaya devam etmek için «Atla» düğmesine dokunun.</string>
+    <string name="Alert_DeviceIsRootedWarning">Tariffia, uygulamayı yalnızca rootlanmamış (jailbreak yapılmamış) telefonlarda çalıştırmanızı önerir.\n\nRootlanmış bir cihazda uygulama, kripto paranızın kötü amaçlı yazılımlara karşı güvenliğini artık garanti edemez.</string>
     <!--OS Pin-->
     <string name="OSPin_Confirm_Title">Telefon PİN\'i</string>
     <string name="OSPin_Confirm_Desciption">Bu uygulamayı kullanabilmeniz için telefonun Ekran Kilidi (Şifre/PİN) etkinleştirilmeli.\n\nAndroid Ayarlarından etkinleştirebilirsiniz.\n\nŞifreyi kaldırdığınızda, kullanılmakta olan güvenli bilgi deposu sistem tarafından kaldırılır. Cüzdanlarınızı gizli anahtar ile geri yüklemeniz gerekecek.</string>
@@ -1283,7 +1276,7 @@
     <string name="BackupManager_CountWallets">%d cüzdan</string>
     <string name="AddZanoNode_AddNode">Düğüm Ekle</string>
     <string name="AddZanoNode_NodeUrl">Düğüm URL</string>
-    <string name="ZanoNodeSettings_Description">Unstoppable uygulamasının cüzdan(lar) senkronizasyonu için kullanması gereken düğümü seçin.</string>
+    <string name="ZanoNodeSettings_Description">Tariffia uygulamasının cüzdan(lar) senkronizasyonu için kullanması gereken düğümü seçin.</string>
     <string name="LocalBackup_ProtectBackup">Yedeği Koru</string>
     <string name="LocalBackup_ProtectBackupDescription">Yedek dosyasını korumak için bir parola oluşturun.</string>
     <string name="LocalBackup_BackupName">Yedek Adı</string>
@@ -1340,7 +1333,7 @@
     <string name="SwapTerms_RiskRestrictions_Info">Bazı rotalar swapları reddedebilir veya fonlara erişimi kısıtlayabilir. Bir rota seçerken rota puanlarına dikkat edin.</string>
     <string name="SwapTerms_RiskRestrictions_Highlight">rota puanları</string>
     <string name="SwapTerms_UserResponsibility_Info">Olası riskleri gözden geçirdim ve rota seçimim için sorumluluğu kabul ediyorum.</string>
-    <string name="ZcashEndpointSettings_Description">Unstoppable uygulamasının Zcash cüzdan(larını) senkronize etmek için kullanması gereken lightwallet sunucusunu seçin.</string>
+    <string name="ZcashEndpointSettings_Description">Tariffia uygulamasının Zcash cüzdan(larını) senkronize etmek için kullanması gereken lightwallet sunucusunu seçin.</string>
     <string name="AddZcashEndpoint_AddEndpoint">Uç nokta ekle</string>
     <string name="AddZcashEndpoint_EndpointUrl">Uç nokta URL\'si</string>
     <string name="AddZcashEndpoint_Warning_UrlExists">Bu URL\'ye sahip bir uç nokta zaten var</string>
@@ -1384,7 +1377,7 @@
     <string name="Balance_Receive_Trustline">Trustline</string>
     <string name="Balance_Zcash_Transparent">Şeffaf</string>
     <string name="Balance_Zcash_UnshieldedBalanceDetected_Info_Title">Şeffaf ZEC Tespit Edildi</string>
-    <string name="Balance_Zcash_UnshieldedBalance_Info_Description">Şeffaf bir adreste tutulan ZEC bakiyeniz var. Unstoppable’da kullanmak için tam gizlilik amacıyla shield edilmesi gerekir.</string>
+    <string name="Balance_Zcash_UnshieldedBalance_Info_Description">Şeffaf bir adreste tutulan ZEC bakiyeniz var. Tariffia’da kullanmak için tam gizlilik amacıyla shield edilmesi gerekir.</string>
     <string name="Balance_Zcash_UnshieldedBalance_Info_Title">Şeffaf Tutar</string>
     <string name="Bip32RootKey">BIP32 Root Key</string>
     <string name="BirthdayDatePicker_Description">Cüzdanın oluşturulduğu yaklaşık tarihi seçin. Blok yüksekliği otomatik olarak hesaplanacaktır.</string>
@@ -1479,7 +1472,7 @@
     <string name="MoneroKeyType_Private">Monero Özel Anahtarları</string>
     <string name="MoneroKeyType_Public">Monero Genel Anahtarları</string>
     <string name="MoneroKeyType_View">Görüntüle</string>
-    <string name="MoneroNodeSettings_Description">Unstoppable uygulamasının cüzdan(lar)ı senkronize etmek için kullanacağı node’u seçin.</string>
+    <string name="MoneroNodeSettings_Description">Tariffia uygulamasının cüzdan(lar)ı senkronize etmek için kullanacağı node’u seçin.</string>
     <string name="MoneroNodeSettings_TrustedTitle">Node Tercihleri</string>
     <string name="PasskeyTerms_LimitedAccess">Sınırlı platformlar arası erişim</string>
     <string name="PasskeyTerms_Responsibility">Sorumluluk</string>
@@ -1522,13 +1515,11 @@
     <string name="Send_Address_SanctionCheck">Yaptırım Kontrolü</string>
     <string name="Send_UnexpectedError">Beklenmeyen hata</string>
     <string name="Send_UnexpectedError_Description">İşleminiz gönderilirken bir hata oluştu. Lütfen tekrar deneyin veya hata kodunu kopyalayıp destek ekibiyle iletişime geçin.</string>
-    <string name="SettingsBanner_GameDescription">Testleri geçin, görevleri tamamlayın ve token kazanın!</string>
     <string name="SettingsBanner_Premium">Premium</string>
     <string name="SettingsLaunchScreen_Auto">Oto</string>
     <string name="SettingsSecurity_HideSuspiciousTxs">Şüpheli İşlemleri Gizle</string>
     <string name="SettingsSecurity_HideSuspiciousTxs_Description">Kimlik avı saldırılarında sıkça kullanılan şüpheli küçük transferleri gizler.</string>
     <string name="SettingsSecurity_SortingBip69Short">Deterministik</string>
-    <string name="SettingsShare_Text">Be Unstoppable</string>
     <string name="SettingsSubscription_GetPremium">Premium’a Geç</string>
     <string name="SettingsTerms_LegalObligations">Fonlarınızın güvenliği, davranışlarınız ve bulunduğunuz yargı bölgesinde ve küresel olarak geçerli yasalara uyum tamamen sizin sorumluluğunuzdadır.</string>
     <string name="SettingsTerms_MonetizationDisclosure">Gelir modeli kapsamında, uygulama cüzdan içinde gerçekleştirilen DEX swap işlemlerinden küçük komisyonlar kazanır. Bu, bağımsız, open source ve VC fonlarından bağımsız kalmamıza yardımcı olur.</string>
@@ -1606,7 +1597,7 @@
     <string name="PasskeyTerms_DeviceDependency">Cihaz Bağımlılığı</string>
     <string name="PasskeyTerms_DeviceDependency_Description">Erişim için cihazınız gereklidir. Erişimi kaybetmek fonların kaybına yol açabilir.</string>
     <string name="PasskeyTerms_LimitedAccess_Description">Tüm cihazlarda veya platformlarda çalışmayabilir.</string>
-    <string name="PasskeyTerms_Responsibility_Description">Cihazınıza erişimden siz sorumlusunuz. Erişim kaybedilirse Unstoppable bu cüzdanı geri yükleyemez.</string>
+    <string name="PasskeyTerms_Responsibility_Description">Cihazınıza erişimden siz sorumlusunuz. Erişim kaybolursa Tariffia bu cüzdanı kurtaramaz.</string>
     <string name="Activate_Activating">Etkinleştiriliyor</string>
     <string name="Activate_AlreadyActive_Description">Token zaten etkin.</string>
     <string name="Activate_AlreadyActive_Title">Zaten Etkin</string>
@@ -1641,7 +1632,7 @@
     <string name="CreateWallet_PassphraseDescription">Parolalar cüzdanlar için ek bir güvenlik katmanı sağlar. Parolayla korunan bir cüzdanı geri yüklerken kullanıcı hem kurtarma ifadesini hem de parolayı sağlamalıdır.\n\nParolalar ayrıca kullanıcıların yalnızca farklı parolalar kullanarak aynı anımsatıcıdan (mnemonic) birden fazla bağımsız çoklu coin cüzdanı oluşturmasına olanak tanır.</string>
     <string name="Error_AssetNotEnabled">Alıcı %s\'yi etkinleştirmediği için onu alamaz.</string>
     <string name="Error_BrowserNotFound">Bu bağlantıyı açacak bir uygulama bulunamadı</string>
-    <string name="FeeSettings_FeeRate_Info">Bir işlem gönderirken bir ağ ücreti ödemeniz gerekir. Ağ ne kadar yoğunsa ücret o kadar yüksek olur.\n\nUnstoppable Wallet, işleminizin makul bir sürede onaylanmasına yardımcı olmak için optimal bir ücret önerir. Bu değeri artırabilir veya azaltabilirsiniz.\n\nÜcreti çok düşük ayarlamak, işleminizin uzun süre beklemede kalmasına ve hatta reddedilmesine neden olabilir. Daha hızlı onay için daha yüksek bir ücret kullanın.</string>
+    <string name="FeeSettings_FeeRate_Info">Bir işlem gönderirken bir ağ ücreti ödemeniz gerekir. Ağ ne kadar yoğunsa ücret o kadar yüksek olur.\n\nTariffia Wallet, işleminizin makul bir sürede onaylanmasına yardımcı olmak için optimal bir ücret önerir. Bu değeri artırabilir veya azaltabilirsiniz.\n\nÜcreti çok düşük ayarlamak, işleminizin uzun süre beklemede kalmasına ve hatta reddedilmesine neden olabilir. Daha hızlı onay için daha yüksek bir ücret kullanın.</string>
     <string name="Hud_Text_AddressCopied">Adres kopyalandı</string>
     <string name="Info_LockTime_NoDateDescription">Gönderen, bu fonları gösterilen tarihte sona erecek bir harcama kilidiyle gönderdi.\n\nEndişelenmeyin, alınan Bitcoin\'ler zaten sizindir, ancak kilit süresi sona erene kadar bunları Bitcoin ağında harcayamazsınız.</string>
     <string name="LargeNumberFormat">%1$s%2$s</string>
@@ -1677,7 +1668,7 @@
     <string name="MoneroNodeSettings_TrustedDescription">Güvenilir düğüm — cüzdan seçili düğüme güvenir ve ek doğrulama yapmadan onun verilerini kullanır.\n\nAçık → işlemler yayınlandığında anında Beklemede olarak görünür (daha hızlı senkronizasyon, ancak daha düşük gizlilik ve düğüme bağımlılık).\n\nKapalı → işlemler yalnızca ağdan onay alındıktan sonra gösterilir (daha yavaş, ancak daha güvenli ve daha gizli).</string>
     <string name="Premium_SubscriptionPeriod_AnnuallySave">%33 TASARRUF</string>
     <string name="Premium_TitleForDroid">Premium (F-Droid için Ücretsiz)</string>
-    <string name="Privacy_Information">Unstoppable, bakiyeleriniz veya cüzdan adresleriniz gibi kişisel verileri toplamaz. Uygulamayı geliştirmek için yalnızca anonim veriler kullanırız.</string>
+    <string name="Privacy_Information">Tariffia Wallet bakiyeleriniz veya cüzdan adresleriniz gibi kişisel verileri toplamaz. Anonim kullanım verileri yalnızca uygulamayı geliştirmek için kullanılır.</string>
     <string name="PrivateKeys_TronPrivateKeyDescription">Bu cüzdandaki TRON ağındaki varlıklar üzerinde tam kontrol sağlar.</string>
     <string name="PublicKeys_TronAddress_Description">TRON blok zincirinde varlık tutan cüzdanın salt okunur izlenmesine olanak tanır.</string>
     <string name="ROI_Period_N">Dönem %s</string>
@@ -1693,27 +1684,7 @@
     <string name="Send_Confirmation_Burn">Yakma</string>
     <string name="Send_Confirmation_Mint">Basım</string>
     <string name="Send_Fee_Info">Bu işlemin blok zincirinde işlenmesinin tahmini maliyeti.</string>
-    <string name="SettingsBanner_BePartOfTheFuture">Özel finansın geleceğinin bir parçası olun</string>
-    <string name="SettingsBanner_DonateByJoiningMovement">Unstoppable hareketine katılarak açık ve özel finansı savunmuş olursunuz:</string>
-    <string name="SettingsBanner_DonateBySupportingUnstoppableWalletYouHelpGrow">Unstoppable Wallet\'ı destekleyerek büyümemize, gelişmemize ve bağımsız kalmamıza yardımcı olursunuz.</string>
-    <string name="SettingsBanner_DonateEveryBitOfSupportMatters">Her türlü destek önemlidir.</string>
-    <string name="SettingsBanner_DonateExclusivelyOnFDroid">Yalnızca F-Droid\'de</string>
-    <string name="SettingsBanner_DonateFeatureAddress">Adres kara liste denetleyicisi</string>
-    <string name="SettingsBanner_DonateFeatureAdvanced">Gelişmiş varlık arama ve filtreler</string>
-    <string name="SettingsBanner_DonateFeatureFullAnalytics">Token\'lar hakkında tam analiz ve veriler</string>
-    <string name="SettingsBanner_DonateFeaturePriority">Desteğe öncelikli erişim</string>
-    <string name="SettingsBanner_DonateFeaturePrivacy">Gizlilik Modu ve Baskı (Duress) Modu</string>
-    <string name="SettingsBanner_DonateFeatureSignals">Güvenli ticaret için sinyaller</string>
-    <string name="SettingsBanner_DonateItHelpsWalletToBeAdFree">Bu, dünya çapında ona güvenen yüz binlerce kişi ve sizin için cüzdanın reklamsız, güvenli ve gerçekten bağımsız kalmasına yardımcı olur.</string>
-    <string name="SettingsBanner_DonateSubtitle">Özel finansın geleceğinin bir parçası olun</string>
-    <string name="SettingsBanner_DonateTitle">Unstoppable Hareketini Destekleyin</string>
-    <string name="SettingsBanner_DonateUnstoppableHasBeenFreeFromDayOne">“Unstoppable Wallet ilk günden beri ücretsiz, reklamsız ve açık kaynaklıdır — ve öyle kalacak.”</string>
-    <string name="SettingsBanner_DonateUnstoppableWalletGivesYouAdvancedFeatures">Unstoppable Wallet size gelişmiş özellikler sunar — abonelik yok, sınır yok:</string>
-    <string name="SettingsBanner_DonateUnstoppableWalletTeam">Unstoppable Wallet Ekibi</string>
-    <string name="SettingsBanner_DonateYourSupportIsCommitment">Desteğiniz yalnızca özellikleri açmakla ilgili değil — herkes için gizlilik, özgürlük ve açık erişime olan bir bağlılıktır.</string>
-    <string name="SettingsBanner_SupportTheProject">Projeyi Destekleyin!</string>
     <string name="SettingsSecurity_SyncModeBlockchair">Blockchair API</string>
-    <string name="Settings_Donate_DonationAddresses">Bağış Adresleri</string>
     <string name="Settings_Support">Destek</string>
     <string name="SwapDefense_PriceImpact_Forbidden_Description">Çok düşük likidite nedeniyle bu takas büyük bir kayba (-%s%%) yol açar.</string>
     <string name="SwapDefense_PriceImpact_Forbidden_Title">Elverişsiz fiyat!</string>
@@ -1938,13 +1909,6 @@
     <string name="Action_Clear">Temizle</string>
     <string name="Send_Utxos_Auto">Otomatik</string>
     <string name="TorPage_ConnectingProgress">Tor Bağlanıyor… %d%%</string>
-    <string name="UnstoppableLabs_SimplexSwapBot">SimpleX Swap Botu</string>
-    <string name="UnstoppableLabs_SimplexSwapBot_Description">SimpleX ile hızlı ve kolay kripto swap.</string>
-    <string name="UnstoppableLabs_TelegramSwapBot">Telegram Swap Botu</string>
-    <string name="UnstoppableLabs_TelegramSwapBot_Description">Telegram\'dan çıkmadan kripto swap yapın.</string>
-    <string name="UnstoppableLabs_SignalSwapBot">Signal Swap Botu</string>
-    <string name="UnstoppableLabs_SignalSwapBot_Description">Doğrudan Signal\'da gizli kripto swap.</string>
-    <string name="UnstoppableLabs_SwapWeb_Description">Doğrudan tarayıcınızdan kripto swap yapın.</string>
     <string name="NearSend_ReceiverRegistration">Alıcı kaydı</string>
     <string name="NearSend_StorageDepositTooHigh">Bu token, alıcıyı kaydetmek için alışılmadık derecede yüksek bir depozito istiyor ve dolandırıcılık olabilir.</string>
     <string name="NearSend_StorageDepositChanged">Alıcı kayıt ücreti değişti. Yeni ücreti kontrol edip tekrar gönderin.</string>

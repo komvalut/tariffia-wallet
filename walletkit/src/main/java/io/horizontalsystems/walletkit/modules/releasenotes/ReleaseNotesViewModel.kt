@@ -9,7 +9,6 @@ import io.horizontalsystems.walletkit.R
 import io.horizontalsystems.walletkit.core.INetworkManager
 import io.horizontalsystems.walletkit.core.managers.ConnectivityManager
 import io.horizontalsystems.walletkit.core.managers.ReleaseNotesManager
-import io.horizontalsystems.walletkit.core.providers.IAppConfigProvider
 import io.horizontalsystems.walletkit.core.providers.Translator
 import io.horizontalsystems.walletkit.entities.ViewState
 import io.horizontalsystems.walletkit.modules.markdown.MarkdownBlock
@@ -26,11 +25,7 @@ class ReleaseNotesViewModel(
     private val contentUrl: String,
     private val connectivityManager: ConnectivityManager,
     private val releaseNotesManager: ReleaseNotesManager,
-    appConfigProvider: IAppConfigProvider
 ) : ViewModel() {
-
-    val twitterUrl = appConfigProvider.appTwitterLink
-    val telegramUrl = appConfigProvider.appTelegramLink
 
     var markdownBlocks by mutableStateOf<List<MarkdownBlock>>(listOf())
         private set

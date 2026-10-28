@@ -742,20 +742,6 @@ class LocalStorageManager(
             }
         }
 
-    override var donateUsLastShownDate: Long?
-        get() {
-            val timestamp = preferences.getLong("donate_us_last_shown_time", 0L)
-            return when (timestamp) {
-                0L -> null
-                else -> timestamp
-            }
-        }
-        set(value) {
-            value?.let {
-                preferences.edit().putLong("donate_us_last_shown_time", it).apply()
-            }
-        }
-
     override var lastMigrationVersion: Int?
         get() = if (preferences.contains(LAST_MIGRATION_VERSION)) preferences.getInt(LAST_MIGRATION_VERSION, 0) else null
         set(value) {

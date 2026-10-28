@@ -86,7 +86,7 @@
     <string name="SyncError">Sync error. Try Again</string>
     <string name="Search_NotFounded">Not Founded</string>
 
-    <string name="FooterText" translatable="false">© Horizontal Systems %d</string>
+    <string name="FooterText" translatable="false">© Tariffia %d</string>
 
     <string name="Keyboard">Keyboard</string>
 
@@ -143,7 +143,7 @@
 
     <!--Rate App-->
     <string name="RateApp_Title_Rate_This_App">GM!</string>
-    <string name="RateApp_Description_Rate_This_App">Enjoying Unstoppable? Share feedback and ideas to take it further.</string>
+    <string name="RateApp_Description_Rate_This_App">Enjoying Tariffia Wallet? Your feedback helps us improve it.</string>
     <string name="RateApp_Button_RateIt">Rate It</string>
     <string name="RateApp_Button_NotNow">Not now</string>
 
@@ -168,7 +168,7 @@
     <string name="Restore_PrivateKeyHint">Enter EVM Private Key, TRON Private Key, BIP32 Root Key, Stellar Secret Key or Account Extended Private Key</string>
     <string name="Restore_PhraseHint">Enter Recovery Phrase</string>
     <string name="Restore_NonStandardRestore">Non-Standard Import</string>
-    <string name="Restore_NonStandard_Description">This page provides a special wallet restore mechanism to Unstoppable users who have a non-standard wallet. Such wallets might have been created in Unstoppable version 0.27 - 0.28 using a non-English recovery phrase and/or a special character in the wallet passphrase (i.e. diacritic symbol).\n\nIf you\'re an affected user then your wallet balance will be shown 0 after restoring such wallet in version 0.29 or above. This page will enable you to restore access to your non-standard wallet. Once restored you\'re recommended to create a new wallet (which will be standard compliant) and move funds there.</string>
+    <string name="Restore_NonStandard_Description">This page restores wallets created with a non-standard recovery phrase. Such wallets may use a non-English phrase or a passphrase containing special characters (for example, diacritics).\n\nIf your balance shows 0 after restoring such a wallet, this page can restore access. Once restored, create a new standard wallet and move your funds there.</string>
 
     <string name="Restore_Bip_Recommended">(recommended)</string>
 
@@ -469,7 +469,7 @@
 
     <string name="Balance_Zcash_UnshieldedBalanceDetected_Info_Title">Detected Transparent ZEC</string>
     <string name="Balance_Zcash_UnshieldedBalance_Info_Title">Transparent amount</string>
-    <string name="Balance_Zcash_UnshieldedBalance_Info_Description">You have a ZEC balance held in a transparent address. To use it in Unstoppable, it must be shielded for full privacy.</string>
+    <string name="Balance_Zcash_UnshieldedBalance_Info_Description">You have a ZEC balance held in a transparent address. To use it in Tariffia Wallet, it must be shielded for full privacy.</string>
     <string name="Balance_Zcash_UnshieldedBalance_Shield" translatable="false">Shield</string>
     <string name="Balance_Zcash_Shielded" translatable="false">Shielded</string>
     <string name="Balance_Zcash_MigrationRequired">Migration Required</string>
@@ -678,7 +678,7 @@
     <string name="FeeSettings_FeeRate">Fee Rate (SAT/BYTE)</string>
     <string name="FeeSettings_FeeRate_RecommendedInfo">Here is the recommended value for hitting the next 2 blocks</string>
     <string name="FeeSettings_FeeRate_Info">When sending a transaction, you must pay a network fee. The busier the network, the higher the fee.
-        \n\nUnstoppable Wallet suggests an optimal fee to help your transaction confirm in a reasonable time. You can increase or decrease this value.
+        \n\nTariffia Wallet suggests an optimal fee to help your transaction confirm in a reasonable time. You can increase or decrease this value.
         \n\nSetting the fee too low may cause your transaction to stay pending for a long time or even be rejected. For faster confirmation, use a higher fee.</string>
 
 
@@ -981,7 +981,7 @@
     <string name="PasskeyTerms_LimitedAccess">Limited cross-platform access</string>
     <string name="PasskeyTerms_LimitedAccess_Description">May not work on all devices or platforms.</string>
     <string name="PasskeyTerms_Responsibility">Responsibility</string>
-    <string name="PasskeyTerms_Responsibility_Description">You are responsible for access to your device. Unstoppable cannot recover this wallet if access is lost.</string>
+    <string name="PasskeyTerms_Responsibility_Description">You are responsible for access to your device. Tariffia cannot recover this wallet if access is lost.</string>
 
     <!-- Swap Confirmation -->
 
@@ -1142,10 +1142,10 @@
     <string name="StatusInfo_Processing">Processing</string>
     <string name="StatusInfo_Confirmed">Completed</string>
     <string name="StatusInfo_Failed">Failed</string>
-    <string name="StatusInfo_PendingDescription">The transaction has not been confirmed on the blockchain yet. Transactions sent with a recommended or higher fee setting are generally processed within a few minutes. Transactions sent with a low fee may remain pending for a few hours or even days, and can even be rejected. Note that status of an individual transaction in Unstoppable wallet interface typically updated with a short delay.</string>
+    <string name="StatusInfo_PendingDescription">The transaction has not been confirmed on the blockchain yet. Transactions sent with a recommended or higher fee setting are generally processed within a few minutes. Transactions sent with a low fee may remain pending for a few hours or even days, and can even be rejected. Note that status of an individual transaction in Tariffia wallet interface typically updated with a short delay.</string>
     <string name="StatusInfo_ProcessingDescription">The transaction has been already included in the blockchain but has not reached permanent finality. At this point, it\'s safe to consider the transaction as completed for smaller payments. For larger payments, it\'s recommended to wait until the transaction status changes to completed.</string>
     <string name="StatusInfo_ConfirmedDescription">Transaction is completed and considered permanent and irreversible.</string>
-    <string name="StatusInfo_FailedDescription">The transaction did not get processed and no value transfer took place. Depending on the fail reason, some failed transactions may consume transaction fees. Transactions that were replaced or cancelled by another transaction do not consume transaction fees and will also appear sa failed. The Unstoppable app is unable to show the reason for failed transactions, but users are able to look it up themselves on a public block explorer i.e. etherscan.io.</string>
+    <string name="StatusInfo_FailedDescription">The transaction did not get processed and no value transfer took place. Depending on the fail reason, some failed transactions may consume transaction fees. Transactions that were replaced or cancelled by another transaction do not consume transaction fees and will also appear sa failed. The Tariffia app is unable to show the reason for failed transactions, but users are able to look it up themselves on a public block explorer i.e. etherscan.io.</string>
 
     <!-- Transaction Info Options -->
 
@@ -1202,7 +1202,7 @@
     <string name="SettingsCurrency_Title">Base Currency</string>
     <string name="SettingsCurrency_Other">OTHER</string>
     <string name="SettingsCurrency_DisclaimerTitle">Disclaimer</string>
-    <string name="SettingsCurrency_DisclaimerText">The exchange rate data is provided by a third party service - Coingecko.com.\n\nThe Unstoppable wallet app doesn\'t guarantee these values are always correct and matches market data. The chance for inconsistency is higher if you select any base currency other than %s.</string>
+    <string name="SettingsCurrency_DisclaimerText">The exchange rate data is provided by a third party service - Coingecko.com.\n\nThe Tariffia wallet app doesn\'t guarantee these values are always correct and matches market data. The chance for inconsistency is higher if you select any base currency other than %s.</string>
 
     <!--Settings-->
 
@@ -1214,9 +1214,9 @@
     <string name="Settings_Terms">Security Terms</string>
     <string name="Settings_Privacy">Privacy</string>
     <string name="Settings_ShareThisWallet">Tell Friends</string>
-    <string name="Settings_InfoTitleWithVersion" translatable="false">Unstoppable %s</string>
+    <string name="Settings_InfoTitleWithVersion" translatable="false">Tariffia %s</string>
     <string name="Settings_InfoSubtitle" translatable="false">decentralized app</string>
-    <string name="Settings_CompanyName" translatable="false">horizontal systems</string>
+    <string name="Settings_CompanyName" translatable="false">Tariffia</string>
     <string name="Settings_Faq" translatable="false">FAQ</string>
     <string name="Settings_AppStatus">App Status</string>
     <string name="Settings_WalletConnect" translatable="false">WalletConnect</string>
@@ -1229,15 +1229,8 @@
     <string name="Settings_AutoLock_Description">Automatically locks the app after a selected time.</string>
     <string name="Settings_Telegram" translatable="false">Telegram</string>
     <string name="Settings_Twitter" translatable="false">Twitter</string>
-    <string name="Settings_JoinUnstoppables">Join Unstoppables</string>
     <string name="Settings_Support">Support</string>
     <string name="Settings_VipSupport">Priority Support</string>
-
-    <string name="Settings_Donate">Donate</string>
-    <string name="Settings_DonateToken">Donate %s</string>
-    <string name="Settings_Donate_Addresses">Addresses</string>
-    <string name="Settings_Donate_DonationAddresses">Donation Addresses</string>
-
     <string name="SettingsSecurity_AutoLock_Immediate">Immediate</string>
     <string name="SettingsSecurity_AutoLock_After1Min">1 minute</string>
     <string name="SettingsSecurity_AutoLock_After5Min">5 minutes</string>
@@ -1251,30 +1244,6 @@
     <string name="SettingsBanner_Premium">Premium</string>
     <string name="SettingsBanner_PremiumBannerDescription">Upgrade your experience with Premium features!</string>
     <string name="SettingsBanner_PremiumTryFee">Try for FREE</string>
-    <string name="SettingsBanner_Title" translatable="false">MiniApp</string>
-    <string name="SettingsBanner_GameDescription">Pass tests, complete tasks, and earn tokens!</string>
-    <string name="SettingsBanner_BePartOfTheFuture">Be part of the future of private finance</string>
-    <string name="SettingsBanner_SupportTheProject">Support the Project!</string>
-
-    <!--Why Donate Page-->
-    <string name="SettingsBanner_DonateTitle">Support the Unstoppable Movement</string>
-    <string name="SettingsBanner_DonateSubtitle">Be part of the future of private finance</string>
-    <string name="SettingsBanner_DonateUnstoppableHasBeenFreeFromDayOne">“Unstoppable Wallet has been free, ad-free, and open-source from day one — and it will stay that way.”</string>
-    <string name="SettingsBanner_DonateByJoiningMovement">By joining the Unstoppable movement, you stand for open and private finance:</string>
-    <string name="SettingsBanner_DonateUnstoppableWalletTeam">The Unstoppable Wallet Team</string>
-    <string name="SettingsBanner_DonateYourSupportIsCommitment">Your support isn’t just about unlocking features — it’s a commitment to privacy, freedom, and open access for all.</string>
-    <string name="SettingsBanner_DonateItHelpsWalletToBeAdFree">It helps keep the wallet ad-free, secure, and truly independent — for you and for hundreds of thousands who rely on it worldwide.</string>
-    <string name="SettingsBanner_DonateExclusivelyOnFDroid">Exclusively on F-Droid</string>
-    <string name="SettingsBanner_DonateUnstoppableWalletGivesYouAdvancedFeatures">Unstoppable Wallet gives you advanced features — with no subscription, no limits:</string>
-    <string name="SettingsBanner_DonateFeatureFullAnalytics">Full analytics and data about tokens</string>
-    <string name="SettingsBanner_DonateFeaturePrivacy">Privacy Mode &amp; Duress Mode</string>
-    <string name="SettingsBanner_DonateFeatureSignals">Signals for confident trading</string>
-    <string name="SettingsBanner_DonateFeatureAddress">Address blacklist checker</string>
-    <string name="SettingsBanner_DonateFeatureAdvanced">Advanced asset search and filters</string>
-    <string name="SettingsBanner_DonateFeaturePriority">Priority access to support</string>
-    <string name="SettingsBanner_DonateEveryBitOfSupportMatters">Every bit of support matters.</string>
-    <string name="SettingsBanner_DonateBySupportingUnstoppableWalletYouHelpGrow">By supporting Unstoppable Wallet, you help us grow, improve, and stay independent.</string>
-
     <!--Setting Subscription -->
     <string name="SettingsSubscription_Active">Active</string>
     <string name="SettingsSubscription_GetPremium">Get Premium</string>
@@ -1397,7 +1366,7 @@
 
     <!-- Privacy  -->
 
-    <string name="Privacy_Information">Unstoppable doesn\'t collect personal data like your balances or wallet addresses. We only use anonymous data to improve the app.</string>
+    <string name="Privacy_Information">Tariffia Wallet does not collect personal data such as your balances or wallet addresses. Anonymous usage data is used only to improve the app.</string>
     <string name="ShareUiData">Share UI data</string>
     <string name="ShareUiDataDescription">This setting lets you turn off analytics and keep your activity fully private.</string>
 
@@ -1439,11 +1408,11 @@
         \n\nOn → transactions instantly appear as Pending when broadcast (faster sync, but lower privacy and reliance on the node).
         \n\nOff → transactions are shown only after confirmations from the network (slower, but safer and more private).</string>
     <string name="MoneroNodeSettings_Trusted">Trusted</string>
-    <string name="MoneroNodeSettings_Description">Choose the node Unstoppable app should use for synchronizing wallet(s).</string>
+    <string name="MoneroNodeSettings_Description">Choose the node Tariffia app should use for synchronizing wallet(s).</string>
     <string name="MoneroNodeSettings_AutoSelectDescription">Automatically use the fastest node</string>
-    <string name="ZanoNodeSettings_Description">Choose the node Unstoppable app should use for synchronizing wallet(s).</string>
+    <string name="ZanoNodeSettings_Description">Choose the node Tariffia app should use for synchronizing wallet(s).</string>
     <!--Zcash Endpoint Settings-->
-    <string name="ZcashEndpointSettings_Description">Choose the lightwallet server Unstoppable app should use for synchronizing Zcash wallet(s).</string>
+    <string name="ZcashEndpointSettings_Description">Choose the lightwallet server Tariffia app should use for synchronizing Zcash wallet(s).</string>
     <string name="ZcashEndpointSettings_AutoSelectDescription">Automatically use the fastest server</string>
     <string name="AddZcashEndpoint_AddEndpoint">Add Endpoint</string>
     <string name="AddZcashEndpoint_EndpointUrl">Endpoint URL</string>
@@ -1451,7 +1420,7 @@
     <string name="AddZcashEndpoint_Error_InvalidUrl">Entered URL is invalid. A valid URL must use the https scheme</string>
     <!--Btc Blockchain Settings -->
     <string name="BtcBlockchainSettings_RestoreSourceChangeWarning">After changing source the wallet will have to resync itself.</string>
-    <string name="BtcBlockchainSettings_RestoreSourceSettingsDescription">Choose the source Unstoppable app should use for synchronizing wallet(s).</string>
+    <string name="BtcBlockchainSettings_RestoreSourceSettingsDescription">Choose the source Tariffia app should use for synchronizing wallet(s).</string>
     <string name="BtcBlockchainSettings_InputsOutputs">Inputs/Outputs</string>
 
     <!--Info screen-->
@@ -1465,7 +1434,7 @@
     <string name="SettingsSecurity_DisablePin">Disable Passcode</string>
     <string name="SettingsSecurity_EditPin">Edit Passcode</string>
     <string name="SettingsSecurity_ManageKeys">Manage Wallets</string>
-    <string name="SettingsSecurity_AppRestartWarning">This action will restart Unstoppable Wallet.</string>
+    <string name="SettingsSecurity_AppRestartWarning">This action will restart Tariffia Wallet.</string>
     <string name="SettingsSecurity_TorConnectionDescription">Fully anonymize your internet while using this app. Note, in some cases WalletConnect feature for DeFi apps may be very slow or not work at all.</string>
     <string name="SettingsSecurity_SortingShuffle">Shuffle</string>
     <string name="SettingsSecurity_SortingShuffleDescription">Random Indexing</string>
@@ -1517,7 +1486,7 @@
     <!--Setting_Tell Friends-->
 
     <string name="SettingsShare_Title">Share</string>
-    <string name="SettingsShare_Text">Be Unstoppable</string>
+    <string name="SettingsShare_Text" translatable="false">Tariffia Wallet — Your Independent Gateway to Crypto</string>
 
     <!--Setting_Contact-->
 
@@ -1567,13 +1536,13 @@
 \n- BIP-84 (recommended)
 \n- BIP-86 (newest)
 \n
-\nWhile Unstoppable wallet supports all 4 of them it recommends to use a %2$s wallet operating in BIP-84 format. The wallets operating in this format get to pay lowest fees when sending %3$s transactions.</string>
+\nWhile Tariffia wallet supports all 4 of them it recommends to use a %2$s wallet operating in BIP-84 format. The wallets operating in this format get to pay lowest fees when sending %3$s transactions.</string>
     <string name="ManageCoins_BchTypeDescription">There are 2 address formats Bitcoin Cash wallets can use to receive incoming payments:
 \n
 \n- TYPE0 (older)
 \n- TYPE145 (newer)
 \n
-\nWhile Unstoppable wallet supports both of them it recommends to use a Bitcoin Cash wallet operating in TYPE145 format.</string>
+\nWhile Tariffia wallet supports both of them it recommends to use a Bitcoin Cash wallet operating in TYPE145 format.</string>
     <string name="ManageCoins_ContractAddress">CONTRACT ADDRESS</string>
 
     <!-- Experimental Feature -->
@@ -1840,7 +1809,7 @@
     <string name="PrivateKeys_Bip32RootKeyDescription">The master private key of the wallet. Grants full control over all derived accounts and assets.</string>
     <string name="PrivateKeys_AccountExtendedPrivateKey">Account Extended Private Key</string>
     <string name="PrivateKeys_AccountExtendedPrivateKeyDescription">Grants full control over Bitcoin and other UTXO-based assets (e.g., Litecoin, Bitcoin Cash, Dash) within this wallet.</string>
-    <string name="PrivateKeys_NeverShareWarning">Never share this key with anyone. Unstoppable Wallet support team will never ask for it.</string>
+    <string name="PrivateKeys_NeverShareWarning">Never share this key with anyone. No legitimate support representative will ever ask for it.</string>
     <string name="PrivateKeys_MoneroPrivateKey">Monero Private Keys</string>
     <string name="PrivateKeys_MoneroPrivateKeyDescription">Grants full control over Monero (XMR) assets within this wallet, including the ability to spend funds.</string>
     <string name="MoneroKeyType">Type</string>
@@ -1906,12 +1875,6 @@
 
     <string name="CoinSettings_BitcoinCashCoinType_Type0_Description">Common before 2018</string>
     <string name="CoinSettings_BitcoinCashCoinType_Type145_Description">Common after 2018</string>
-
-    <!-- Nym VPN -->
-
-    <string name="NymVpn_GetNymVpn" translatable="false">Get Nym VPN</string>
-    <string name="NymVpn_Description" translatable="false">Unstoppable recommends NYM VPN for increased privacy.</string>
-
     <!-- Tor -->
 
     <string name="Tor_Title" translatable="false">Tor</string>
@@ -2011,7 +1974,7 @@
     <string name="CoinPage_FastLength">Fast Length</string>
     <string name="CoinPage_SlowLength">Slow Length</string>
     <string name="CoinPage_SignalSmoothing">Signal Smoothing</string>
-    <string name="CoinPage_IndicatorsAlertText">Indicators available only for Unstoppable Wallet premium users.</string>
+    <string name="CoinPage_IndicatorsAlertText">Indicators are available only to Tariffia Wallet Premium users.</string>
     <string name="CoinPage_AiGeneratedText">This is an AI-generated description based on the provided reference material for the given cryptocurrency. It may contain errors.</string>
     <string name="CoinPage_MarketsLabel_Verified">VERIFIED</string>
     <string name="CoinPage_MarketsVerifiedMenu_Verified">Verified</string>
@@ -2200,8 +2163,6 @@
     <string name="BalanceSyncError_ErrorText">Failed to fetch data from the current source. Please try again later.</string>
 
     <!--Release notes-->
-
-    <string name="ReleaseNotes_JoinUnstoppables">JOIN UNSTOPPABLES</string>
     <string name="Hud_Text_LearnMore">Coming Soon</string>
     <string name="Hud_Text_Activate">Activate</string>
 
@@ -2215,8 +2176,8 @@
     <string name="Alert_KeysInvalidatedTitle">Android Keystore Error</string>
     <string name="Alert_KeysInvalidatedDescription">The encrypted data holding your wallet was recently invalidated because your Android lock screen was changed</string>
     <string name="Alert_TitleWarning">Warning</string>
-    <string name="Alert_CustomKeyboardIsUsed">It looks like your device uses a non-default keyboard. Unstoppable recommends selecting default keyboard on your device as third party keyboards can potentially collect and expose users\' input data. \n\nClick \'Skip\' button if you would like to keep using your preferred keyboard.</string>
-    <string name="Alert_DeviceIsRootedWarning">The Unstoppable team recommends running app only on non-rooted (not jailbroken) phones.\n\nPlease note when you use a rooted device the app can no longer guarantee the safety of your cryptocurrency from malicious software.</string>
+    <string name="Alert_CustomKeyboardIsUsed">It looks like your device uses a non-default keyboard. Tariffia recommends selecting the default keyboard because third-party keyboards can potentially collect and expose what you type.\n\nTap \'Skip\' if you want to keep using your preferred keyboard.</string>
+    <string name="Alert_DeviceIsRootedWarning">Tariffia recommends running the app only on non-rooted (not jailbroken) phones.\n\nOn a rooted device, the app can no longer guarantee the safety of your cryptocurrency from malicious software.</string>
 
     <!--OS Pin-->
 
@@ -2285,15 +2246,6 @@
     <string name="Hud_Text_ChangeWallet">Change Wallet</string>
     <string name="WatchWallet_Typed">%s Watch Wallet</string>
     <string name="TorPage_ConnectingProgress">Connecting Tor… %d%%</string>
-    <string name="UnstoppableLabs_Title" translatable="false">Unstoppable Labs</string>
-    <string name="UnstoppableLabs_SwapWeb" translatable="false">Swap.unstoppable.money</string>
-    <string name="UnstoppableLabs_SimplexSwapBot">SimpleX Swap Bot</string>
-    <string name="UnstoppableLabs_SimplexSwapBot_Description">Fast and easy crypto swaps with SimpleX.</string>
-    <string name="UnstoppableLabs_TelegramSwapBot">Telegram Swap Bot</string>
-    <string name="UnstoppableLabs_TelegramSwapBot_Description">Swap crypto without leaving Telegram.</string>
-    <string name="UnstoppableLabs_SignalSwapBot">Signal Swap Bot</string>
-    <string name="UnstoppableLabs_SignalSwapBot_Description">Private crypto swaps right in Signal.</string>
-    <string name="UnstoppableLabs_SwapWeb_Description">Swap crypto directly from your browser.</string>
     <string name="NearSend_ReceiverRegistration">Receiver registration</string>
     <string name="NearSend_StorageDepositTooHigh">This token asks for an unusually large deposit to register the receiver and may be a scam.</string>
     <string name="NearSend_StorageDepositChanged">The receiver registration fee has changed. Check the updated fee and send again.</string>

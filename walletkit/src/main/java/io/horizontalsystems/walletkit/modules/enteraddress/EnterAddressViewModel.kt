@@ -11,7 +11,6 @@ import io.horizontalsystems.walletkit.core.address.AddressCheckResult
 import io.horizontalsystems.walletkit.core.address.AddressCheckType
 import io.horizontalsystems.walletkit.core.chain.ChainRegistry
 import io.horizontalsystems.walletkit.core.factories.AddressValidatorFactory
-import io.horizontalsystems.walletkit.core.managers.ActionCompletedDelegate
 import io.horizontalsystems.walletkit.core.managers.RecentAddressManager
 import io.horizontalsystems.walletkit.core.utils.AddressUriParser
 import io.horizontalsystems.walletkit.entities.Address
@@ -286,7 +285,6 @@ class EnterAddressViewModel(
                 RecentAddressManager(
                     App.accountManager,
                     App.appDatabase.recentAddressDao(),
-                    ActionCompletedDelegate
                 )
             val addressValidator = AddressValidatorFactory.get(token, allowOwnAddress, zcashTransparentOnly)
             val addressCheckManager = AddressCheckManager(

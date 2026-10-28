@@ -13,7 +13,6 @@ import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -37,7 +36,6 @@ import io.horizontalsystems.walletkit.ui.compose.components.TextImportantWarning
 import io.horizontalsystems.walletkit.ui.compose.components.VSpacer
 import io.horizontalsystems.walletkit.ui.compose.components.body_leah
 import io.horizontalsystems.walletkit.ui.compose.components.cell.SectionUniversalLawrence
-import io.horizontalsystems.walletkit.ui.helpers.LinkHelper
 import io.horizontalsystems.walletkit.uiv3.components.HSScaffold
 import kotlinx.serialization.Serializable
 
@@ -71,7 +69,6 @@ fun PrivacyScreen(
 ) {
     val viewModel = viewModel<PrivacyViewModel>(factory = PrivacyViewModel.Factory())
     val uiState = viewModel.uiState
-    val context = LocalContext.current
 
     if (torViewModel.restartApp) {
         LaunchedEffect(Unit) {
@@ -117,18 +114,6 @@ fun PrivacyScreen(
             InfoText(
                 text = stringResource(R.string.SettingsSecurity_TorConnectionDescription),
             )
-
-            VSpacer(12.dp)
-            SectionUniversalLawrence {
-                NymVpnBlock(
-                    onClick = {
-                        LinkHelper.openLinkInAppBrowser(context, viewModel.nymVpnLink)
-                    }
-                )
-            }
-            InfoText(
-                text = stringResource(R.string.NymVpn_Description),
-            )
         }
     }
 }
@@ -161,37 +146,5 @@ fun ShareUiDataBlock(
             )
         },
         onClick = { onCheckedChange.invoke(!checked) }
-    )
-}
-
-@Composable
-fun NymVpnBlock(
-    onClick: () -> Unit,
-) {
-    SecurityCenterCell(
-        start = {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                painter = painterResource(R.drawable.icon_nym_vpn_24),
-                tint = ComposeAppTheme.colors.grey,
-                contentDescription = null,
-            )
-        },
-        center = {
-            body_leah(
-                text = stringResource(R.string.NymVpn_GetNymVpn),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
-        end = {
-            Icon(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(R.drawable.ic_arrow_right),
-                tint = ComposeAppTheme.colors.grey,
-                contentDescription = null,
-            )
-        },
-        onClick = onClick
     )
 }

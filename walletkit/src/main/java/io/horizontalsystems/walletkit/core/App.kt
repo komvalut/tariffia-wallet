@@ -21,7 +21,6 @@ import io.horizontalsystems.walletkit.core.factories.AccountFactory
 import io.horizontalsystems.walletkit.core.factories.AdapterFactory
 import io.horizontalsystems.walletkit.core.managers.AccountCleaner
 import io.horizontalsystems.walletkit.core.managers.AccountManager
-import io.horizontalsystems.walletkit.core.managers.ActionCompletedDelegate
 import io.horizontalsystems.walletkit.core.managers.AdapterManager
 import io.horizontalsystems.walletkit.core.managers.AppVersionManager
 import io.horizontalsystems.walletkit.core.managers.BackupManager
@@ -31,7 +30,6 @@ import io.horizontalsystems.walletkit.core.managers.BtcBlockchainManager
 import io.horizontalsystems.walletkit.core.managers.CoinManager
 import io.horizontalsystems.walletkit.core.managers.ConnectivityManager
 import io.horizontalsystems.walletkit.core.managers.CurrencyManager
-import io.horizontalsystems.walletkit.core.managers.DonationShowManager
 import io.horizontalsystems.walletkit.core.managers.EvmBlockchainManager
 import io.horizontalsystems.walletkit.core.managers.EvmLabelManager
 import io.horizontalsystems.walletkit.core.managers.EvmSyncSourceManager
@@ -184,7 +182,6 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
         lateinit var marketKit: MarketKitWrapper
         lateinit var priceManager: PriceManager
         lateinit var releaseNotesManager: ReleaseNotesManager
-        lateinit var donationShowManager: DonationShowManager
         lateinit var restoreSettingsManager: RestoreSettingsManager
         lateinit var evmSyncSourceManager: EvmSyncSourceManager
         lateinit var evmBlockchainManager: EvmBlockchainManager
@@ -338,7 +335,7 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
 
         scannedTransactionStorage = ScannedTransactionStorage(appDatabase.scannedTransactionDao())
         contactsRepository = ContactsRepository(marketKit)
-        recentAddressManager = RecentAddressManager(accountManager, appDatabase.recentAddressDao(), ActionCompletedDelegate)
+        recentAddressManager = RecentAddressManager(accountManager, appDatabase.recentAddressDao())
         swapRecordManager = SwapRecordManager(accountManager, appDatabase.swapRecordDao())
         swapSyncService = SwapSyncService(swapRecordManager, appConfigProvider)
         swapProviderInfoManager = SwapProviderInfoManager(appConfigProvider, localStorage)
@@ -427,7 +424,6 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
         )
 
         releaseNotesManager = ReleaseNotesManager(systemInfoManager, localStorage, appConfigProvider)
-        donationShowManager = DonationShowManager(localStorage)
 
         setAppTheme()
 

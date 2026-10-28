@@ -85,7 +85,6 @@ fun SendV2Screen(
 ) {
     val uiState = viewModel.uiState
     val wallet = uiState.wallet
-    val title = (purpose as? SendV2Page.Purpose.Donation)?.title
     val chainPlugin = remember { ChainRegistry[wallet.token.blockchainType] }
     val hasSettings = remember { chainPlugin?.sendSettingsPage(wallet, null) != null }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -103,7 +102,7 @@ fun SendV2Screen(
     }
 
     HSScaffold(
-        title = title ?: stringResource(R.string.Send_Title, wallet.coin.code),
+        title = stringResource(R.string.Send_Title, wallet.coin.code),
         onBack = { navigation.removeLastOrNull() },
         menuItems = if (hasSettings) {
             listOf(
@@ -124,7 +123,7 @@ fun SendV2Screen(
             when (it) {
                 SendTab.Standard -> true
                 SendTab.Private -> uiState.privateSendSupported
-                SendTab.CrossPay -> purpose is SendV2Page.Purpose.Transfer
+                SendTab.CrossPay -> true
             }
         }
 
@@ -273,18 +272,14 @@ private fun ColumnScope.SendFormTab(
                         amountExceedsBalance = step is SendStep.Error && step.error == SwapError.InsufficientBalanceFrom,
                         onTokenClick = null
                     )
-                    if (!uiState.hideAddress) {
-                        AddressRow(
-                            address = uiState.address,
-                            contactName = uiState.contactName,
-                            onClick = openAddress,
-                            risky = uiState.riskyAddress
-                        )
-                    }
+                    AddressRow(
+                        address = uiState.address,
+                        contactName = uiState.contactName,
+                        onClick = openAddress,
+                        risky = uiState.riskyAddress
+                    )
                 }
-                if (!uiState.hideAddress) {
-                    SectionArrow()
-                }
+                SectionArrow()
             }
             // Neither the chain's own field nor a memo can travel with a private send
             // deposit (its memo slot belongs to the provider's identifier), so they

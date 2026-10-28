@@ -1,97 +1,35 @@
-# Unstoppable Wallet Release
+# Tariffia Wallet Release
 
-This document describes the release process for `Unstoppable` app.
+This document describes the release process for Tariffia Wallet. The project is in pre-release development and is not yet approved for mainnet distribution.
 
-### 1. Prepare dependent libraries
+### 1. Prepare the release
 
-#### 1.1. Update Checkpoints
+- Confirm the version code and version name in `app/build.gradle.kts`.
+- Review the dependency and third-party notice changes.
+- Run the available tests, lint, and a clean release build.
+- Verify that Tor is still opt-in, disabled by default, and fail-closed.
 
-* `BitcoinKit`
-* `BitcoinCashKit`
-* `LitecoinKit`
-* `DashKit`
+### 2. Configure secrets and signing
 
-#### 1.2. Update coins dump in `MarketKit`
+- Provide the required values through the environment variables documented in [README](README.md).
+- Use a protected release keystore. The tracked `app/test.keystore` is for debug builds only.
+- Do not pass keystore passwords as command-line arguments or commit them to the repository.
 
-Initial coins dump `json` file should be updated to latest state of backend.
+### 3. Deploy Digital Asset Links
 
-### 2. Update URL for Guides and FAQ
+Publish the release and development asset-link files at the configured hosts:
 
-* In case there are changes in Guides and FAQ repositories, update their URL's by new tags.
+- `assetlinks/assetlinks.json` → `https://tariffia.app/.well-known/assetlinks.json`
+- `assetlinks/assetlinks-dev.json` → `https://dev.tariffia.app/.well-known/assetlinks.json`
 
-### 3. Update README file
+Replace the empty `sha256_cert_fingerprints` arrays with the release and development signing-certificate fingerprints. Both files must be served as `application/json` over HTTPS. Do not enable App Links or passkeys until DNS, HTTPS, and the fingerprints have been verified.
 
-* Check and update 'Supported Android Versions' section if needed
+### 4. Build and verify
 
-### 4. Transfer Code to Production Branch
+Build the signed APK, record its checksum, and verify that the artifact matches the tagged source. Distribution channels such as Google Play and F-Droid require separate review and configuration.
 
-Open a pull request from `develop` into `master` and merge it.
+### 5. Publish
 
-### 5. Prepare `develop` for the Next Version
-
-On `develop`:
-
-* Increment version code.
-* Increase version name.
-
-Hotfixes that land on `master` after the release are merged back into `develop` so the two branches do not diverge.
-
-### 6. Set repository tag
-
-* Check out `master` at the merge commit from step 4.
-* Create the tag for the released version.
-
-### 7. Build apk file
-
-#### 7.1 Build apk file via Docker.
-
-You will find a bash script located at `[Wallet-Project-Path]/docker/build-apk.sh`
-1. Create and go to temporary folder for APK output
-2. Run command:
-```bash
-./build-apk.sh [REPO-TAG] [FULL_PATH_TO_KEYSTORE]
-```
-Where:<br>
-REPO-TAG: Repository tag from which you want to build APK<br>
-FULL_PATH_TO_KEYSTORE: Full Location of the keystore file<br>
-
-The script prompts for the keystore password interactively (it must not be
-passed as an argument, so it never ends up in shell history).
-
-Example:
-```bash
-./build-apk.sh 0.18.0 ~/Documents/Keystore/Apk_HorSys/horsys
-```
-
-#### 7.2 Verify apk file is reproducible from source code
-
-Run command:
-
-```
-./test.sh [APK-FILE-NAME]
-```
-Where:<br>
-`test.sh` bash script located at `[Wallet-Project-Path]/docker`<br>
-APK-FILE-NAME: Name of the apk file<br>
-
-### 8. Deploy Asset Links
-
-Deploy the Digital Asset Links files so App Links and passkey verification work correctly.
-
-* `assetlinks.json` → `https://unstoppable.money/.well-known/assetlinks.json`
-* `assetlinks-dev.json` → `https://dev.unstoppable.money/.well-known/assetlinks.json`
-
-`${appLinksHost}` is defined in `app/build.gradle.kts`. Both files must be served with `Content-Type: application/json` and be publicly accessible over HTTPS.
-
-### 9. Upload Build to Google Play
-
-* Upload apk to `Google Play Console`.
-
-### 10. Create Release in GitHub Repository
-
-* Create new `Release`, add changelog and upload apk file. Make note in changelog if the 'Supported Android Versions' was changed
-* Compute the sha256 and md5 checksums of the apk file and attach them as separate files, named unstoppable-wallet-[version].apk.sha256 and unstoppable-wallet-[version].apk.md5 respectively, under the 'Assets' section.
-
-### 11. Make sure Unstoppable Wallet is 'Reproducible' in [WalletScrutiny](https://walletscrutiny.com/android/io.horizontalsystems.bankwallet/)
-
-* After apk is uploaded to Google Play make sure that new version of Unstoppable Wallet is 'Reproducible' in WalletScrutiny.
+- Create a GitHub release with the changelog and APK artifacts.
+- Attach SHA-256 and MD5 checksums using Tariffia-specific filenames.
+- Do not ship a build containing placeholder links, empty service credentials, or a test signing key.

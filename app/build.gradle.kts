@@ -35,17 +35,18 @@ android {
 
         vectorDrawables.useSupportLibrary = true
 
-        buildConfigFieldString("COMPANY_WEB_PAGE_LINK", "https://horizontalsystems.io")
-        buildConfigFieldString("APP_WEB_PAGE_LINK", "https://unstoppable.money")
-        buildConfigFieldString("ANALYTICS_LINK", "https://unstoppable.money/analytics")
-        buildConfigFieldString("APP_GITHUB_LINK", "https://github.com/horizontalsystems/unstoppable-wallet-android")
-        buildConfigFieldString("APP_TWITTER_LINK", "https://twitter.com/UnstoppableByHS")
-        buildConfigFieldString("APP_TELEGRAM_LINK", "https://t.me/unstoppable_announcements")
-        buildConfigFieldString("REPORT_EMAIL", "support.unstoppable@protonmail.com")
-        buildConfigFieldString("RELEASE_NOTES_URL", "https://api.github.com/repos/horizontalsystems/unstoppable-wallet-android/releases/tags/")
-        buildConfigFieldString("WALLET_CONNECT_APP_META_DATA_NAME", "Unstoppable")
-        buildConfigFieldString("WALLET_CONNECT_APP_META_DATA_URL", "unstoppable.money")
-        buildConfigFieldString("WALLET_CONNECT_APP_META_DATA_ICON", "https://raw.githubusercontent.com/horizontalsystems/HS-Design/master/PressKit/UW-AppIcon-on-light.png")
+        buildConfigFieldString("COMPANY_WEB_PAGE_LINK", "https://tariffia.app")
+        buildConfigFieldString("APP_WEB_PAGE_LINK", "https://tariffia.app")
+        buildConfigFieldString("ANALYTICS_LINK", "https://tariffia.app/analytics")
+        buildConfigFieldString("APP_GITHUB_LINK", "https://github.com/komvalut/tariffia-wallet")
+        buildConfigFieldString("REPORT_EMAIL", "support@tariffia.app")
+        buildConfigFieldString("RELEASE_NOTES_URL", "https://api.github.com/repos/komvalut/tariffia-wallet/releases/tags/")
+        buildConfigFieldString("WALLET_CONNECT_PROJECT_ID", secret("WALLET_CONNECT_PROJECT_ID"))
+        buildConfigFieldString("WALLET_CONNECT_APP_META_DATA_NAME", "Tariffia Wallet")
+        buildConfigFieldString("WALLET_CONNECT_APP_META_DATA_URL", "https://tariffia.app")
+        buildConfigFieldString("WALLET_CONNECT_APP_META_DATA_ICON", "https://tariffia.app/icon.png")
+        buildConfigFieldString("PASSKEY_RP_ID", secret("PASSKEY_RP_ID"))
+        buildConfigFieldString("PASSKEY_RP_NAME", "Tariffia Wallet")
         buildConfigFieldString("THORCHAIN_API_KEY", secret("THORCHAIN_API_KEY"))
 
         buildConfigField("boolean", "FDROID_BUILD", "false")
@@ -99,8 +100,8 @@ android {
             applicationIdSuffix = ".appcenter"
             versionCode = System.getenv("BUILD_NUMBER")?.toIntOrNull() ?: defaultConfig.versionCode
             signingConfig = signingConfigs.getByName("test")
-            buildConfigFieldString("APP_LINKS_HOST", "dev.unstoppable.money")
-            manifestPlaceholders["appLinksHost"] = "dev.unstoppable.money"
+            buildConfigFieldString("APP_LINKS_HOST", "dev.tariffia.app")
+            manifestPlaceholders["appLinksHost"] = "dev.tariffia.app"
             buildConfigFieldString("USWAP_API_KEY", uswapApiKeyAndroid)
         }
     }
@@ -111,8 +112,8 @@ android {
             isDebuggable = true
             isMinifyEnabled = false
             applicationIdSuffix = ".dev"
-            buildConfigFieldString("APP_LINKS_HOST", "dev.unstoppable.money")
-            manifestPlaceholders["appLinksHost"] = "dev.unstoppable.money"
+            buildConfigFieldString("APP_LINKS_HOST", "dev.tariffia.app")
+            manifestPlaceholders["appLinksHost"] = "dev.tariffia.app"
             buildConfigFieldString("TWITTER_BEARER_TOKEN", secret("TWITTER_BEARER_TOKEN"))
             buildConfigFieldString("ETHERSCAN_KEY", secret("ETHERSCAN_KEY"))
             buildConfigFieldString("BSCSCAN_KEY", secret("BSCSCAN_KEY"))
@@ -123,13 +124,12 @@ android {
             buildConfigFieldString("PROVIDER_COINS_JSON_URL", "https://raw.githubusercontent.com/horizontalsystems/cryptocurrencies/master/provider.coins.json")
             buildConfigFieldString("MARKET_API_BASE_URL", "https://api-dev.blocksdecoded.com")
             buildConfigFieldString("MARKET_API_KEY", secret("MARKET_API_KEY"))
-            buildConfigFieldString("WALLET_CONNECT_V2_KEY", secret("WALLET_CONNECT_V2_KEY"))
             buildConfigFieldString("ALCHEMY_API_KEY", secret("ALCHEMY_API_KEY"))
             buildConfigFieldString("SOLANA_JUPITER_API_KEY", secret("SOLANA_JUPITER_API_KEY"))
             buildConfigFieldString("TONAPI_KEY", secret("TONAPI_KEY"))
             buildConfigFieldString("TRONGRID_API_KEYS", secret("TRONGRID_API_KEYS"))
             buildConfigFieldString("UDN_API_KEY", secret("UDN_API_KEY"))
-            buildConfigFieldString("BLOCKS_DECODED_ETHEREUM_RPC", "https://ethereum-rpc.unstoppable.money")
+            buildConfigFieldString("BLOCKS_DECODED_ETHEREUM_RPC", "https://ethereum-rpc.publicnode.com")
             buildConfigFieldString("CHAINALYSIS_BASE_URL", "https://public.chainalysis.com/api/v1/")
             buildConfigFieldString("CHAINALYSIS_API_KEY", secret("CHAINALYSIS_API_KEY"))
             buildConfigFieldString("HASH_DIT_BASE_URL", "https://service.hashdit.io/v2/hashdit/")
@@ -143,8 +143,8 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            buildConfigFieldString("APP_LINKS_HOST", "unstoppable.money")
-            manifestPlaceholders["appLinksHost"] = "unstoppable.money"
+            buildConfigFieldString("APP_LINKS_HOST", "tariffia.app")
+            manifestPlaceholders["appLinksHost"] = "tariffia.app"
             buildConfigFieldString("TWITTER_BEARER_TOKEN", secret("TWITTER_BEARER_TOKEN"))
             buildConfigFieldString("ETHERSCAN_KEY", secret("ETHERSCAN_KEY"))
             buildConfigFieldString("BSCSCAN_KEY", secret("BSCSCAN_KEY"))
@@ -155,13 +155,12 @@ android {
             buildConfigFieldString("PROVIDER_COINS_JSON_URL", "https://raw.githubusercontent.com/horizontalsystems/cryptocurrencies/v0.21/provider.coins.json")
             buildConfigFieldString("MARKET_API_BASE_URL", "https://api.blocksdecoded.com")
             buildConfigFieldString("MARKET_API_KEY", secret("MARKET_API_KEY"))
-            buildConfigFieldString("WALLET_CONNECT_V2_KEY", secret("WALLET_CONNECT_V2_KEY"))
             buildConfigFieldString("ALCHEMY_API_KEY", secret("ALCHEMY_API_KEY"))
             buildConfigFieldString("SOLANA_JUPITER_API_KEY", secret("SOLANA_JUPITER_API_KEY"))
             buildConfigFieldString("TONAPI_KEY", secret("TONAPI_KEY"))
             buildConfigFieldString("TRONGRID_API_KEYS", secret("TRONGRID_API_KEYS"))
             buildConfigFieldString("UDN_API_KEY", secret("UDN_API_KEY"))
-            buildConfigFieldString("BLOCKS_DECODED_ETHEREUM_RPC", "https://ethereum-rpc.unstoppable.money")
+            buildConfigFieldString("BLOCKS_DECODED_ETHEREUM_RPC", "https://ethereum-rpc.publicnode.com")
             buildConfigFieldString("CHAINALYSIS_BASE_URL", "https://public.chainalysis.com/api/v1/")
             buildConfigFieldString("CHAINALYSIS_API_KEY", secret("CHAINALYSIS_API_KEY"))
             buildConfigFieldString("HASH_DIT_BASE_URL", "https://service.hashdit.io/v2/hashdit/")

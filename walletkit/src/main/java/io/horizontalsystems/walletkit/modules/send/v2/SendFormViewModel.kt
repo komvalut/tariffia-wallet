@@ -57,7 +57,6 @@ data class SendFormUiState(
     val extraInput: SendExtraInput?,
     val extraInputValue: String?,
     val extraInputError: String?,
-    val hideAddress: Boolean,
     /** Percent buttons offered greyed out. */
     val disabledPercents: Set<Int>,
     val step: SendStep,
@@ -94,8 +93,6 @@ class SendFormViewModel(
     private var contactName: String? = null
     private var riskyAddress = false
     private var memo: String? = null
-    // A donation's recipient is fixed by the app and not shown.
-    private val hideAddress = purpose is SendV2Page.Purpose.Donation
     private val prefill = (purpose as? SendV2Page.Purpose.Transfer)?.prefill
     private var memoSupport: SendMemoSupport? = null
     private var memoSupportJob: Job? = null
@@ -113,11 +110,6 @@ class SendFormViewModel(
     private val chainPlugin = ChainRegistry[wallet.token.blockchainType]
 
     init {
-        // A hidden destination is the app's own choice and needs no confirmation; a
-        // prefilled one was confirmed on the recipient page before this screen opened.
-        if (purpose is SendV2Page.Purpose.Donation) {
-            address = Address(purpose.address)
-        }
         prefill?.address?.let { setAddress(it, prefill.riskyAddress, prefill.contactName) }
         memo = prefill?.memo?.ifBlank { null }
 
@@ -260,7 +252,6 @@ class SendFormViewModel(
         extraInput = extraInput,
         extraInputValue = extraInputValue,
         extraInputError = extraInputError,
-        hideAddress = hideAddress,
         // A private send commits a provider order for the entered amount as is; nothing
         // later takes the fee out of it, so a coin that pays its own fee cannot send its
         // whole balance that way. A token whose fee is paid in the chain's coin can.

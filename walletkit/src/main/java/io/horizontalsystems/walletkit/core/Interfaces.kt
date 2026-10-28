@@ -3,7 +3,6 @@ package io.horizontalsystems.walletkit.core
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import io.horizontalsystems.walletkit.core.managers.ActiveAccountState
-import io.horizontalsystems.walletkit.core.managers.MiniAppRegisterService.RegisterAppResponse
 import io.horizontalsystems.walletkit.core.managers.ServiceWCWhitelist
 import io.horizontalsystems.walletkit.core.providers.FeeRates
 import io.horizontalsystems.walletkit.core.utils.AddressUriResult
@@ -143,7 +142,6 @@ interface ILocalStorage {
 
     var priceChangeInterval: PriceChangeInterval
     val priceChangeIntervalFlow: StateFlow<PriceChangeInterval>
-    var donateUsLastShownDate: Long?
     var lastMigrationVersion: Int?
 
     var enabledPaidActions: Set<String>
@@ -221,7 +219,6 @@ interface IRandomProvider {
 interface INetworkManager {
     suspend fun getMarkdown(host: String, path: String): String
     suspend fun getReleaseNotes(host: String, path: String): JsonObject
-    suspend fun registerApp(userId: String, referralCode: String): RegisterAppResponse
     suspend fun getWCWhiteList(host: String, path: String): List<ServiceWCWhitelist.WCWhiteList>
 }
 
