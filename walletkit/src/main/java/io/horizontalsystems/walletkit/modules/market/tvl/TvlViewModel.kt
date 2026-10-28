@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.core.TariffiaCdn
 import io.horizontalsystems.walletkit.core.providers.Translator
 import io.horizontalsystems.walletkit.core.stats.StatEvent
 import io.horizontalsystems.walletkit.core.stats.StatPage
@@ -40,7 +41,7 @@ class TvlViewModel(
     var header = MarketModule.Header(
         title = Translator.getString(R.string.MarketGlobalMetrics_TvlInDefi),
         description = Translator.getString(R.string.MarketGlobalMetrics_TvlInDefiDescription),
-        icon = ImageSource.Remote("https://cdn.blocksdecoded.com/header-images/tvl@3x.png")
+        icon = ImageSource.Remote(TariffiaCdn.headerImage("tvl"))
     )
 
     init {

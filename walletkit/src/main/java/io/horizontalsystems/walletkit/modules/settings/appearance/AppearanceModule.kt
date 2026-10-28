@@ -42,8 +42,6 @@ enum class AppIcon(val icon: Int, val titleText: String, val isDeprecated: Boole
     Doge(R.drawable.launcher_doge_preview, "Doge"),
     Punk(R.drawable.launcher_punk_preview, "Punk"),
     Ape(R.drawable.launcher_ape_preview, "#1874"),
-    Plflag(R.drawable.launcher_plflag_preview, "Plflag"),
-    Sinwar(R.drawable.launcher_sinwar_preview, "Sinwar"),
     Yeschad(R.drawable.launcher_yeschad_preview, "Yeschad"),
     Gigachad(R.drawable.launcher_gigachad_preview, "Gigachad"),
     //deprecated icons with manifest aliases should stay in app for 2 releases before removal

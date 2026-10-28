@@ -35,9 +35,27 @@ Use the same layout on both hosts. Production and development must use different
 | `/analytics` | Analytics information page | `text/html` | Linked from app settings |
 | `/api/v1/*` | Tariffia market and WalletConnect metadata API | Proxied | Must implement the paths the app calls |
 | `/api/v3/*` | Disabled USwap API | `application/json` | Return `404` or `503`; never proxy to upstream |
-| `/cdn/*` | Optional self-hosted Tariffia images | `image/png` | Only needed after the app stops using the current CDN |
+| `/cdn/*` | Tariffia image CDN | `image/png` | Required; the app no longer uses the upstream CDN |
 
 The app currently has no bundled FAQ, guide, or coin catalogue. If these files are absent, the affected screens show an error state or have no catalogue data. Publishing them is part of the release gate, not an optional CDN optimization.
+
+## CDN Path Contract
+
+All runtime image URLs are built by `walletkit/core/TariffiaCdn.kt` under `https://tariffia.app/cdn`. Missing images must return `404`; the app then renders its local placeholder rather than falling back to another host.
+
+| Path | Item |
+| --- | --- |
+| `/cdn/blockchain-icons/32px/<uid>@3x.png` | Blockchain and platform icon |
+| `/cdn/coin-icons/32px/<uid>@3x.png` | Coin icon |
+| `/cdn/fiat-icons/<code>@3x.png` | Fiat currency icon |
+| `/cdn/category-icons/<uid>@3x.png` | Coin category icon |
+| `/cdn/fund-icons/<uid>@3x.png` | Investment fund icon |
+| `/cdn/treasury-icons/<fundUid>@3x.png` | Treasury logo |
+| `/cdn/auditor-icons/<name>@3x.png` | Audit partner logo |
+| `/cdn/header-images/<name>@3x.png` | Market, TVL, ETF, and analytics header image |
+| `/cdn/etf-tresuries/<ticker>@3x.png` | ETF issuer logo |
+
+The filenames are part of the server contract and must match exactly, including apostrophes or spaces present in upstream names. Review every mirrored asset for ownership and redistribution rights before publication.
 
 ## API Routing
 

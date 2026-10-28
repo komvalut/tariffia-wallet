@@ -9,6 +9,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.horizontalsystems.walletkit.core.TariffiaCdn
 import io.horizontalsystems.walletkit.ui.compose.ComposeAppTheme
 import io.horizontalsystems.walletkit.ui.compose.components.HsImage
 import io.horizontalsystems.walletkit.ui.compose.components.RowUniversal
@@ -58,7 +59,7 @@ fun CoinScreenTitlePreviewNoRank() {
         CoinScreenTitle(
             coinName = "Synthetix Network TokenSynthetix Network Token",
             marketCapRank = null,
-            coinIconUrl = "https://cdn.blocksdecoded.com/coin-icons/32px/bitcoin@3x.png",
+            coinIconUrl = TariffiaCdn.coinIcon("bitcoin"),
             alternativeCoinIconUrl = null,
             iconPlaceholder = null
         )
@@ -72,7 +73,7 @@ fun CoinScreenTitlePreviewLongTitle() {
         CoinScreenTitle(
             coinName = "Synthetix Network Token Synthetix Network Token Synthetix Network Token Synthetix Network Token",
             marketCapRank = 123,
-            coinIconUrl = "https://cdn.blocksdecoded.com/coin-icons/32px/bitcoin@3x.png",
+            coinIconUrl = TariffiaCdn.coinIcon("bitcoin"),
             alternativeCoinIconUrl = null,
             iconPlaceholder = null
         )
@@ -86,7 +87,7 @@ fun CoinScreenTitlePreviewShortTitle() {
         CoinScreenTitle(
             coinName = "Bitcoin",
             marketCapRank = 1,
-            coinIconUrl = "https://cdn.blocksdecoded.com/coin-icons/32px/bitcoin@3x.png",
+            coinIconUrl = TariffiaCdn.coinIcon("bitcoin"),
             alternativeCoinIconUrl = null,
             iconPlaceholder = null
         )

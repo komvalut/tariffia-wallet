@@ -8,6 +8,7 @@ import io.horizontalsystems.walletkit.core.managers.APIClient
 import io.horizontalsystems.walletkit.core.providers.IAppConfigProvider
 import io.horizontalsystems.walletkit.entities.SimulateFailSwapMode
 import io.horizontalsystems.walletkit.entities.SwapRecord
+import io.horizontalsystems.walletkit.modules.multiswap.providers.ALLBRIDGE_PROVIDER_ID
 import io.horizontalsystems.walletkit.modules.multiswap.providers.IMultiSwapProvider
 import io.horizontalsystems.walletkit.modules.multiswap.providers.ISplitSwapProvider
 import io.horizontalsystems.walletkit.modules.multiswap.providers.MultiSwapProviderRegistry
@@ -89,14 +90,11 @@ class SwapSyncService(
     }
 
     private suspend fun syncRecord(record: SwapRecord) {
+        if (record.providerId == ALLBRIDGE_PROVIDER_ID) return
+
         // A tracking handle means the app advances this record through its own
         // tracking service — the server tracker must leave it alone.
         if (record.trackingHandle != null) return
-
-        if (record.providerId == AllBridgeTracker.PROVIDER_ID) {
-            syncAllBridgeRecord(record)
-            return
-        }
 
         if (SwapOperation.fromString(record.operation) == SwapOperation.SplitSwap) {
             syncSplitRecord(record)
@@ -188,41 +186,6 @@ class SwapSyncService(
         } catch (e: Throwable) {
             Log.e("SwapSyncService", "Failed to sync split record ${record.id}: ${e.message}", e)
         }
-    }
-
-    private suspend fun syncAllBridgeRecord(record: SwapRecord) {
-        try {
-            val txId = record.transactionHash ?: return
-            val chain = AllBridgeTracker.chainSymbol(record.tokenInBlockchainTypeUid) ?: return
-            val response = AllBridgeTracker.fetchTransferStatus(chain, txId)
-
-            val outboundTxId = response.receive?.txId
-            if (outboundTxId != null && outboundTxId != record.outboundTransactionHash) {
-                swapRecordManager.updateOutboundTransactionHash(record.id, outboundTxId)
-            }
-
-            val newStatus = mapAllBridgeStatus(response)
-                .takeIf { it != SwapStatus.valueOf(record.status) }
-                ?: return
-            val newAmountOut = response.receive?.amountFormatted?.takeIf { it > BigDecimal.ZERO }
-            if (newAmountOut != null) {
-                swapRecordManager.updateStatusAndAmountOut(record.id, newStatus, newAmountOut.toPlainString(), null)
-            } else {
-                swapRecordManager.updateStatus(record.id, newStatus, null)
-            }
-        } catch (e: Throwable) {
-            Log.e("SwapSyncService", "Failed to sync AllBridge record ${record.id}: ${e.message}")
-        }
-    }
-
-    private fun mapAllBridgeStatus(response: AllBridgeTracker.TransferStatus): SwapStatus {
-        if (response.isSuspended) return SwapStatus.Failed
-        val receive = response.receive
-        if (receive == null) {
-            val send = response.send
-            return if (send.confirmations >= send.confirmationsNeeded) SwapStatus.Swapping else SwapStatus.Depositing
-        }
-        return if (receive.blockTime != null) SwapStatus.Completed else SwapStatus.Sending
     }
 
     private fun mapStatus(response: UnstoppableAPI.Response.Track): SwapStatus? = when (response.status) {

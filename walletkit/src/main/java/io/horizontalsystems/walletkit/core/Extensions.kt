@@ -26,22 +26,22 @@ val <T> Optional<T>.orNull: T?
     }
 
 val Platform.iconUrl: String
-    get() = "https://cdn.blocksdecoded.com/blockchain-icons/32px/$uid@3x.png"
+    get() = TariffiaCdn.blockchainIcon(uid)
 
 val String.coinIconUrl: String
-    get() = "https://cdn.blocksdecoded.com/coin-icons/32px/$this@3x.png"
+    get() = TariffiaCdn.coinIcon(this)
 
 val String.fiatIconUrl: String
-    get()= "https://cdn.blocksdecoded.com/fiat-icons/$this@3x.png"
+    get()= TariffiaCdn.fiatIcon(this)
 
 val CoinCategory.imageUrl: String
-    get() = "https://cdn.blocksdecoded.com/category-icons/$uid@3x.png"
+    get() = TariffiaCdn.categoryIcon(uid)
 
 val CoinInvestment.Fund.logoUrl: String
-    get() = "https://cdn.blocksdecoded.com/fund-icons/$uid@3x.png"
+    get() = TariffiaCdn.fundIcon(uid)
 
 val CoinTreasury.logoUrl: String
-    get() = "https://cdn.blocksdecoded.com/treasury-icons/$fundUid@3x.png"
+    get() = TariffiaCdn.treasuryIcon(fundUid)
 
 fun List<FullCoin>.sortedByFilter(filter: String): List<FullCoin> {
     val base = listOf(SortCriterion.MarketCapRank, SortCriterion.NameAscending)

@@ -250,7 +250,7 @@ private fun SettingSections(
             add {
                 HsSettingCell(
                     R.string.Settings_AppSettings,
-                    R.drawable.uw_logo_24,
+                    R.drawable.ic_tariffia_24,
                     onClick = {
                         navigation.slideFromRight(AppearancePage)
 

@@ -207,7 +207,7 @@ fun Blockchain.nep141TokenUrl(contractId: String) = "https://nearblocks.io/token
 fun Blockchain.assetUrl(code: String, issuer: String) = "https://stellar.expert/explorer/public/asset/$code-$issuer"
 
 val BlockchainType.imageUrl: String
-    get() = "https://cdn.blocksdecoded.com/blockchain-icons/32px/$uid@3x.png"
+    get() = TariffiaCdn.blockchainIcon(uid)
 
 val BlockchainType.restoreSettingTypes: List<RestoreSettingType>
     get() = when (this) {
@@ -563,7 +563,7 @@ val TokenType.bitcoinCashCoinType: TokenType.AddressType?
     }
 
 val Coin.imageUrl: String
-    get() = "https://cdn.blocksdecoded.com/coin-icons/32px/$uid@3x.png"
+    get() = TariffiaCdn.coinIcon(uid)
 
 val Coin.alternativeImageUrl: String?
     get() = image
@@ -572,7 +572,7 @@ val Coin.imagePlaceholder: Int
     get() = R.drawable.coin_placeholder
 
 val TopPlatform.imageUrl
-    get() = "https://cdn.blocksdecoded.com/blockchain-icons/32px/${blockchain.uid}@3x.png"
+    get() = TariffiaCdn.blockchainIcon(blockchain.uid)
 
 val FullCoin.supportedTokens
     get() = tokens

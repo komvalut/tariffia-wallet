@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import io.horizontalsystems.chartview.ChartData
 import io.horizontalsystems.chartview.models.ChartPoint
 import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.core.TariffiaCdn
 import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.core.stats.StatPremiumTrigger
 import io.horizontalsystems.walletkit.entities.ViewState
@@ -176,7 +177,7 @@ object CoinAnalyticsModule {
         HoldersRank(R.string.CoinAnalytics_HoldersRank, R.string.CoinAnalytics_HoldersRank_Description, "holders");
 
         val headerIcon: ImageSource
-            get() = ImageSource.Remote("https://cdn.blocksdecoded.com/header-images/$headerIconName@3x.png")
+            get() = ImageSource.Remote(TariffiaCdn.headerImage(headerIconName))
     }
 
     data class UiState(
