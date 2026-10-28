@@ -49,7 +49,7 @@ A dependency is not harmless merely because it is only used on a secondary scree
 | APP-13 | Provider coin catalogue | `PROVIDER_COINS_JSON_URL` | `https://tariffia.app/data/provider-coins.json` | R0 | Publish a pinned, reviewed copy with a compatible schema | Blocked: DNS NXDOMAIN |
 | APP-14 | Market data API | `MARKET_API_BASE_URL` | `https://tariffia.app/api`, `https://dev.tariffia.app/api` | R0 | Implement or disable the Tariffia market API; no HS fallback | Blocked: DNS NXDOMAIN |
 | APP-15 | Market and asset CDN | Image URLs in `walletkit` screens | `cdn.blocksdecoded.com` | R2 | Self-host reviewed assets or replace the provider | Pending |
-| APP-16 | Allbridge integration | `AllBridgeTracker.kt` | `allbridge.blocksdecoded.com` | R2/R3 | Confirm ownership/license; replace or disable the feature | Pending |
+| APP-16 | Allbridge integration | Retired provider metadata | None | R3 | Removed live tracker and network sync; historical records remain read-only | Removed |
 | APP-17 | USwap API | `USWAP_API_BASE_URL`, `SWAP_ENABLED` | `https://tariffia.app/api/v3/`; swap flag is false | R0 | Keep disabled until a Tariffia swap backend exists; no HS calls | Code hard-disabled; runtime pending |
 | APP-18 | USwap credentials | `USWAP_API_KEY` | Empty; upstream key variables removed | R0 | Do not reintroduce HS keys; add a Tariffia key only with the new backend | Code removed |
 | APP-19 | Ethereum RPC | `BLOCKS_DECODED_ETHEREUM_RPC` | `ethereum-rpc.publicnode.com` | R1 | Rename the setting and keep the independent endpoint | Verified |

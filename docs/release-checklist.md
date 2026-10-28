@@ -29,7 +29,7 @@ Release status: **BLOCKED**. The code-side migration is ready for an RC tag, but
 Blocking items before removing the RC label:
 
 - Deploy DNS, TLS, asset links, FAQ, guides, coin catalogues, icon, analytics page, and the market API as described in `docs/hosting.md`.
-- Resolve APP-15 (`cdn.blocksdecoded.com`) and APP-16 (`allbridge.blocksdecoded.com`), or record an explicit approval.
+- Resolve APP-15 (`cdn.blocksdecoded.com`), or record an explicit approval.
 - Replace HS store metadata and complete the license/notice review.
 - Create the release keystore, record both channel fingerprints, and deploy asset links.
 - Build from the tag, run the device/network tests, and complete signing and artifact checks.
@@ -138,7 +138,7 @@ Record the exact commands and results here for the RC or production release.
             Could not resolve host: dev.tariffia.app
 
 2026-10-28  rg -n -i 'horizontalsystems|blocksdecoded\.com' app walletkit ...
-            Remaining runtime URLs: cdn.blocksdecoded.com and allbridge.blocksdecoded.com
+            Remaining runtime URL: cdn.blocksdecoded.com
 ```
 
 ## 9. Post-Release Verification
