@@ -1,0 +1,60 @@
+package io.horizontalsystems.walletkit.modules.confirm
+
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
+import io.horizontalsystems.walletkit.ui.compose.ComposeAppTheme
+import io.horizontalsystems.walletkit.ui.extensions.HSBottomSheet
+import io.horizontalsystems.walletkit.ui.helpers.TextHelper
+import io.horizontalsystems.walletkit.uiv3.components.bottomsheet.BottomSheetBody
+import io.horizontalsystems.walletkit.uiv3.components.bottomsheet.BottomSheetHeaderV3
+import io.horizontalsystems.walletkit.uiv3.components.controls.ButtonVariant
+import io.horizontalsystems.walletkit.uiv3.components.controls.HSButton
+import io.horizontalsystems.walletkit.uiv3.components.info.TextBlock
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class ErrorSheet(val input: Input) : HSBottomSheet(expanded = true) {
+
+    @Composable
+    override fun GetContent(navigation: HSNavigation) {
+        ErrorBottomSheetScreen(navigation, input.error)
+    }
+
+    @Serializable
+    data class Input(val error: String)
+}
+
+@Composable
+fun ErrorBottomSheetScreen(
+    navigation: HSNavigation,
+    error: String
+) {
+    BottomSheetBody(
+        buttons = {
+            HSButton(
+                title = stringResource(R.string.Button_CopyError),
+                modifier = Modifier.fillMaxWidth(),
+                variant = ButtonVariant.Secondary,
+                onClick = {
+                    TextHelper.copyText(error)
+                    navigation.removeLastOrNull()
+                }
+            )
+        },
+        content = {
+            BottomSheetHeaderV3(
+                image72 = painterResource(R.drawable.warning_filled_24),
+                imageTint = ComposeAppTheme.colors.lucian,
+                title = stringResource(R.string.Send_UnexpectedError)
+            )
+            TextBlock(text = stringResource(R.string.Send_UnexpectedError_Description), textAlign = TextAlign.Center)
+        },
+    )
+}
+

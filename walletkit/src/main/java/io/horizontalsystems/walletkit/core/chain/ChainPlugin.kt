@@ -1,0 +1,463 @@
+package io.horizontalsystems.walletkit.core.chain
+
+import io.horizontalsystems.marketkit.models.BlockchainType
+import io.horizontalsystems.marketkit.models.Token
+import io.horizontalsystems.marketkit.models.TokenType
+import io.horizontalsystems.marketkit.models.Blockchain
+import io.horizontalsystems.walletkit.core.AdapterState
+import io.horizontalsystems.walletkit.core.App
+import io.horizontalsystems.walletkit.core.IAdapter
+import io.horizontalsystems.walletkit.core.ITransactionsAdapter
+import io.horizontalsystems.walletkit.modules.addtoken.AddTokenModule
+import io.horizontalsystems.walletkit.modules.transactionInfo.options.SpeedUpCancelType
+import io.horizontalsystems.walletkit.modules.transactions.TransactionSource
+import io.horizontalsystems.walletkit.core.managers.RestoreSettings
+import io.horizontalsystems.walletkit.entities.Account
+import io.horizontalsystems.walletkit.entities.AccountType
+import io.horizontalsystems.walletkit.entities.Wallet
+import io.horizontalsystems.walletkit.core.IBalanceAdapter
+import androidx.compose.runtime.Composable
+import io.horizontalsystems.walletkit.entities.Address
+import io.horizontalsystems.walletkit.modules.address.IAddressHandler
+import io.horizontalsystems.walletkit.modules.balance.BalanceModule
+import io.horizontalsystems.walletkit.modules.blockchainsettings.BlockchainSettingsModule
+import io.horizontalsystems.walletkit.modules.multiswap.action.ISwapProviderAction
+import io.horizontalsystems.walletkit.modules.multiswap.sendtransaction.AbstractSendTransactionService
+import io.horizontalsystems.walletkit.modules.walletconnect.handler.IWCHandler
+import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
+import io.horizontalsystems.walletkit.modules.enablecoin.restoresettings.AccountPickerResult
+import io.horizontalsystems.walletkit.modules.nav3.HSPage
+import io.horizontalsystems.walletkit.modules.send.address.EnterAddressValidator
+import kotlinx.coroutines.flow.Flow
+import java.math.BigDecimal
+import java.time.LocalDate
+import java.util.Date
+import kotlin.reflect.KClass
+
+/**
+ * Per-blockchain extension point. Optional chains implement this and register in
+ * [ChainRegistry] at app start; shared code resolves chain-specific behavior through the
+ * registry instead of hardcoded `when (blockchainType)` branches, so a consuming app that
+ * does not include a chain's module simply has no plugin for it — and no trace of the
+ * chain in the UI.
+ *
+ * Hooks are added incrementally as dispatch points are converted; see
+ * docs/Walletkit-Modularization-Plan.md.
+ */
+interface ChainPlugin {
+    val blockchainType: BlockchainType
+
+    /**
+     * Creates the balance/send adapter for a wallet of this chain. [restoreSettings] holds
+     * the chain's stored restore configuration (e.g. birthday height) and is empty for
+     * chains without restore settings. Returning null defers creation (the adapter is
+     * recreated on the next reloadWallets for this chain).
+     */
+    fun createAdapter(wallet: Wallet, restoreSettings: RestoreSettings): IAdapter? = null
+
+    /** Releases kit-manager resources held for [account] when its last wallet is unlinked. */
+    fun unlink(account: Account) = Unit
+
+    /** Handlers recognizing this chain's plain address formats. */
+    fun addressHandlers(): List<IAddressHandler> = emptyList()
+
+    /** Handlers resolving this chain's naming/alias systems to addresses. */
+    fun domainAddressHandlers(): List<IAddressHandler> = emptyList()
+
+    /** Validator used by send/enter-address flows, or null to fall back to core dispatch. */
+    fun addressValidator(token: Token): EnterAddressValidator? = null
+
+    /**
+     * Validator variant for swap-recipient entry. [allowOwnAddress] permits the wallet's
+     * own address; [transparentOnly] restricts to transparent-style addresses where the
+     * chain distinguishes them (Zcash). Defaults to the plain validator.
+     */
+    fun addressValidator(token: Token, allowOwnAddress: Boolean, transparentOnly: Boolean): EnterAddressValidator? =
+        addressValidator(token)
+
+    /** Page replacing the default receive flow (e.g. Zcash address-type picker). */
+    fun receivePage(wallet: Wallet, entryPoint: KClass<out HSPage>? = null): HSPage? = null
+
+    /** Page for shielding transparent funds, opened from the locked-balance sheet. */
+    fun shieldPage(wallet: Wallet, entryPoint: KClass<out HSPage>): HSPage? = null
+
+    /** Threshold above which an unshielded balance triggers the balance-screen alert. */
+    fun unshieldedBalanceThreshold(): BigDecimal? = null
+
+    /**
+     * The balance of [token] that send and swap forms and token pickers offer, when it
+     * differs from the adapter's available balance, or null to use that. Zcash counts funds
+     * still confirming and transparent funds, which become spendable through [spendStep].
+     */
+    fun spendBalance(token: Token): BigDecimal? = null
+
+    /**
+     * What a form must wait for or start before it can spend [amount] of [token], or null
+     * when the amount is spendable now or exceeds [spendBalance]. An action in progress
+     * keeps the form waiting, the way swap waits on an approval.
+     */
+    fun spendStep(token: Token, amount: BigDecimal, purpose: SpendPurpose): ISwapProviderAction? = null
+
+    /**
+     * Balance the chain requires the user to migrate (e.g. Zcash Orchard→Ironwood after a
+     * network upgrade), or null when no migration is pending for [wallet].
+     */
+    fun migrationRequiredBalance(wallet: Wallet): BigDecimal? = null
+
+    /** Confirmation page executing the pending migration reported by [migrationRequiredBalance]. */
+    fun migrationPage(wallet: Wallet, entryPoint: KClass<out HSPage>): HSPage? = null
+
+    /**
+     * Page that picks which on-chain account [accountType] opens on this chain, shown when the
+     * chain's first wallet is enabled for a restored account; null when there is nothing to pick.
+     * The page sends back an [AccountPickerResult].
+     */
+    fun accountPickerPage(accountType: AccountType): HSPage? = null
+
+    /** Lowest accepted birthday height for the restore date picker. */
+    fun minBirthdayHeight(): Long? = null
+
+    /** Stops the chain's adapter and clears local data so a rescan starts clean. */
+    suspend fun prepareRescan(wallet: Wallet) = Unit
+
+    /** The wallet's unified/shielded receive address for swap delivery, or null. */
+    suspend fun swapUnifiedReceiveAddress(token: Token): String? = null
+
+    /**
+     * The wallet's unified address with shielded receivers only, named as the refund (and source)
+     * of a sell to a provider that takes a unified refund, or null for chains without one. One
+     * address per account per operation: every re-preview of one operation gets the same address,
+     * and the chain's send service forgets it once the deposit is sent. Throws instead of falling
+     * back to an address with a transparent receiver.
+     */
+    suspend fun swapShieldedRefundAddress(token: Token): String? = null
+
+    /** Birthday height stored when a NEW wallet of this chain is created, or null if unused. */
+    fun newWalletBirthdayHeight(): Long? = null
+
+    /** Date of the chain's first block, for the restore birthday-height date picker. */
+    fun firstBlockDate(): LocalDate? = null
+
+    /** Estimates the date a block at [height] was mined. */
+    suspend fun estimateBlockDate(height: Long): Date? = null
+
+    /** Estimates the block height at [date]. */
+    suspend fun estimateBlockHeightFromDate(date: Date): Long? = null
+
+    /**
+     * Emissions trigger reloadWallets for this chain (e.g. after a node/endpoint change).
+     * Collected once by WalletManager.start.
+     */
+    val walletReloadTrigger: Flow<*>? get() = null
+
+    /** Emissions refresh the blockchain-settings rows; defaults to [walletReloadTrigger]. */
+    val settingsRefreshTrigger: Flow<*>? get() = walletReloadTrigger
+
+    /** Kit status details for the App Status debug screen. */
+    fun statusInfo(): Map<String, Any>? = null
+
+    /** Chain-specific warning for a wallet's balance row (e.g. inactive Tron account). */
+    suspend fun balanceWarning(wallet: Wallet): BalanceModule.BalanceWarning? = null
+
+    /** Refreshes the chain's kit on user-initiated refresh, if one is running. */
+    suspend fun refreshKit() = Unit
+
+    /** The chain's network/node settings page, opened from sync errors and settings. */
+    fun networkSettingsPage(): HSPage? = null
+
+    /** Row shown in Settings > Blockchain Settings, or null to omit the chain there. */
+    fun blockchainSettingsItem(): BlockchainSettingsModule.BlockchainItem? = null
+
+    /**
+     * Derives the account's receive address for swap destinations without requiring an
+     * enabled wallet. Null means the address cannot be derived for this account type.
+     */
+    suspend fun swapDestinationAddress(account: Account): String? = null
+
+    /** Token-aware variant for chains whose first address depends on the token's derivation. */
+    suspend fun swapDestinationAddress(account: Account, token: Token): String? = swapDestinationAddress(account)
+
+    /** Startup work after core managers are ready (e.g. Monero fastest-node auto-select). */
+    suspend fun onAppStart() = Unit
+
+    /**
+     * Work when the app returns to the foreground. Runs on every foreground transition,
+     * including the first one after launch, so implementations must be idempotent and cheap
+     * when there is nothing to do (e.g. Auto-Select only re-picks a node when one has died).
+     */
+    suspend fun onEnterForeground() = Unit
+
+    /**
+     * Work when this chain's sync has been stalled for a while, foreground or background.
+     * Called on a backoff by StalledSyncWatcher, so implementations need not rate-limit
+     * themselves, but must tolerate being called while a previous attempt is still running.
+     */
+    suspend fun onSyncStalled() = Unit
+
+    /**
+     * True when an active wallet of this chain has an adapter reporting [AdapterState.NotSynced].
+     *
+     * Deliberately narrower than "not Synced": Syncing/Connecting are healthy progress, and a
+     * chain with no adapter yet (creation deferred, wallet disabled) reports false.
+     */
+    fun hasUnsyncedWallet(): Boolean =
+        App.walletManager.activeWallets
+            .filter { it.token.blockchainType == blockchainType }
+            .any { App.adapterManager.getBalanceAdapterForWallet(it)?.balanceState is AdapterState.NotSynced }
+
+    /**
+     * Deletes the chain's locally stored data for a removed account.
+     *
+     * Deliberately without a default: this used to be a no-op that plugins inherited silently, and
+     * five of them did, so deleting an account left their databases behind. A chain with nothing
+     * to delete should say so with an empty body rather than by omission.
+     */
+    fun clearAccountData(accountId: String)
+
+    /** Dedicated transactions adapter, or null when the balance adapter serves both roles. */
+    fun createTransactionsAdapter(source: TransactionSource): ITransactionsAdapter? = null
+
+    /** True when the chain supports adding custom tokens by reference. */
+    val supportsCustomTokens: Boolean get() = false
+
+    /** Resolves custom-token info for the add-token flow; null when unsupported. */
+    fun addTokenBlockchainService(blockchain: Blockchain): AddTokenModule.IAddTokenBlockchainService? = null
+
+    /** The chain's sync-source/node display name for the settings backup, or null. */
+    fun backupSyncSourceName(): String? = null
+
+    /** True when the chain replaces the generic receive screen with [ReceiveScreen]. */
+    val hasReceiveScreen: Boolean get() = false
+
+    /** Chain-specific receive screen; only called when [hasReceiveScreen] is true. */
+    @Composable
+    fun ReceiveScreen(navigation: HSNavigation, wallet: Wallet, receiveEntryPointDestId: KClass<out HSPage>?) = Unit
+
+    /**
+     * Wording for the shared token-activation flow (trust lines), for a wallet whose adapter is an
+     * [io.horizontalsystems.walletkit.core.IActivatableTokenAdapter]. Null when the chain has no
+     * such tokens.
+     */
+    fun tokenActivationInfo(wallet: Wallet): io.horizontalsystems.walletkit.core.TokenActivationInfo? = null
+
+    /** Extra cells on the token balance screen (e.g. Monero account picker). */
+    @Composable
+    fun TokenBalanceExtraCells(wallet: Wallet, navigation: HSNavigation) = Unit
+
+    /** Validates a watch-account private view key against an address; throws when invalid. */
+    fun validateWatchViewKey(viewKey: String, address: String) {
+        throw UnsupportedOperationException("watch accounts not supported")
+    }
+
+    /** Word suggestions for the chain's own mnemonic scheme (e.g. Monero 25-word legacy). */
+    fun altMnemonicSuggestions(word: String): List<String> = emptyList()
+
+    /** Whether [word] belongs to the chain's own mnemonic word list. */
+    fun isAltMnemonicWord(word: String, partial: Boolean): Boolean = false
+
+    /** Word count identifying the chain's own mnemonic scheme, or null if none. */
+    val altMnemonicWordCount: Int? get() = null
+
+    /** Builds the account for the chain's own mnemonic scheme; null = invalid checksum. */
+    fun buildAltMnemonicAccount(words: List<String>, passphrase: String): AccountType? = null
+
+    /** Rows contributed to the manage-account private keys screen. */
+    fun privateKeyRows(account: Account): List<ChainKeyRow> = emptyList()
+
+    /** Rows contributed to the manage-account public keys screen. */
+    fun publicKeyRows(account: Account): List<ChainKeyRow> = emptyList()
+
+    /** True when the plugin recognizes this deep link / scanned text as its own. */
+    fun isDeepLinkSupported(link: String, fromScanner: Boolean): Boolean = false
+
+    /** Handles a deep link previously accepted by [isDeepLinkSupported]. */
+    suspend fun handleDeepLink(link: String, closeApp: Boolean) = Unit
+
+    /** Effects composed on the main screen (e.g. chain-specific request sheets). */
+    @Composable
+    fun MainScreenEffects(navigation: HSNavigation) = Unit
+
+    /** Renders this chain's WalletConnect request sheet content; false when not handled. */
+    @Composable
+    fun WcRequestSheetScreen(navigation: HSNavigation): Boolean = false
+
+    /** Chain-specific blacklist checker consulted by the address-check flow, or null. */
+    fun blacklistAddressChecker(): io.horizontalsystems.walletkit.core.address.AddressChecker? = null
+
+    /** Page for speeding up / cancelling a pending transaction, or null when unsupported. */
+    fun resendTransactionPage(type: SpeedUpCancelType, transactionHash: String): HSPage? = null
+
+    /** Maps a chain-library error to a user-presentable one, or null when not recognized. */
+    fun convertError(throwable: Throwable): Throwable? = null
+
+    /** Address reported to market analytics for this chain, or null. */
+    fun analyticsAddress(accountType: AccountType): String? = null
+
+    /**
+     * The token type behind a swap server's asset identifier on this chain, for chains whose
+     * identifiers are an asset notation rather than an address (THORChain's `THOR.RUNE`,
+     * `BTC-BTC`), or null when the identifier names nothing this chain serves.
+     */
+    fun swapAssetTokenType(assetIdentifier: String): TokenType? = null
+
+    /**
+     * Pre-swap step the account needs before it can receive [token] (a Stellar trustline), or
+     * null when none is needed or the state cannot be read. Keyed on the buy token alone: every
+     * route delivering it to the account needs the same step.
+     */
+    suspend fun swapActivationAction(token: Token): ISwapProviderAction? = null
+
+    /** Current EIP-20 allowance granted to spender, or null when not applicable. */
+    suspend fun eip20Allowance(token: Token, spenderAddress: String): BigDecimal? = null
+
+    /** Approve/revoke action required before swapping, or null when none is needed. */
+    suspend fun eip20ApproveAction(
+        allowance: BigDecimal?,
+        amountIn: BigDecimal,
+        spenderAddress: String,
+        token: Token,
+    ): ISwapProviderAction? = null
+
+    /** Chain-specific OpenCryptoPay confirmation page, or null to use the generic one. */
+    fun openCryptoPayConfirmationPage(
+        data: io.horizontalsystems.walletkit.modules.opencryptopay.OcpConfirmData,
+        sendEntryPointDestId: KClass<out HSPage>,
+    ): HSPage? = null
+
+    /** Source addresses whose UTXOs cover amountIn for a swap, or null when not a UTXO chain. */
+    suspend fun swapSourceAddresses(token: Token, amountIn: BigDecimal): List<String>? = null
+
+    /** WalletConnect handlers to register at app start. */
+    fun wcHandlers(): List<IWCHandler> = emptyList()
+
+    /** Silent handler for wallet_* WalletConnect requests, or null. */
+    fun wcWalletRequestHandler(): io.horizontalsystems.walletkit.modules.walletconnect.IWCWalletRequestHandler? = null
+
+    /** Account types restorable from a pasted private key. */
+    fun privateKeyAccountTypes(privateKey: String): List<AccountType> = emptyList()
+
+    /** Send-transaction service used by multiswap/OpenCryptoPay confirm flows. */
+    fun sendTransactionService(token: Token): AbstractSendTransactionService? = null
+
+    /**
+     * Memo the chain can attach to a plain transfer of [token], or null when it has no memo
+     * field. [address] is the chosen recipient, or null while none is chosen yet; chains whose
+     * memo depends on the destination answer for the optimistic case then.
+     */
+    suspend fun sendMemoSupport(token: Token, address: String?): SendMemoSupport? = null
+
+    /**
+     * A chain-specific field on the send screen above the memo (the XRP destination tag), or
+     * null when the chain has none. [address] is the chosen recipient, or null while none is
+     * chosen yet; whether the field is required and whether the address fixes its value
+     * depend on it.
+     */
+    suspend fun sendExtraInput(token: Token, address: String?): SendExtraInput? = null
+
+    /**
+     * A plain transfer of [amount] to [address] carrying [memo] as SendTransactionData for the
+     * chain's send-transaction service, or null when the chain cannot build one. [extraInput]
+     * is what was typed into the chain's [sendExtraInput] field, if any. [settings] are the
+     * per-send choices made on the chain's settings page (see [sendSettingsPage]), if any;
+     * what the user was not asked about (fee rate) takes the service's defaults.
+     */
+    fun sendTransactionData(
+        token: Token,
+        amount: BigDecimal,
+        address: String,
+        memo: String?,
+        extraInput: String?,
+        settings: SendChainSettings?,
+    ): io.horizontalsystems.walletkit.modules.multiswap.sendtransaction.SendTransactionData? = null
+
+    /**
+     * The balance the send screen should offer for [token] under [settings], or null to use
+     * the wallet's spendable balance. Bitcoin answers with the sum of manually selected
+     * outputs, so the amount can only be taken from what will actually be spent.
+     */
+    fun sendAvailableBalance(token: Token, settings: SendChainSettings?): BigDecimal? = null
+
+    /**
+     * [data], a deposit built by a swap provider, with the coin control the user chose in the
+     * send screen's [settings] applied: the outputs to spend, and for Bitcoin the sorting and
+     * replace-by-fee preferences. A timelock is never applied: the deposit must be spendable
+     * by the provider immediately. Chains without such settings return [data] as is.
+     */
+    fun depositTransactionData(
+        token: Token,
+        data: io.horizontalsystems.walletkit.modules.multiswap.sendtransaction.SendTransactionData,
+        settings: SendChainSettings?,
+    ): io.horizontalsystems.walletkit.modules.multiswap.sendtransaction.SendTransactionData = data
+
+    /**
+     * Bitcoin-family parameters a private send deposit inherits from the send screen's
+     * [settings], or null for other chains. A timelock is never part of them: the deposit
+     * must be spendable by the provider immediately.
+     */
+    fun privateSendBtcParams(
+        token: Token,
+        settings: SendChainSettings?,
+    ): io.horizontalsystems.walletkit.modules.privatesend.PrivateSendBtcParams? = null
+
+    /**
+     * Page behind the send screen's settings icon, or null when the chain has none. [address]
+     * is the chosen recipient, or null while none is chosen; settings that depend on it (a
+     * Bitcoin timelock) are offered accordingly.
+     */
+    fun sendSettingsPage(wallet: Wallet, address: String?): HSPage? = null
+
+    /**
+     * A plain transfer of [amount] to [address] as SendTransactionData, for flows that build a
+     * deposit themselves (private send). Most chains are built kit-free by the caller; EVM
+     * needs the kit for ERC20 transfer calldata, so its plugin overrides this.
+     */
+    fun depositTransferData(
+        token: Token,
+        amount: BigDecimal,
+        address: String,
+    ): io.horizontalsystems.walletkit.modules.multiswap.sendtransaction.SendTransactionData? = null
+}
+
+/** Per-send, chain-specific choices made on the send screen and carried to confirmation. */
+interface SendChainSettings
+
+/**
+ * How a chain's send memo is limited and who can read it once sent. [maxBytes] is what the
+ * network stores, so the field counts the memo's UTF-8 bytes, not its characters.
+ */
+data class SendMemoSupport(
+    val maxBytes: Int,
+    val visibility: io.horizontalsystems.walletkit.modules.memo.MemoVisibility,
+)
+
+/**
+ * A chain-specific text field on the send screen. [fixedValue] is a value the recipient
+ * address itself carries, which locks the field; [required] says the recipient will not
+ * accept a transfer without one. [validate] answers the error for a typed value, or null
+ * when it is acceptable.
+ */
+data class SendExtraInput(
+    val title: String,
+    val info: String,
+    val required: Boolean,
+    val fixedValue: String?,
+    val keyboardType: androidx.compose.ui.text.input.KeyboardType,
+    val maxLength: Int,
+    val validate: (String) -> String?,
+)
+
+/** A row on the manage-account private/public keys screens, navigating to a chain page. */
+class ChainKeyRow(
+    val titleRes: Int,
+    val descriptionRes: Int,
+    val page: HSPage,
+    val statPage: io.horizontalsystems.walletkit.core.stats.StatPage,
+)
+
+
+/** What the funds checked by a send or swap form are about to be spent on. */
+enum class SpendPurpose { Send, Swap }
+
+/** The balance of [token] a form or token picker offers; see [ChainPlugin.spendBalance]. */
+fun IBalanceAdapter.spendBalance(token: Token): BigDecimal? =
+    ChainRegistry[token.blockchainType]?.spendBalance(token) ?: balanceData?.available

@@ -1,0 +1,18 @@
+package io.horizontalsystems.walletkit.core.address
+
+import io.horizontalsystems.walletkit.R
+
+enum class AddressCheckResult {
+    Clear,
+    Detected,
+    NotAvailable,
+    NotSupported;
+
+    val title: Int
+        get() = when (this) {
+            Clear -> R.string.Send_Address_Error_Clear
+            Detected -> R.string.Send_Address_Error_Detected
+            NotAvailable -> R.string.NotAvailable
+            NotSupported -> R.string.NotAvailable
+        }
+}

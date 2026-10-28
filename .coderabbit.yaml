@@ -1,0 +1,90 @@
+reviews:
+  profile: "chill"
+  high_level_summary: true
+  poem: false
+  review_status: true
+  request_changes_workflow: true
+
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "^develop$"
+    ignore_title_keywords:
+      - "WIP"
+      - "DO NOT REVIEW"
+
+  path_filters:
+    - "!**/build/**"
+    - "!**/.gradle/**"
+    - "!**/gradle/wrapper/**"
+    - "!**/*.iml"
+    - "!**/generated/**"
+    - "!**/*.pb.kt"
+    - "!**/res/values-*/strings.xml"
+
+  path_instructions:
+    - path: "**/*.kt"
+      instructions: |
+        This is an Android crypto wallet. Review priorities, in order:
+
+        1. Secret material (mnemonic, private key, seed, passphrase) must
+           never reach logs, analytics, SharedPreferences, DataStore, or any
+           persisted storage other than Android Keystore. Clipboard copy is
+           allowed only as an explicit user action from a sensitive-data
+           screen, ideally with a confirmation step and routed through the
+           app's centralized clipboard helper. Flag any path where a
+           secret-looking value crosses a forbidden boundary — even if the
+           variable is renamed through several function calls.
+
+        2. Logging: any Log.d/v/i/w/e or println that can contain secret
+           material must be guarded by BuildConfig.DEBUG and verified not
+           to ship.
+
+        3. Cryptographic operations must run on Dispatchers.IO or a
+           dedicated executor, never Dispatchers.Main.
+
+        4. StateFlow / SharedFlow values exposed to UI must not contain
+           secret material.
+
+    - path: "walletkit-chain-*/**/*.kt"
+      instructions: |
+        Chain integration code. Check it against
+        docs/chain-integration/checklist.md and cite item IDs. Most often
+        missed:
+
+        - AMT-2: decimals rescaling that loses special values (unlimited
+          approve, default trust limit). The maximum must be detected
+          before rescaling.
+        - HIST-3: the history amount must be what moved, not what was
+          requested; no fallback to a requested amount.
+        - TX-4 / TX-5: a lost or ambiguous submit response is "unknown",
+          not "failed"; pending is not marked failed because a lookup
+          threw; a retry resends the same signed bytes.
+        - TX-7 / NET-2: encoded fields range-checked, never truncated;
+          every paging loop capped.
+        - NET-1: an empty or "account not found" response is not a zero
+          balance.
+        - ACC-1 / ACC-3: watch accounts never reach a signing path; data
+          for a deleted account cannot be rebound to another account.
+
+  tools:
+    gitleaks:
+      enabled: true
+    semgrep:
+      enabled: true
+    ast-grep:
+      essential_rules: true
+    detekt:
+      enabled: false
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  learnings:
+    scope: "auto"
+  opt_out: false
+  code_guidelines:
+    filePatterns:
+      - "docs/CRYPTO_GUIDELINES.md"

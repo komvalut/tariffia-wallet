@@ -1,0 +1,87 @@
+package io.horizontalsystems.walletkit.modules.settings.donate
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.core.App
+import io.horizontalsystems.walletkit.core.stats.StatEvent
+import io.horizontalsystems.walletkit.core.stats.StatPage
+import io.horizontalsystems.walletkit.core.stats.stat
+import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
+import io.horizontalsystems.walletkit.modules.nav3.HSPage
+import io.horizontalsystems.walletkit.core.providers.Translator
+import io.horizontalsystems.walletkit.modules.send.v2.SendV2Page
+import io.horizontalsystems.walletkit.modules.tokenselect.TokenSelectScreen
+import io.horizontalsystems.walletkit.modules.tokenselect.TokenSelectViewModel
+import io.horizontalsystems.walletkit.ui.compose.ComposeAppTheme
+import io.horizontalsystems.walletkit.uiv3.components.cell.CellMiddleInfo
+import io.horizontalsystems.walletkit.uiv3.components.cell.CellPrimary
+import io.horizontalsystems.walletkit.uiv3.components.cell.CellRightNavigation
+import io.horizontalsystems.walletkit.uiv3.components.cell.hs
+import kotlinx.serialization.Serializable
+
+@Serializable
+data object DonateTokenSelectPage : HSPage() {
+
+    @Composable
+    override fun GetContent(navigation: HSNavigation) {
+        TokenSelectScreen(
+            navigation = navigation,
+            title = stringResource(R.string.Settings_Donate),
+            onClickItem = { viewItem ->
+                val donateAddress: String? =
+                    App.appConfigProvider.donateAddresses[viewItem.wallet.token.blockchainType]
+                donateAddress?.let {
+                    navigation.slideFromRight(
+                        SendV2Page(
+                            wallet = viewItem.wallet,
+                            sendEntryPointDestId = DonateTokenSelectPage::class,
+                            purpose = SendV2Page.Purpose.Donation(
+                                address = donateAddress,
+                                title = Translator.getString(
+                                    R.string.Settings_DonateToken,
+                                    viewItem.wallet.token.fullCoin.coin.code
+                                ),
+                            ),
+                        )
+                    )
+
+                    stat(page = StatPage.Donate, event = StatEvent.OpenSend(viewItem.wallet.token))
+                }
+
+            },
+            viewModel = viewModel(factory = TokenSelectViewModel.FactoryForSend()),
+        ) {
+            DonateHeader(
+                onClick = {
+                    navigation.slideFromRight(DonateAddressesPage)
+
+                    stat(page = StatPage.Donate, event = StatEvent.Open(StatPage.DonateAddressList))
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun DonateHeader(onClick: () -> Unit) {
+    CellPrimary(
+        middle = {
+            CellMiddleInfo(title = stringResource(R.string.Settings_Donate_DonationAddresses).hs)
+        },
+        right = {
+            CellRightNavigation()
+        },
+        onClick = onClick
+    )
+}
+
+@Preview
+@Composable
+private fun DonateHeaderPreview() {
+    ComposeAppTheme {
+        DonateHeader({})
+    }
+}

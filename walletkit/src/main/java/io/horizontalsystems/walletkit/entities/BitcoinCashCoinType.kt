@@ -1,0 +1,38 @@
+package io.horizontalsystems.walletkit.entities
+
+import io.horizontalsystems.walletkit.R
+
+enum class BitcoinCashCoinType(val value: String) {
+    type0("type0"), type145("type145");
+
+    val title: String
+        get() {
+            return when (this) {
+                type0 -> "Legacy (Type 0)"
+                type145 -> "CashAddress (Type 145)"
+            }
+        }
+
+    val description: Int
+        get() {
+            return when (this) {
+                type0 -> R.string.CoinSettings_BitcoinCashCoinType_Type0_Description
+                type145 -> R.string.CoinSettings_BitcoinCashCoinType_Type145_Description
+            }
+        }
+
+    // Declaration order is fixed by `value`, which is persisted; display order puts
+    // the recommended type first instead.
+    val order: Int
+        get() = when (this) {
+            type145 -> 0
+            type0 -> 1
+        }
+
+        companion object {
+            val default = type145
+            private val map = values().associateBy(BitcoinCashCoinType::value)
+
+            fun fromString(value: String?): BitcoinCashCoinType? = map[value]
+        }
+}

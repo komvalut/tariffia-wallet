@@ -1,0 +1,55 @@
+package io.horizontalsystems.walletkit.entities
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import io.horizontalsystems.walletkit.modules.multiswap.history.SwapOperation
+
+@Entity
+data class SwapRecord(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val accountId: String,
+    val timestamp: Long,
+    val providerId: String,
+    val providerName: String,
+
+    val tokenInUid: String,
+    val tokenInCoinCode: String,
+    val tokenInCoinUid: String,
+    val tokenInBadge: String?,
+    val tokenInBlockchainTypeUid: String,
+
+    val tokenOutUid: String,
+    val tokenOutCoinCode: String,
+    val tokenOutCoinUid: String,
+    val tokenOutBadge: String?,
+    val tokenOutBlockchainTypeUid: String,
+
+    val amountIn: String,
+    val amountOut: String?,
+    val amountOutMin: String?,
+
+    val recipientAddress: String?,
+    val customRecipientAddress: Boolean = false,
+    val sourceAddress: String?,
+    val transactionHash: String?,
+    val outboundTransactionHash: String? = null,
+
+    val providerSwapId: String?,
+    val fromAsset: String?,
+    val toAsset: String?,
+    val depositAddress: String?,
+    val status: String,
+    // SwapOperation.name — which user-facing operation produced this record (plain swap,
+    // private send, CrossPay). Same rail can serve several; history renders each differently.
+    val operation: String = SwapOperation.Swap.name,
+    val pauseReason: String? = null,
+    // opaque handle linking the record to an external settlement mechanism
+    // (e.g. a smart-account userOp hash) until the real transactionHash is known
+    val trackingHandle: String? = null,
+    // estimated swap duration in seconds, as quoted at swap time
+    val estimatedTime: Long? = null,
+    // SplitSwap only: the outputs as JSON (SwapRecordOutput list), each with its own status,
+    // amount and payout hash, since the outputs of one deposit finish independently.
+    val splitOutputs: String? = null,
+)

@@ -1,0 +1,55 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+        maven { url = uri("https://jitpack.io") }
+        // Zodl Zcash SDK. Zodl publishes no releases to Maven Central, only snapshots to the
+        // Sonatype snapshot repository, so zcashSdk pins a timestamped (unique) snapshot build
+        // and gradle/verification-metadata.xml pins its checksums: a re-upload of the same
+        // -SNAPSHOT version cannot change what the app builds against.
+        maven {
+            url = uri("https://central.sonatype.com/repository/maven-snapshots/")
+            content { includeGroup("com.zodl.android") }
+        }
+    }
+}
+
+rootProject.name = "Tariffia"
+
+include(":app")
+include(":walletkit")
+include(":walletkit-chain-zano")
+include(":walletkit-chain-monero")
+include(":walletkit-chain-zcash")
+include(":walletkit-chain-solana")
+include(":walletkit-chain-stellar")
+include(":walletkit-chain-xrp")
+include(":walletkit-chain-near")
+include(":walletkit-chain-ton")
+include(":walletkit-chain-tron")
+include(":walletkit-chain-thorchain")
+include(":walletkit-chain-bitcoin")
+include(":walletkit-chain-evm")
+include(":components:icons")
+include(":components:chartview")
+include(":subscriptions-core")
+if (file("subscriptions-google-play").exists()) {
+    include(":subscriptions-google-play")
+}
+include(":subscriptions-dev")
+include(":subscriptions-fdroid")
+
+include(":dapp-core")
+if (file("dapp-wallet-connect").exists()) {
+    include(":dapp-wallet-connect")
+}

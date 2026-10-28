@@ -1,0 +1,123 @@
+package io.horizontalsystems.walletkit.modules.market.filtersresult
+
+import io.horizontalsystems.walletkit.core.collectSafely
+import io.horizontalsystems.walletkit.core.managers.MarketFavoritesManager
+import io.horizontalsystems.walletkit.core.managers.MarketKitWrapper
+import io.horizontalsystems.walletkit.core.managers.SignalsControlManager
+import io.horizontalsystems.walletkit.entities.DataState
+import io.horizontalsystems.walletkit.modules.market.MarketItem
+import io.horizontalsystems.walletkit.modules.market.SortingField
+import io.horizontalsystems.walletkit.modules.market.favorites.MarketItemWrapper
+import io.horizontalsystems.walletkit.modules.market.filters.IMarketListFetcher
+import io.horizontalsystems.walletkit.modules.market.sort
+import io.horizontalsystems.marketkit.models.Analytics
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
+
+class MarketFiltersResultService(
+    private val fetcher: IMarketListFetcher,
+    private val favoritesManager: MarketFavoritesManager,
+    private val signalsControlManager: SignalsControlManager,
+    private val marketKitWrapper: MarketKitWrapper,
+) {
+    val showSignals: Boolean
+        get() = signalsControlManager.showSignals
+    private val _stateFlow = MutableSharedFlow<DataState<List<MarketItemWrapper>>>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val stateFlow: Flow<DataState<List<MarketItemWrapper>>> = _stateFlow
+
+    var marketItems: List<MarketItem> = listOf()
+    var signals: Map<String, Analytics.TechnicalAdvice.Advice> = mapOf()
+
+    val sortingFields = listOf(
+        SortingField.HighestCap,
+        SortingField.LowestCap,
+        SortingField.TopGainers,
+        SortingField.TopLosers,
+    )
+
+    var sortingField = SortingField.HighestCap
+
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    private var fetchJob: Job? = null
+
+    fun start() {
+        coroutineScope.launch {
+            favoritesManager.dataUpdatedFlow.collectSafely {
+                syncItems()
+            }
+        }
+
+        fetch()
+    }
+
+    fun stop() {
+        coroutineScope.cancel()
+    }
+
+    fun refresh() {
+        fetch()
+    }
+
+    fun updateSortingField(sortingField: SortingField) {
+        this.sortingField = sortingField
+        syncItems()
+    }
+
+    fun addFavorite(coinUid: String) {
+        favoritesManager.add(coinUid)
+    }
+
+    fun removeFavorite(coinUid: String) {
+        favoritesManager.remove(coinUid)
+    }
+
+    fun showSignals() {
+        signalsControlManager.showSignals = true
+        refresh()
+    }
+
+    fun hideSignals() {
+        signalsControlManager.showSignals = false
+        refresh()
+    }
+
+    private fun fetch() {
+        fetchJob?.cancel()
+
+        fetchJob = coroutineScope.launch {
+            try {
+                marketItems = fetcher.fetchAsync()
+                if (showSignals) {
+                    signals = marketKitWrapper
+                        .getCoinSignalsSingle(marketItems.map { it.fullCoin.coin.uid })
+                }
+                syncItems()
+            } catch (e: Throwable) {
+                _stateFlow.tryEmit(DataState.Error(e))
+            }
+        }
+    }
+
+    private fun syncItems() {
+        val favorites = favoritesManager.getAll().map { it.coinUid }
+
+        val items = marketItems
+            .sort(sortingField)
+            .map {
+                MarketItemWrapper(
+                    marketItem = it,
+                    favorited = favorites.contains(it.fullCoin.coin.uid),
+                    signal = if (showSignals) signals[it.fullCoin.coin.uid] else null
+                )
+            }
+
+        _stateFlow.tryEmit(DataState.Success(items))
+    }
+
+}

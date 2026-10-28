@@ -1,0 +1,228 @@
+package io.horizontalsystems.walletkit.chain.stellar
+
+import androidx.compose.runtime.Composable
+import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.core.App
+import io.horizontalsystems.walletkit.core.ISendStellarAdapter
+import io.horizontalsystems.walletkit.core.chain.SendChainSettings
+import io.horizontalsystems.walletkit.modules.multiswap.sendtransaction.SendTransactionData
+import java.math.BigDecimal
+import io.horizontalsystems.walletkit.core.IAdapter
+import io.horizontalsystems.walletkit.core.ITransactionsAdapter
+import io.horizontalsystems.walletkit.core.adapters.StellarAdapter
+import io.horizontalsystems.walletkit.core.adapters.StellarAssetAdapter
+import io.horizontalsystems.walletkit.core.adapters.StellarTransactionsAdapter
+import io.horizontalsystems.walletkit.core.chain.ChainKeyRow
+import io.horizontalsystems.walletkit.core.chain.ChainPlugin
+import io.horizontalsystems.walletkit.core.factories.StellarTransactionConverter
+import io.horizontalsystems.walletkit.core.managers.RestoreSettings
+import io.horizontalsystems.walletkit.core.managers.StellarAccountManager
+import io.horizontalsystems.walletkit.core.managers.StellarKitManager
+import io.horizontalsystems.walletkit.core.managers.toStellarWallet
+import io.horizontalsystems.walletkit.core.stats.StatPage
+import io.horizontalsystems.walletkit.entities.Account
+import io.horizontalsystems.walletkit.entities.AccountType
+import io.horizontalsystems.walletkit.entities.Wallet
+import io.horizontalsystems.walletkit.modules.address.IAddressHandler
+import io.horizontalsystems.walletkit.modules.manageaccount.stellarsecretkey.StellarSecretKeyPage
+import io.horizontalsystems.walletkit.modules.multiswap.action.ActionActivateStellarAsset
+import io.horizontalsystems.walletkit.modules.multiswap.action.ISwapProviderAction
+import io.horizontalsystems.walletkit.modules.multiswap.sendtransaction.AbstractSendTransactionService
+import io.horizontalsystems.walletkit.modules.multiswap.sendtransaction.SendTransactionServiceStellar
+import io.horizontalsystems.walletkit.modules.address.AddressHandlerStellar
+import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
+import io.horizontalsystems.walletkit.modules.nav3.HSPage
+import io.horizontalsystems.walletkit.modules.receive.ReceiveScreen
+import io.horizontalsystems.walletkit.modules.receive.ReceiveActivatableTokenScreen
+import io.horizontalsystems.walletkit.core.TokenActivationInfo
+import io.horizontalsystems.walletkit.modules.send.address.EnterAddressValidator
+import io.horizontalsystems.walletkit.modules.send.address.StellarAddressValidator
+import io.horizontalsystems.walletkit.modules.transactions.TransactionSource
+import io.horizontalsystems.walletkit.modules.walletconnect.handler.IWCHandler
+import io.horizontalsystems.walletkit.modules.walletconnect.stellar.WCHandlerStellar
+import io.horizontalsystems.marketkit.models.BlockchainType
+import io.horizontalsystems.marketkit.models.Token
+import io.horizontalsystems.walletkit.core.chain.SendMemoSupport
+import io.horizontalsystems.walletkit.modules.memo.MemoVisibility
+import io.horizontalsystems.marketkit.models.TokenQuery
+import io.horizontalsystems.marketkit.models.TokenType
+import io.horizontalsystems.stellarkit.StellarKit
+import io.horizontalsystems.stellarkit.room.StellarAsset
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlin.reflect.KClass
+
+class StellarChainPlugin : ChainPlugin {
+
+    // Native XLM: the reserve-aware balance net of the flat network fee, which is what a
+    // whole-balance payment can carry. Assets pay their fee in XLM and keep their own figure.
+    override fun sendAvailableBalance(token: Token, settings: SendChainSettings?): BigDecimal? =
+        if (token.type == TokenType.Native) {
+            App.adapterManager.getAdapterForToken<ISendStellarAdapter>(token)?.maxSendableBalance
+                ?.coerceAtLeast(BigDecimal.ZERO)
+        } else {
+            null
+        }
+
+    override fun sendTransactionData(
+        token: Token,
+        amount: BigDecimal,
+        address: String,
+        memo: String?,
+        extraInput: String?,
+        settings: SendChainSettings?,
+    ) = SendTransactionData.Stellar.Regular(address, memo.orEmpty(), amount)
+
+    // A Stellar text memo holds at most 28 bytes; the SDK rejects a longer one when the
+    // transaction is built.
+    override suspend fun sendMemoSupport(token: Token, address: String?) =
+        SendMemoSupport(maxBytes = 28, visibility = MemoVisibility.Public)
+
+    override val blockchainType: BlockchainType = BlockchainType.Stellar
+
+    val kitManager by lazy { StellarKitManager(App.backgroundManager) }
+
+    private val accountManager by lazy {
+        StellarAccountManager(App.accountManager, App.walletManager, kitManager, App.tokenAutoEnableManager)
+    }
+
+    override suspend fun onAppStart() {
+        accountManager.start()
+    }
+
+    override fun createAdapter(wallet: Wallet, restoreSettings: RestoreSettings): IAdapter? =
+        when (val tokenType = wallet.token.type) {
+            TokenType.Native -> StellarAdapter(kitManager.getStellarKitWrapper(wallet.account))
+            is TokenType.Asset -> StellarAssetAdapter(
+                kitManager.getStellarKitWrapper(wallet.account),
+                tokenType.code,
+                tokenType.issuer,
+            )
+            else -> null
+        }
+
+    // Not implemented: stellar-kit exposes no clear API, unlike bitcoin-kit and ethereum-kit which
+    // provide Kit.clear(context, network, walletId). Deleting the store from here would mean
+    // hardcoding the kit's internal database name, which silently stops working the moment the
+    // kit renames it. So Stellar account data currently outlives the account — history and
+    // addresses, not keys. Needs a clear() in stellar-kit; see #9452.
+    override fun clearAccountData(accountId: String) = Unit
+
+    override fun createTransactionsAdapter(source: TransactionSource): ITransactionsAdapter? {
+        val stellarKitWrapper = kitManager.getStellarKitWrapper(source.account)
+        val baseToken = App.coinManager.getToken(TokenQuery(BlockchainType.Stellar, TokenType.Native)) ?: return null
+        val converter = StellarTransactionConverter(
+            source,
+            stellarKitWrapper.stellarKit.receiveAddress,
+            App.coinManager,
+            baseToken,
+        )
+
+        return StellarTransactionsAdapter(stellarKitWrapper, converter)
+    }
+
+    override fun unlink(account: Account) {
+        kitManager.unlink(account)
+    }
+
+    override fun statusInfo(): Map<String, Any>? = kitManager.statusInfo
+
+    override suspend fun refreshKit() {
+        kitManager.stellarKitWrapper?.stellarKit?.refresh()
+    }
+
+    override suspend fun swapDestinationAddress(account: Account): String =
+        kitManager.getAddress(account.type)
+
+    override fun sendTransactionService(token: Token): AbstractSendTransactionService {
+        val activeAccount = App.accountManager.activeAccount
+            ?: throw IllegalStateException("No active account for Stellar send")
+        val stellarKitWrapper = kitManager.getStellarKitWrapper(activeAccount)
+        return SendTransactionServiceStellar(stellarKitWrapper.stellarKit, token)
+    }
+
+    override fun wcHandlers(): List<IWCHandler> = listOf(WCHandlerStellar(kitManager))
+
+    // The trustline pre-swap step (the EIP-20 approve analogue): a classic-asset buy needs the
+    // account's trustline BEFORE the swap. The trustline belongs to the ACCOUNT, not the wallet
+    // list — when the buy token was never added as a wallet (no adapter), it is resolved through
+    // the account-level kit, so the user gets the Activate button instead of a raw server 4xx at
+    // confirmation. An unresolvable state does NOT block (null): the server preflight remains
+    // the authority; this only drives the inline button UX.
+    override suspend fun swapActivationAction(token: Token): ISwapProviderAction? {
+        val tokenType = token.type as? TokenType.Asset ?: return null // native XLM needs no trustline
+        val account = App.accountManager.activeAccount ?: return null
+
+        val established = try {
+            App.adapterManager.getAdapterForToken<StellarAssetAdapter>(token)?.isTrustlineEstablished()
+                ?: withContext(Dispatchers.IO) {
+                    // A kit already running for this account answers without taking a reference;
+                    // one started just for the question is released again, or it would keep the
+                    // kit alive after the last Stellar wallet is gone.
+                    val running = kitManager.stellarKitWrapper?.takeIf { kitManager.currentAccount == account }
+                    val wrapper = running ?: kitManager.getStellarKitWrapper(account)
+                    try {
+                        wrapper.stellarKit.isAssetEnabled(StellarAsset.Asset(tokenType.code, tokenType.issuer))
+                    } finally {
+                        if (running == null) kitManager.unlink(account)
+                    }
+                }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Throwable) {
+            return null
+        }
+        if (established) return null
+
+        return ActionActivateStellarAsset(Wallet(token, account))
+    }
+
+    override fun privateKeyAccountTypes(privateKey: String): List<AccountType> =
+        if (StellarKit.isValidSecretKey(privateKey)) {
+            listOf(AccountType.StellarSecretKey(privateKey))
+        } else {
+            emptyList()
+        }
+
+    override fun privateKeyRows(account: Account): List<ChainKeyRow> {
+        val secretKey = try {
+            StellarKit.getSecretSeed(account.type.toStellarWallet())
+        } catch (e: Exception) {
+            null
+        } ?: return emptyList()
+
+        return listOf(
+            ChainKeyRow(
+                titleRes = R.string.PrivateKeys_StellarSecretKey,
+                descriptionRes = R.string.PrivateKeys_StellarSecretKeyDescription,
+                page = StellarSecretKeyPage(StellarSecretKeyPage.Input(secretKey)),
+                statPage = StatPage.StellarSecretKey,
+            )
+        )
+    }
+
+    override fun addressHandlers(): List<IAddressHandler> = listOf(AddressHandlerStellar())
+
+    override fun addressValidator(token: Token): EnterAddressValidator = StellarAddressValidator(token)
+
+    override val hasReceiveScreen: Boolean get() = true
+
+    private val stellarActivationInfo = TokenActivationInfo(
+        dialogDescriptionRes = R.string.ActivationRequired_DialogDescription,
+        insufficientBalanceDescriptionRes = R.string.Activate_InsufficientBalance_Description,
+    )
+
+    override fun tokenActivationInfo(wallet: Wallet): TokenActivationInfo? =
+        if (wallet.token.type is TokenType.Asset) stellarActivationInfo else null
+
+    @Composable
+    override fun ReceiveScreen(navigation: HSNavigation, wallet: Wallet, receiveEntryPointDestId: KClass<out HSPage>?) {
+        if (wallet.token.type is TokenType.Asset) {
+            ReceiveActivatableTokenScreen(navigation, wallet, receiveEntryPointDestId, stellarActivationInfo)
+        } else {
+            ReceiveScreen(navigation, wallet, receiveEntryPointDestId, false)
+        }
+    }
+
+}

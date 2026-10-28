@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!--Final, top-level theme-->
+    <style name="Theme.AppTheme.DayNight" parent="Theme.AppTheme"/>
+
+    <style name="Theme.AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorAccent">@color/yellow_l</item>
+        <item name="android:windowBackground">@color/light</item>
+        <item name="android:actionMenuTextAppearance">@style/Headline2</item>
+        <item name="colorControlNormal">@color/grey</item>
+        <item name="colorControlActivated">@color/yellow_l</item>
+        <item name="colorControlHighlight">#6E7899</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_back</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+
+        <item name="TitleColor">@color/dark</item>
+        <item name="RoundRippleColor">@color/light_grey</item>
+    </style>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/tyler</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+        <item name="windowSplashScreenAnimationDuration">300</item>
+        <item name="postSplashScreenTheme">@style/Theme.AppTheme.DayNight</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+    </style>
+</resources>

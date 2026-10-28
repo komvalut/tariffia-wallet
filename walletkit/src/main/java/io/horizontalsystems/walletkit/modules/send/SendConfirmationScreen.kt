@@ -1,0 +1,413 @@
+package io.horizontalsystems.walletkit.modules.send
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import io.horizontalsystems.walletkit.R
+import io.horizontalsystems.walletkit.SnackbarDuration
+import io.horizontalsystems.walletkit.core.App
+import io.horizontalsystems.walletkit.core.badge
+import io.horizontalsystems.walletkit.core.ethereum.CautionViewItem
+import io.horizontalsystems.walletkit.ui.compose.components.IMenuItem
+import io.horizontalsystems.walletkit.core.stats.StatEvent
+import io.horizontalsystems.walletkit.core.stats.StatPage
+import io.horizontalsystems.walletkit.core.stats.stat
+import io.horizontalsystems.walletkit.entities.Address
+import io.horizontalsystems.walletkit.entities.CurrencyValue
+import io.horizontalsystems.walletkit.helpers.HudHelper
+import io.horizontalsystems.walletkit.modules.confirm.ErrorSheet
+import io.horizontalsystems.walletkit.modules.contacts.model.Contact
+import io.horizontalsystems.walletkit.modules.evmfee.ButtonsGroupWithShade
+import io.horizontalsystems.walletkit.modules.evmfee.Cautions
+import io.horizontalsystems.walletkit.modules.fee.FeeItem
+import io.horizontalsystems.walletkit.modules.multiswap.QuoteInfoRow
+import io.horizontalsystems.walletkit.modules.multiswap.ui.DataFieldFeeTemplate
+import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
+import io.horizontalsystems.walletkit.modules.nav3.HSPage
+import io.horizontalsystems.walletkit.modules.send.v2.SendV2Page
+import io.horizontalsystems.walletkit.modules.sendevmtransaction.AddressCell
+import io.horizontalsystems.walletkit.ui.compose.ComposeAppTheme
+import io.horizontalsystems.walletkit.ui.compose.components.CoinImage
+import io.horizontalsystems.walletkit.ui.compose.components.HsDivider
+import io.horizontalsystems.walletkit.ui.compose.components.RowUniversal
+import io.horizontalsystems.walletkit.ui.compose.components.VSpacer
+import io.horizontalsystems.walletkit.ui.compose.components.subhead1_grey
+import io.horizontalsystems.walletkit.ui.compose.components.subhead2_leah
+import io.horizontalsystems.walletkit.uiv3.components.HSScaffold
+import io.horizontalsystems.walletkit.uiv3.components.cell.CellMiddleInfo
+import io.horizontalsystems.walletkit.uiv3.components.cell.CellPrimary
+import io.horizontalsystems.walletkit.uiv3.components.cell.CellRightInfo
+import io.horizontalsystems.walletkit.uiv3.components.cell.hs
+import io.horizontalsystems.marketkit.models.Coin
+import io.horizontalsystems.marketkit.models.Token
+import kotlinx.coroutines.delay
+import java.math.BigDecimal
+import kotlin.reflect.KClass
+import io.horizontalsystems.walletkit.uiv3.components.controls.HSButton
+
+@Composable
+fun SendConfirmationScreen(
+    navigation: HSNavigation,
+    coinMaxAllowedDecimals: Int,
+    feeCoinMaxAllowedDecimals: Int,
+    rate: CurrencyValue?,
+    feeCoinRate: CurrencyValue?,
+    sendResult: SendResult?,
+    token: Token,
+    feeCoin: Coin,
+    amount: BigDecimal,
+    address: Address?,
+    contact: Contact?,
+    fee: BigDecimal?,
+    memo: String?,
+    onClickSend: () -> Unit,
+    sendEntryPointDestId: KClass<out HSPage>?,
+    title: String? = null,
+    error: Throwable? = null,
+    menuItems: List<IMenuItem> = listOf(),
+    cautions: List<CautionViewItem> = listOf(),
+    sendEnabled: Boolean = true,
+    feeInfoText: String? = null,
+    // Called once the failure sheet is up, so the caller can clear the result and a later
+    // recomposition of this screen does not show the sheet again.
+    onFailureShown: (() -> Unit)? = null,
+    sendButtonTitle: String? = null,
+    sendingButtonTitle: String? = null,
+    additionalFields: (@Composable ColumnScope.() -> Unit)? = null,
+) {
+    val closeUntilDestId = sendEntryPointDestId ?: SendV2Page::class
+    val view = LocalView.current
+    val failureText = (sendResult as? SendResult.Failed)?.let {
+        it.caution.getDescription() ?: it.caution.getString()
+    }
+
+    // Keyed on the result so each outcome is announced once, not on every recomposition.
+    LaunchedEffect(sendResult) {
+        when (sendResult) {
+            is SendResult.Sent -> {
+                HudHelper.showSuccessMessage(view, R.string.Send_Success, SnackbarDuration.LONG)
+                delay(1200)
+                navigation.removeLastUntil(closeUntilDestId, true)
+            }
+
+            is SendResult.Failed -> {
+                if (sendResult.expected) {
+                    HudHelper.showErrorMessage(view, failureText.orEmpty())
+                } else {
+                    navigation.slideFromBottom(ErrorSheet(ErrorSheet.Input(failureText.orEmpty())))
+                }
+                onFailureShown?.invoke()
+            }
+
+            else -> Unit
+        }
+    }
+
+    LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
+        if (sendResult is SendResult.Sent) {
+            navigation.removeLastUntil(closeUntilDestId, true)
+        }
+    }
+
+    HSScaffold(
+        title = title ?: stringResource(R.string.Send_Confirmation_Title),
+        onBack = navigation::removeLastOrNull,
+        menuItems = menuItems,
+        bottomBar = {
+            ButtonsGroupWithShade {
+                SendButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    sendResult = sendResult,
+                    title = sendButtonTitle,
+                    sendingTitle = sendingButtonTitle,
+                    onClickSend = {
+                        onClickSend()
+
+                        stat(page = StatPage.SendConfirmation, event = StatEvent.Send)
+                    },
+                    enabled = error == null && sendEnabled
+                )
+            }
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 106.dp)
+        ) {
+            VSpacer(16.dp)
+            ConfirmationTopSection(
+                token = token,
+                amount = amount,
+                coinMaxAllowedDecimals = coinMaxAllowedDecimals,
+                rate = rate,
+                address = address,
+                contact = contact,
+            )
+
+            ConfirmationBottomSection(
+                feeCoin = feeCoin,
+                feeCoinMaxAllowedDecimals = feeCoinMaxAllowedDecimals,
+                fee = fee,
+                feeCoinRate = feeCoinRate,
+                navigation = navigation,
+                memo = memo,
+                customFeeInfo = feeInfoText,
+                additionalFields = additionalFields
+            )
+
+            error?.let {
+                Cautions(listOf(CautionViewItem.fromThrowable(it)))
+            }
+            if (cautions.isNotEmpty()) {
+                Cautions(cautions)
+            }
+        }
+    }
+}
+
+@Composable
+fun ConfirmationBottomSection(
+    feeCoin: Coin,
+    feeCoinMaxAllowedDecimals: Int,
+    fee: BigDecimal?,
+    feeCoinRate: CurrencyValue?,
+    navigation: HSNavigation,
+    memo: String?,
+    customFeeInfo: String? = null,
+    additionalFields: (@Composable ColumnScope.() -> Unit)? = null,
+) {
+    var formattedFee by remember { mutableStateOf<FeeItem?>(null) }
+
+    LaunchedEffect(fee, feeCoinRate) {
+        formattedFee = getFormattedFee(fee, feeCoinRate, feeCoin.code, feeCoinMaxAllowedDecimals)
+    }
+
+    VSpacer(16.dp)
+
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(ComposeAppTheme.colors.lawrence)
+            .padding(vertical = 8.dp)
+    ) {
+        additionalFields?.let {
+            it()
+        }
+
+        if (!memo.isNullOrBlank()) {
+            MemoCell(memo)
+        }
+
+        // The row stays in place while no fee is known (still estimating, or the amount
+        // cannot be sent), so the layout does not jump and the user sees the fee is pending.
+        DataFieldFeeTemplate(
+            navigation = navigation,
+            primary = formattedFee?.primary ?: stringResource(R.string.NotAvailable),
+            secondary = formattedFee?.secondary,
+            title = stringResource(id = R.string.FeeSettings_NetworkFee),
+            infoText = customFeeInfo ?: stringResource(id = R.string.FeeSettings_NetworkFee_Info)
+        )
+    }
+}
+
+@Composable
+fun ConfirmationTopSection(
+    token: Token,
+    amount: BigDecimal,
+    coinMaxAllowedDecimals: Int,
+    rate: CurrencyValue?,
+    address: Address?,
+    contact: Contact?,
+) {
+    val coinAmount = App.numberFormatter.formatCoinFull(
+        amount,
+        null,
+        coinMaxAllowedDecimals
+    )
+
+    val fiatAmount = rate?.let { rate ->
+        rate.copy(value = amount.times(rate.value))
+            .getFormattedFull()
+    }
+    Box {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(ComposeAppTheme.colors.lawrence)
+        ) {
+            CellPrimary(
+                left = {
+                    CoinImage(
+                        token = token,
+                        modifier = Modifier.size(32.dp)
+                    )
+                },
+                middle = {
+                    CellMiddleInfo(
+                        eyebrow = token.coin.code.hs(color = ComposeAppTheme.colors.leah),
+                        subtitle = (token.badge ?: stringResource(id = R.string.CoinPlatforms_Native)).hs
+                    )
+                },
+                right = {
+                    CellRightInfo(
+                        eyebrow = coinAmount.hs(color = ComposeAppTheme.colors.leah),
+                        subtitle = fiatAmount?.hs
+                    )
+                }
+            )
+            address?.let {
+                HsDivider()
+                AddressCell(
+                    address = it.hex,
+                    contact = contact?.name,
+                    domain = it.domain,
+                )
+            }
+        }
+        if (address != null) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow_down_20),
+                contentDescription = null,
+                tint = ComposeAppTheme.colors.grey,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 57.dp) //top cell is 67.dp - iconWidth/2(which is equal 10.dp)
+                    .clip(CircleShape)
+                    .background(ComposeAppTheme.colors.lawrence)
+            )
+        }
+    }
+}
+
+@Composable
+fun SendButton(
+    modifier: Modifier,
+    sendResult: SendResult?,
+    onClickSend: () -> Unit,
+    enabled: Boolean,
+    title: String? = null,
+    sendingTitle: String? = null,
+) {
+    // The Sending/Sent branches below disable the button, but they are driven by sendResult, which
+    // the view models assign on an IO dispatcher after onClickSend() returns. Between the tap and
+    // that state arriving in composition the button is still live, so a same-frame double tap
+    // launches two sends — two valid transactions on account-based chains. Latch synchronously
+    // here, in the same frame as the tap, and let a failure hand the button back.
+    var sent by remember { mutableStateOf(false) }
+
+    LaunchedEffect(sendResult) {
+        if (sendResult is SendResult.Failed) {
+            sent = false
+        }
+    }
+
+    when (sendResult) {
+        SendResult.Sending -> {
+            HSButton(
+                modifier = modifier,
+                title = sendingTitle ?: stringResource(R.string.Send_Sending),
+                onClick = { },
+                enabled = false
+            )
+        }
+
+        is SendResult.Sent -> {
+            HSButton(
+                modifier = modifier,
+                title = stringResource(R.string.Send_Success),
+                onClick = { },
+                enabled = false
+            )
+        }
+
+        else -> {
+            HSButton(
+                modifier = modifier,
+                title = title ?: stringResource(R.string.Send_Confirmation_Send_Button),
+                onClick = {
+                    if (!sent) {
+                        sent = true
+                        onClickSend()
+                    }
+                },
+                enabled = enabled && !sent
+            )
+        }
+    }
+}
+
+@Composable
+fun ConfirmAmountCell(fiatAmount: String?, coinAmount: String, coin: Coin) {
+    RowUniversal(
+        modifier = Modifier.padding(horizontal = 16.dp),
+    ) {
+        CoinImage(
+            coin = coin,
+            modifier = Modifier.size(32.dp)
+        )
+        subhead2_leah(
+            modifier = Modifier.padding(start = 16.dp),
+            text = coinAmount,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(Modifier.weight(1f))
+        subhead1_grey(text = fiatAmount ?: "")
+    }
+}
+
+@Composable
+fun MemoCell(value: String) {
+    QuoteInfoRow(
+        title = stringResource(R.string.Send_Confirmation_HintMemo),
+        value = value.hs(color = ComposeAppTheme.colors.leah),
+    )
+}
+
+fun getFormattedFee(
+    fee: BigDecimal?,
+    rate: CurrencyValue?,
+    coinCode: String,
+    coinDecimal: Int,
+): FeeItem? {
+
+    if (fee == null) return null
+
+    val coinAmount = App.numberFormatter.formatCoinFull(fee, coinCode, coinDecimal)
+    val currencyAmount = rate?.let {
+        it.copy(value = fee.times(it.value)).getFormattedFull()
+    }
+
+    return  FeeItem(coinAmount, currencyAmount)
+}

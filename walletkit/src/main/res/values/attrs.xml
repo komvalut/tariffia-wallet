@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="TitleColor" format="reference|color" />
+    <attr name="RoundRippleColor" format="reference|color" />
+
+</resources>

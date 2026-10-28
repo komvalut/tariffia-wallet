@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Paired Colors-->
+    <color name="jacob">@color/yellow_d</color>
+    <color name="remus">@color/green_d</color>
+    <color name="lucian">@color/red_d</color>
+    <color name="tyler">@color/dark</color>
+
+    <color name="blade">@color/carbon</color>
+    <color name="leah">@color/steel_light</color>
+    <color name="lawrence">@color/steel_dark</color>
+
+    <color name="andy">@color/smoke</color>
+    <color name="raina">@color/steel_10</color>
+
+</resources>

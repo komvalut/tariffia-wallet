@@ -1,0 +1,74 @@
+package io.horizontalsystems.walletkit.chain.zcash
+
+import io.horizontalsystems.walletkit.entities.Address
+import io.horizontalsystems.walletkit.modules.address.IAddressHandler
+import io.horizontalsystems.marketkit.models.BlockchainType
+import timber.log.Timber
+
+class AddressHandlerZcash : IAddressHandler {
+    override val blockchainType = BlockchainType.Zcash
+
+    override fun isSupported(value: String): Boolean {
+        return ZcashStaticAddressValidator.isValidBlocking(value)
+    }
+
+    override fun parseAddress(value: String): Address {
+        return Address(value, blockchainType = blockchainType)
+    }
+
+}
+
+/**
+ * Zcash Names (ZNS) input rules.
+ *
+ * On chain a name is 1 to 63 lowercase ASCII letters and digits. Users type it with a
+ * `.zcash` or `.zec` suffix; the suffix is display-only and stripped before lookup.
+ * The suffix is required here: a bare lowercase alphanumeric string is indistinguishable
+ * from a partially typed address, and the send screen validates on every keystroke.
+ */
+object ZnsName {
+    private val nameRegex = Regex("^[a-z0-9]{1,63}$")
+    private val suffixes = listOf(".zcash", ".zec")
+
+    /** Returns the on-chain name for [value], or null when it is not a ZNS name. */
+    fun normalize(value: String): String? {
+        val lowercased = value.trim().lowercase()
+        val suffix = suffixes.firstOrNull { lowercased.endsWith(it) } ?: return null
+        val name = lowercased.removeSuffix(suffix)
+        return name.takeIf { nameRegex.matches(it) }
+    }
+}
+
+/**
+ * Resolves a ZNS name, then accepts the result only if [addressHandler], the plain Zcash
+ * address handler, accepts it.
+ */
+class AddressHandlerZns(
+    private val resolver: ZnsResolver,
+    private val addressHandler: IAddressHandler,
+) : IAddressHandler {
+    override val blockchainType = BlockchainType.Zcash
+    private val cache = mutableMapOf<String, Address>()
+
+    override fun isSupported(value: String): Boolean {
+        val name = ZnsName.normalize(value) ?: return false
+        if (cache.containsKey(value)) return true
+
+        return try {
+            val resolved = resolver.resolve(name) ?: return false
+            if (!addressHandler.isSupported(resolved)) {
+                Timber.w("ZNS name %s resolved to an invalid Zcash address", name)
+                return false
+            }
+            cache[value] = Address(addressHandler.parseAddress(resolved).hex, value.trim(), blockchainType)
+            true
+        } catch (e: Exception) {
+            Timber.w(e, "ZNS resolution failed for %s", name)
+            false
+        }
+    }
+
+    override fun parseAddress(value: String): Address {
+        return cache[value]!!
+    }
+}

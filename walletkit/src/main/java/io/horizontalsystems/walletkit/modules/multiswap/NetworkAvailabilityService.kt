@@ -1,0 +1,43 @@
+package io.horizontalsystems.walletkit.modules.multiswap
+
+import io.horizontalsystems.walletkit.core.ServiceState
+import io.horizontalsystems.walletkit.core.managers.ConnectivityManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import java.net.UnknownHostException
+
+class NetworkAvailabilityService(
+    private val connectivityManager: ConnectivityManager
+) : ServiceState<NetworkAvailabilityService.State>() {
+
+    private var networkAvailable = connectivityManager.isConnected
+    // Derived from the initial status as well: the availability flow replays nothing, so a
+    // screen opened while already offline would otherwise never learn it.
+    private var error: UnknownHostException? = if (networkAvailable) null else UnknownHostException()
+
+    override fun createState() = State(
+        networkAvailable = networkAvailable,
+        error = error,
+    )
+
+    fun start(coroutineScope: CoroutineScope) {
+        coroutineScope.launch {
+            connectivityManager.networkAvailabilityFlow.collect { networkAvailable ->
+                handleUpdatedNetworkState(networkAvailable)
+            }
+        }
+    }
+
+    private fun handleUpdatedNetworkState(networkAvailable: Boolean) {
+        this.networkAvailable = networkAvailable
+        error = if (!networkAvailable) {
+            UnknownHostException()
+        } else {
+            null
+        }
+
+        emitState()
+    }
+
+    data class State(val networkAvailable: Boolean, val error: UnknownHostException?)
+}

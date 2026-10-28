@@ -1,0 +1,11 @@
+Tariffia Wallet
+
+This project is derived from Unstoppable Wallet Android 0.54.0:
+
+    https://github.com/horizontalsystems/unstoppable-wallet-android
+    Source commit: f3e9db20df93fc997cdfc397746a5c896467d796
+
+The upstream source is licensed under the MIT License. See the LICENSE file.
+
+Tariffia Wallet contains modifications, including application identity and
+branding changes. Upstream copyright and license notices are retained.

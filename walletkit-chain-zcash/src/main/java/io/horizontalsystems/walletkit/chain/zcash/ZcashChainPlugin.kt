@@ -1,0 +1,320 @@
+package io.horizontalsystems.walletkit.chain.zcash
+
+import android.content.Context
+import io.horizontalsystems.walletkit.core.App
+import io.horizontalsystems.walletkit.core.chain.SendChainSettings
+import io.horizontalsystems.walletkit.modules.multiswap.sendtransaction.SendTransactionData
+import io.horizontalsystems.walletkit.core.adapters.zcash.ISendZcashAdapter
+import io.horizontalsystems.walletkit.core.IAdapter
+import io.horizontalsystems.walletkit.core.ILocalStorage
+import io.horizontalsystems.walletkit.core.adapters.zcash.ZcashAdapter
+import io.horizontalsystems.walletkit.core.chain.ChainPlugin
+import io.horizontalsystems.walletkit.core.managers.NoActiveAccount
+import io.horizontalsystems.walletkit.core.managers.RestoreSettings
+import io.horizontalsystems.walletkit.core.managers.ZcashBirthdayProvider
+import io.horizontalsystems.walletkit.core.managers.ZcashLightWalletEndpointManager
+import io.horizontalsystems.walletkit.core.stats.StatEvent
+import io.horizontalsystems.walletkit.entities.Account
+import io.horizontalsystems.walletkit.entities.Wallet
+import io.horizontalsystems.walletkit.modules.address.IAddressHandler
+import io.horizontalsystems.walletkit.modules.blockchainsettings.BlockchainSettingsModule
+import io.horizontalsystems.walletkit.modules.multiswap.sendtransaction.AbstractSendTransactionService
+import io.horizontalsystems.walletkit.modules.multiswap.sendtransaction.SendTransactionServiceZcash
+import io.horizontalsystems.walletkit.modules.nav3.HSPage
+import io.horizontalsystems.walletkit.modules.receive.ZcashAddressTypeSelectPage
+import io.horizontalsystems.walletkit.modules.send.address.EnterAddressValidator
+import io.horizontalsystems.walletkit.modules.zcashmigration.ZcashMigrationPage
+import io.horizontalsystems.walletkit.modules.zcashnetwork.ZcashNetworkPage
+import io.horizontalsystems.marketkit.models.BlockchainType
+import io.horizontalsystems.marketkit.models.Token
+import io.horizontalsystems.walletkit.core.chain.SendMemoSupport
+import io.horizontalsystems.walletkit.modules.memo.MemoVisibility
+import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
+import timber.log.Timber
+import java.math.BigDecimal
+import java.time.LocalDate
+import java.util.Date
+import java.net.URI
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.reflect.KClass
+import io.horizontalsystems.walletkit.modules.send.zcash.shield.ShieldZcashPage
+import io.horizontalsystems.walletkit.modules.send.zcash.shield.ActionShield
+import io.horizontalsystems.walletkit.core.chain.SpendPurpose
+import io.horizontalsystems.walletkit.modules.multiswap.action.ISwapProviderAction
+
+class ZcashChainPlugin(
+    private val context: () -> Context,
+    private val endpointManager: () -> ZcashLightWalletEndpointManager,
+    private val localStorage: () -> ILocalStorage,
+) : ChainPlugin {
+
+    override fun sendTransactionData(
+        token: Token,
+        amount: BigDecimal,
+        address: String,
+        memo: String?,
+        extraInput: String?,
+        settings: SendChainSettings?,
+    ) = SendTransactionData.Zcash.Regular(address, amount, memo.orEmpty())
+
+    // Encrypted memos travel only to destinations with a shielded receiver: Sapling and
+    // unified addresses. Transparent (including Tex) destinations have no memo field.
+    // The memo field holds 512 bytes (ZIP 302), all of which a text memo may use.
+    override suspend fun sendMemoSupport(token: Token, address: String?): SendMemoSupport? {
+        val support = SendMemoSupport(maxBytes = 512, visibility = MemoVisibility.Encrypted)
+        address ?: return support
+        val adapter = App.adapterManager.getAdapterForToken<ISendZcashAdapter>(token) ?: return null
+        val addressType = try {
+            adapter.validate(address)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            return null
+        }
+        return when (addressType) {
+            ZcashAdapter.ZCashAddressType.Shielded,
+            ZcashAdapter.ZCashAddressType.Unified -> support
+            ZcashAdapter.ZCashAddressType.Transparent -> null
+        }
+    }
+
+    private val reselectScope = CoroutineScope(Dispatchers.Default)
+
+    // One resolver per plugin: its HTTP client is created lazily on the first lookup.
+    private val znsResolver = ZnsResolver()
+    private val addressHandler = AddressHandlerZcash()
+
+    override val blockchainType: BlockchainType = BlockchainType.Zcash
+
+    private val birthdayProvider by lazy { ZcashBirthdayProvider(context()) }
+
+    // Double-checked caches for derived addresses: each derivation spins up a fresh
+    // synchronizer, so results are memoized per account (moved from SwapHelper).
+    private val transparentAddressCache = ConcurrentHashMap<String, String>()
+    private val transparentAddressMutex = Mutex()
+    private val unifiedAddressCache = ConcurrentHashMap<String, String>()
+    private val unifiedAddressMutex = Mutex()
+    // The shielded-only unified address of the operation in progress, per account. The SDK
+    // stores a fresh diversified address on every request and a confirmation re-previews
+    // every 15 s, so one address is kept from the first preview until the deposit is sent.
+    private val shieldedRefundAddressCache = ConcurrentHashMap<String, String>()
+    private val shieldedRefundAddressMutex = Mutex()
+
+    override fun createAdapter(wallet: Wallet, restoreSettings: RestoreSettings): IAdapter =
+        ZcashAdapter(
+            context(),
+            wallet,
+            restoreSettings,
+            localStorage(),
+            endpointManager().currentEndpoint.toLightWalletEndpoint(),
+        )
+
+    override suspend fun onAppStart() {
+        val manager = endpointManager()
+        manager.endpointPinger = { urls ->
+            ZcashEndpointPinger.ping(context(), urls) { url ->
+                ZcashLightWalletEndpointManager.ZcashEndpoint(url, url).toLightWalletEndpoint()
+            }
+        }
+        manager.autoSelectFastestEndpointOnStartup()
+    }
+
+    override suspend fun onEnterForeground() = reselectFastestIfUnsynced(retryIfNoSwitch = false)
+
+    override suspend fun refreshKit() = reselectFastestIfUnsynced(retryIfNoSwitch = false)
+
+    // The watcher's two-strike gate means the stall is persistent, so when no better server
+    // exists the adapter is rebuilt on the current one — a terminally stopped sync only
+    // recovers with a fresh start. Foreground/refresh skip that: they can fire on a
+    // transient blip where a forced rebuild would churn.
+    override suspend fun onSyncStalled() = reselectFastestIfUnsynced(retryIfNoSwitch = true)
+
+    /**
+     * Switches to the fastest reachable endpoint when the current one has stopped working.
+     *
+     * Gated on an unsynced wallet so a healthy connection is never churned, and on connectivity
+     * so a dead phone network is not mistaken for a dead server.
+     */
+    private fun reselectFastestIfUnsynced(retryIfNoSwitch: Boolean) {
+        if (!App.connectivityManager.isConnected) return
+        if (!hasUnsyncedWallet()) return
+
+        // Launched rather than awaited: the probe can take seconds and both callers are latency
+        // sensitive — refreshKit() is awaited by the balance pull-to-refresh spinner, and the
+        // foreground hook runs plugins one after another. The switch lands asynchronously through
+        // walletReloadTrigger. The manager guards with a mutex, so overlapping calls collapse.
+        reselectScope.launch {
+            try {
+                val switched = endpointManager().reselectFastestEndpoint()
+                if (!switched && retryIfNoSwitch && hasUnsyncedWallet()) {
+                    endpointManager().retryCurrentEndpoint()
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                Timber.e(e, "Zcash endpoint reselect failed")
+            }
+        }
+    }
+
+    override fun clearAccountData(accountId: String) {
+        ZcashAdapter.clear(accountId)
+    }
+
+    override suspend fun prepareRescan(wallet: Wallet) {
+        val adapter: ZcashAdapter? = App.adapterManager.getAdapterForWallet(wallet)
+        withContext(Dispatchers.IO) {
+            adapter?.stop()
+            ZcashAdapter.clear(wallet.account.id)
+        }
+    }
+
+    override fun addressHandlers(): List<IAddressHandler> = listOf(addressHandler)
+
+    override fun domainAddressHandlers(): List<IAddressHandler> = listOf(AddressHandlerZns(znsResolver, addressHandler))
+
+    override fun addressValidator(token: Token): EnterAddressValidator =
+        ZcashAddressValidator(token, App.adapterManager)
+
+    override fun addressValidator(
+        token: Token,
+        allowOwnAddress: Boolean,
+        transparentOnly: Boolean,
+    ): EnterAddressValidator = ZcashAddressValidator(token, App.adapterManager, allowOwnAddress, transparentOnly)
+
+    override fun newWalletBirthdayHeight(): Long = birthdayProvider.getLatestCheckpointBlockHeight()
+
+    override fun firstBlockDate(): LocalDate = LocalDate.of(2018, 10, 29)
+
+    override fun minBirthdayHeight(): Long = 420_000L
+
+    override suspend fun estimateBlockDate(height: Long): Date? =
+        ZcashAdapter.estimateBirthdayDate(context(), height)
+
+    override suspend fun estimateBlockHeightFromDate(date: Date): Long? =
+        ZcashAdapter.estimateBirthdayHeight(context(), date)
+
+    override val walletReloadTrigger: Flow<*>
+        get() = endpointManager().currentEndpointUpdatedFlow
+
+    override fun statusInfo(): Map<String, Any>? {
+        val wallet = App.walletManager.activeWallets
+            .firstOrNull { it.token.blockchainType == BlockchainType.Zcash } ?: return null
+        return App.adapterManager.getAdapterForWallet<ZcashAdapter>(wallet)?.statusInfo
+    }
+
+    override fun networkSettingsPage(): HSPage = ZcashNetworkPage
+
+    override fun blockchainSettingsItem(): BlockchainSettingsModule.BlockchainItem.Chain? {
+        val manager = endpointManager()
+        val blockchain = manager.blockchain ?: return null
+        return BlockchainSettingsModule.BlockchainItem.Chain(
+            blockchain = blockchain,
+            subtitle = manager.currentEndpoint.name,
+            btcLike = true,
+            page = ZcashNetworkPage,
+            statEvent = StatEvent.OpenBlockchainSettingsCryptoNote(blockchain.uid),
+        )
+    }
+
+    override fun receivePage(wallet: Wallet, entryPoint: KClass<out HSPage>?): HSPage =
+        ZcashAddressTypeSelectPage(ZcashAddressTypeSelectPage.Input(wallet, entryPoint))
+
+    override fun shieldPage(wallet: Wallet, entryPoint: KClass<out HSPage>): HSPage =
+        ShieldZcashPage(ShieldZcashPage.Input(wallet, entryPoint))
+
+    override fun unshieldedBalanceThreshold(): BigDecimal = ZcashAdapter.minimalShieldThreshold
+
+    override fun spendBalance(token: Token): BigDecimal? =
+        App.adapterManager.getAdapterForToken<ZcashAdapter>(token)?.shieldBalance?.balance
+
+    override fun spendStep(
+        token: Token,
+        amount: BigDecimal,
+        purpose: SpendPurpose,
+    ): ISwapProviderAction? {
+        val adapter = App.adapterManager.getAdapterForToken<ZcashAdapter>(token) ?: return null
+        val step = adapter.shieldBalance?.step(amount) ?: return null
+        val wallet = App.walletManager.activeWallets.firstOrNull { it.token == token } ?: return null
+        return ActionShield(wallet = wallet, purpose = purpose, step = step)
+    }
+
+    override fun migrationRequiredBalance(wallet: Wallet): BigDecimal? =
+        App.adapterManager.getAdapterForWallet<ZcashAdapter>(wallet)?.ironwoodMigrationRequiredBalance
+
+    override fun migrationPage(wallet: Wallet, entryPoint: KClass<out HSPage>): HSPage =
+        ZcashMigrationPage(ZcashMigrationPage.Input(wallet, entryPoint))
+
+    override suspend fun swapDestinationAddress(account: Account): String =
+        cachedAddress(account.id, transparentAddressCache, transparentAddressMutex) {
+            ZcashAdapter.getTransparentAddress(account, endpointManager().currentEndpoint.toLightWalletEndpoint())
+        }
+
+    override suspend fun swapUnifiedReceiveAddress(token: Token): String {
+        App.adapterManager.getAdapterForToken<ZcashAdapter>(token)?.let {
+            return it.receiveAddress
+        }
+
+        val account = App.accountManager.activeAccount ?: throw NoActiveAccount()
+
+        return cachedAddress(account.id, unifiedAddressCache, unifiedAddressMutex) {
+            ZcashAdapter.getUnifiedAddress(account, endpointManager().currentEndpoint.toLightWalletEndpoint())
+        }
+    }
+
+    // No fallback: without an adapter or while the wallet syncs there is nothing shielded-only
+    // to name, and the default unified address would carry a transparent receiver. Under a
+    // concurrent miss the mutex lets the first stored address win, so one operation names one.
+    override suspend fun swapShieldedRefundAddress(token: Token): String {
+        val adapter = App.adapterManager.getAdapterForToken<ZcashAdapter>(token)
+            ?: throw IllegalStateException("Zcash wallet is not available")
+        val account = App.accountManager.activeAccount ?: throw NoActiveAccount()
+
+        return cachedAddress(account.id, shieldedRefundAddressCache, shieldedRefundAddressMutex) {
+            adapter.shieldedUnifiedAddress()
+        }
+    }
+
+    override fun sendTransactionService(token: Token): AbstractSendTransactionService {
+        val adapter = App.adapterManager.getAdapterForToken<ZcashAdapter>(token)
+            ?: throw IllegalStateException("ZcashAdapter is null")
+        val accountId = App.accountManager.activeAccount?.id
+        return SendTransactionServiceZcash(adapter) {
+            // The deposit is sent: the next operation names a new shielded-only address.
+            accountId?.let { shieldedRefundAddressCache.remove(it) }
+        }
+    }
+
+
+    // Matches the original SwapHelper semantics: the derivation is memoized per account,
+    // serialized by a mutex, and runs NonCancellable so a cancelled caller cannot abandon
+    // a half-built synchronizer.
+    private suspend fun cachedAddress(
+        accountId: String,
+        cache: ConcurrentHashMap<String, String>,
+        mutex: Mutex,
+        derive: suspend () -> String,
+    ): String {
+        return cache[accountId] ?: mutex.withLock {
+            cache[accountId] ?: withContext(NonCancellable + Dispatchers.IO) { derive() }.also { cache[accountId] = it }
+        }
+    }
+}
+
+internal fun ZcashLightWalletEndpointManager.ZcashEndpoint.toLightWalletEndpoint(): LightWalletEndpoint {
+    val uri = URI(url)
+    return LightWalletEndpoint(
+        host = uri.host ?: url,
+        port = uri.port.takeIf { it > 0 } ?: 443,
+        isSecure = uri.scheme?.lowercase() == "https"
+    )
+}

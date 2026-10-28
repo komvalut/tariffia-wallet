@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <queries>
+        <package android:name="org.telegram.messenger" />
+    </queries>
+
+    <application
+        android:name=".MainApp"
+        android:allowBackup="false"
+        android:icon="@mipmap/launcher_main"
+        android:label="@string/App_Name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppTheme.DayNight"
+        tools:ignore="GoogleAppIndexingWarning">
+
+        <receiver
+            android:name="io.horizontalsystems.walletkit.widgets.MarketWidgetReceiver"
+            android:exported="false">
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/appwidget_provider_info" />
+        </receiver>
+
+        <activity
+            android:name="io.horizontalsystems.walletkit.widgets.MarketWidgetConfigurationActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+
+        <activity
+            android:name=".modules.main.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.App.Starting"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden">
+            <!-- Deep Link Intent Filters -->
+            <intent-filter android:label="@string/App_Name">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="bitcoin" />
+                <data android:scheme="ethereum" />
+                <data android:scheme="toncoin" />
+                <data android:scheme="monero" />
+                <data android:scheme="tron" />
+                <data android:scheme="solana" />
+                <data android:scheme="zcash" />
+                <data android:scheme="litecoin" />
+            </intent-filter>
+            <intent-filter android:label="@string/App_Name">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="tc" />
+                <data android:scheme="unstoppable.money" />
+            </intent-filter>
+            <intent-filter android:label="@string/App_Name">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="wc" />
+            </intent-filter>
+            <intent-filter android:label="@string/App_Name">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="@string/DeeplinkScheme" />
+            </intent-filter>
+            <!-- App Links -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="${appLinksHost}" />
+                <data android:pathPrefix="/referral" />
+            </intent-filter>
+        </activity>
+
+        <activity-alias
+            android:name="${applicationId}.MainLauncherAlias"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/launcher_main"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.DarkLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_dark"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.MonoLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_mono"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.PunkLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_punk"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.ApeLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_ape"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.Ball8LauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_8ball"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.PepeLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_pepe"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.DogeLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_doge"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.GigachadLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_gigachad"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.PlflagLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_plflag"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.YeschadLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_yeschad"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.MoneroLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_monero"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.ZCashLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_zcash"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.SinwarLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_sinwar"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!--Deprecated -->
+        <activity-alias
+            android:name="${applicationId}.LeoLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_leo"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.MustangLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_mustang"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.YakLauncherAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/launcher_yak"
+            android:label="@string/App_Name"
+            android:targetActivity=".modules.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+    </application>
+
+</manifest>
