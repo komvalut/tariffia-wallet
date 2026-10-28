@@ -4,11 +4,41 @@ Last updated: 2026-10-28
 
 Use this checklist for every production release. A checked box must be backed by a command result, a deployed URL, or a signed artifact, not by intent alone.
 
+## RC1 Snapshot
+
+Date: 2026-10-28
+
+Tag target: `v1.0.0-rc1` on `main` in `komvalut/tariffia-wallet`
+
+App version: `versionCode 185`, `versionName 1.0.0-rc1`
+
+Release status: **BLOCKED**. The code-side migration is ready for an RC tag, but the external release gates are not complete.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Translation coverage | Pass | `python3 .github/scripts/check_translations.py`: 1735 strings checked against 9 locales, all translated |
+| Static UI branding | Pass | No runtime HS branding in resources; preview-only markdown footer updated to `© Tariffia` |
+| CrossPay/USwap code gate | Pass | CrossPay tab and manager now require `SWAP_ENABLED`; preview and commit throw an unavailable error when disabled |
+| Tariffia DNS | Fail | `tariffia.app` and `dev.tariffia.app` return `Could not resolve host` |
+| Tariffia HTTPS endpoints | Fail | All checked URLs return HTTP `000` |
+| Asset links | Fail | No host, no deployment, empty fingerprints |
+| Release build | Not run | Android SDK unavailable; Java/keytool fails in this environment |
+| Store metadata | Fail | `metadata/*` still contains HS branding |
+| Network capture | Not run | Requires a built app and a running backend |
+
+Blocking items before removing the RC label:
+
+- Deploy DNS, TLS, asset links, FAQ, guides, coin catalogues, icon, analytics page, and the market API as described in `docs/hosting.md`.
+- Resolve APP-15 (`cdn.blocksdecoded.com`) and APP-16 (`allbridge.blocksdecoded.com`), or record an explicit approval.
+- Replace HS store metadata and complete the license/notice review.
+- Create the release keystore, record both channel fingerprints, and deploy asset links.
+- Build from the tag, run the device/network tests, and complete signing and artifact checks.
+
 ## 1. Scope and Decisions
 
 - [ ] Release version and supported distribution channels are confirmed: Google Play and direct APK for v1.
 - [ ] F-Droid remains deferred, or its signing and listing requirements have been separately approved.
-- [ ] Version code and version name in `app/build.gradle.kts` are final.
+- [x] Version code and version name in `app/build.gradle.kts` are final for RC1: `185` / `1.0.0-rc1`.
 - [ ] Release notes and known limitations are written.
 - [ ] The release does not claim production readiness for unfinished features.
 
@@ -16,9 +46,11 @@ Use this checklist for every production release. A checked box must be backed by
 
 - [ ] `docs/phase3-endpoint-matrix.md` has no unresolved R2 required production dependency.
 - [ ] `docs/phase3-endpoint-matrix.md` has no unresolved R3 dependency.
-- [ ] USwap is removed or hard-disabled and makes no outbound requests.
+- [x] CrossPay is gated by `SWAP_ENABLED` at the tab, view-model, manager, and provider-resolution layers.
+- [ ] USwap is removed or hard-disabled and makes no outbound requests, confirmed by a network capture.
 - [ ] Market data is replaced or disabled and makes no `blocksdecoded` requests.
 - [ ] FAQ, guides, and coin catalogues are served by Tariffia-controlled infrastructure.
+- [ ] `docs/hosting.md` has been implemented and verified on both hosts.
 - [ ] CDN images are self-hosted or separately licensed and approved.
 - [ ] All production API keys belong to Tariffia and are not inherited from upstream.
 - [ ] No API key, keystore, password, or private endpoint is committed to the repository.
@@ -54,6 +86,7 @@ Use this checklist for every production release. A checked box must be backed by
 
 ## 5. Build Verification
 
+- [x] Translation coverage check passed: `python3 .github/scripts/check_translations.py`.
 - [ ] A clean build was run from the release tag, not from a dirty worktree.
 - [ ] Unit tests pass.
 - [ ] Lint passes or every remaining warning is reviewed and documented.
@@ -74,7 +107,7 @@ Use this checklist for every production release. A checked box must be backed by
 - [ ] The artifact is signed by the expected certificate.
 - [ ] SHA-256 and MD5 checksums were generated from the final artifact.
 - [ ] Release notes, privacy policy, and support links are reachable.
-- [ ] Play Store listing, screenshots, and descriptions contain no upstream branding.
+- [ ] Play Store listing, screenshots, and descriptions contain no upstream branding. `metadata/*` is still HS-branded.
 - [ ] Play subscription management uses the actual `app.tariffia.wallet` package ID.
 - [ ] Rate-app links use the actual package ID and HTTPS, or the prompt is removed.
 - [ ] Play Data Safety and content-rating answers match the actual app behavior.
@@ -90,7 +123,25 @@ Use this checklist for every production release. A checked box must be backed by
 - [ ] The release notes state any disabled or degraded features.
 - [ ] The team has a named rollback owner and a tested rollback path.
 
-## 8. Post-Release Verification
+## 8. Evidence Log
+
+Record the exact commands and results here for the RC or production release.
+
+```text
+2026-10-28  python3 .github/scripts/check_translations.py
+            1735 strings checked against 9 locales; all translated
+
+2026-10-28  curl -sS https://tariffia.app/
+            Could not resolve host: tariffia.app
+
+2026-10-28  curl -sS https://dev.tariffia.app/
+            Could not resolve host: dev.tariffia.app
+
+2026-10-28  rg -n -i 'horizontalsystems|blocksdecoded\.com' app walletkit ...
+            Remaining runtime URLs: cdn.blocksdecoded.com and allbridge.blocksdecoded.com
+```
+
+## 9. Post-Release Verification
 
 - [ ] Install the Play build and the direct APK on separate devices.
 - [ ] Confirm the installed certificate on the direct APK.

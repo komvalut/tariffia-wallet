@@ -81,6 +81,7 @@ class SendViewModel(
 
     fun onSelectTab(tab: SendTab) {
         if (tab == SendTab.Private && !privateSendSupported) return
+        if (tab == SendTab.CrossPay && !App.instance.isSwapEnabled) return
         this.tab = tab
         emitState()
     }

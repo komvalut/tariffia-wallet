@@ -17,6 +17,12 @@ The production and development files are separate. Never publish a debug fingerp
 
 The templates in `docs/templates/` are starting points. They contain placeholders and must not be deployed as-is.
 
+Deployment layout, TLS behavior, cache rules, and the server reference configuration are in `docs/hosting.md`. This document defines the file contents and verification flow; `docs/hosting.md` defines how the host must serve them.
+
+## Current Deployment Status
+
+As of 2026-10-28, `tariffia.app` and `dev.tariffia.app` do not resolve in DNS, so neither asset links URL exists. The tracked files contain empty fingerprint arrays. Do not deploy placeholders to make a check pass.
+
 ## Required HTTP Behavior
 
 Both files must be:
@@ -86,6 +92,7 @@ The final path list must be approved and added to `AndroidManifest.xml` together
 
 ## Deployment Order
 
+0. Confirm DNS and HTTPS for both hosts as described in `docs/hosting.md`.
 1. Generate and record the debug/test certificate fingerprint.
 2. Fill the development template and deploy it to `dev.tariffia.app`.
 3. Verify the development host with curl and the Google Digital Asset Links API.

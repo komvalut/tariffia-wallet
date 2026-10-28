@@ -1,6 +1,7 @@
 package io.horizontalsystems.walletkit.modules.crosspay
 
 import com.google.gson.Gson
+import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.modules.multiswap.providers.IMultiSwapProvider
 import io.horizontalsystems.walletkit.modules.multiswap.providers.MultiSwapProviderRegistry
 import io.horizontalsystems.walletkit.modules.multiswap.providers.USwapProvider
@@ -37,6 +38,8 @@ class CrossPayManager {
      * amountOut come from the preview response alone.
      */
     suspend fun preview(request: CrossPayRequest): CrossPayPreview {
+        if (!App.instance.isSwapEnabled) throw CrossPayError.TokenUnsupported
+
         val provider = provider ?: throw CrossPayError.TokenUnsupported
 
         if (!supportsPair(provider, request.tokenIn, request.tokenOut)) throw CrossPayError.TokenUnsupported
@@ -125,6 +128,8 @@ class CrossPayManager {
      * [CrossPayError]; the token is never retried.
      */
     suspend fun commit(preview: CrossPayPreview): CrossPayOrder {
+        if (!App.instance.isSwapEnabled) throw CrossPayError.TokenUnsupported
+
         val request = preview.request
 
         val commit = try {
@@ -286,9 +291,13 @@ class CrossPayManager {
         // a second exact-output provider some day means widening this to a fan-out.
         private const val PROVIDER_SERVER_ID = "NEAR"
 
-        fun resolveProvider(): USwapProvider? = MultiSwapProviderRegistry.allProviders
-            .filterIsInstance<USwapProvider>()
-            .firstOrNull { it.serverProviderId == PROVIDER_SERVER_ID }
+        fun resolveProvider(): USwapProvider? {
+            if (!App.instance.isSwapEnabled) return null
+
+            return MultiSwapProviderRegistry.allProviders
+                .filterIsInstance<USwapProvider>()
+                .firstOrNull { it.serverProviderId == PROVIDER_SERVER_ID }
+        }
 
         /**
          * Whether [token] can be what the recipient receives, independent of the provider's
