@@ -125,17 +125,18 @@ The production assetlinks must contain:
 
 The development assetlinks must contain the debug certificate fingerprint used by debug/CI builds.
 
-## Gradle Configuration Requirements
+## Gradle Configuration
 
-The implementation task must add a release signing configuration that:
+The release build reads signing material from environment variables:
 
-- Reads the keystore path, keystore password, key alias, and key password from environment variables or an external properties file.
-- Never falls back to `app/test.keystore` for a release build.
-- Fails a release build when signing material is required but missing.
-- Does not print secrets in Gradle output.
-- Keeps `signingConfigs.test` for debug/CI builds only.
+- The `release` signing config is created only when all four `TARIFFIA_*` signing variables are present.
+- `TARIFFIA_KEYSTORE_FILE` should be an absolute path, or a path relative to `app/`.
+- A release build fails when `TARIFFIA_REQUIRE_SIGNING=true` and any signing variable is missing.
+- It never falls back to `app/test.keystore` for a release build.
+- Secrets are not printed in Gradle output.
+- `signingConfigs.test` remains for debug/CI builds only.
 
-Suggested environment variables:
+Environment variables:
 
 ```text
 TARIFFIA_KEYSTORE_FILE
@@ -143,12 +144,6 @@ TARIFFIA_KEYSTORE_PASSWORD
 TARIFFIA_KEY_ALIAS
 TARIFFIA_KEY_PASSWORD
 TARIFFIA_REQUIRE_SIGNING
-```
-
-Suggested local-only file, if environment injection is inconvenient:
-
-```text
-~/.gradle/gradle.properties
 ```
 
 Do not commit `keystore.properties`, `.p12`, `.jks`, `.keystore`, or passwords. The tracked `app/test.keystore` remains a public debug/test artifact and must never sign a release.

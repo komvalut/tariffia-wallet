@@ -313,8 +313,10 @@ fun CoinOverviewScreen(
                                     Spacer(modifier = Modifier.height(32.dp))
                                     CellFooter(text = stringResource(id = R.string.Market_PoweredByApi))
                                 }
-                                coinToken?.let {
-                                    CoinBottomButtons(coinToken, popularToken, navigation)
+                                if (App.instance.isSwapEnabled) {
+                                    coinToken?.let {
+                                        CoinBottomButtons(coinToken, popularToken, navigation)
+                                    }
                                 }
                             }
                         }

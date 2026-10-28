@@ -111,6 +111,8 @@ class AppConfigProvider(localStorage: ILocalStorage) : IAppConfigProvider {
 
     override val uswapApiKey = BuildConfig.USWAP_API_KEY
 
+    override val swapEnabled = BuildConfig.SWAP_ENABLED
+
     override val fastNearApiKey = BuildConfig.FASTNEAR_API_KEY.ifBlank { null }
 
     override val tonApiKey = BuildConfig.TONAPI_KEY

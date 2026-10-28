@@ -39,23 +39,23 @@ A dependency is not harmless merely because it is only used on a secondary scree
 | APP-07 | WalletConnect project | `WALLET_CONNECT_PROJECT_ID` | Empty unless supplied | R0 | Create a Tariffia Reown project and inject through CI | Pending |
 | APP-08 | WalletConnect metadata | `app/build.gradle.kts` | `https://tariffia.app`, `/icon.png` | R0 | Host the final metadata page and icon | Pending |
 | APP-09 | Passkey relying party | `PASSKEY_RP_ID`, `PASSKEY_RP_NAME` | Falls back to `APP_LINKS_HOST` | R0 | Set explicitly for production; verify assetlinks | Pending |
-| APP-10 | FAQ | `FAQ_URL` | Horizontal Systems `unstoppable.money` raw content | R2 | Replace with Tariffia-hosted, versioned JSON | Pending |
-| APP-11 | Guides | `GUIDES_URL` | Horizontal Systems raw GitHub content | R2 | Replace with Tariffia-hosted, versioned JSON | Pending |
-| APP-12 | Coin catalogue | `COINS_JSON_URL` | Horizontal Systems `cryptocurrencies` repository | R2 | Mirror or self-host a pinned, reviewed copy | Pending |
-| APP-13 | Provider coin catalogue | `PROVIDER_COINS_JSON_URL` | Horizontal Systems `cryptocurrencies` repository | R2 | Mirror or self-host a pinned, reviewed copy | Pending |
-| APP-14 | Market data API | `MARKET_API_BASE_URL` | `api.blocksdecoded.com`, `api-dev.blocksdecoded.com` | R2 | Replace or disable the market feature; no fallback calls | Pending |
+| APP-10 | FAQ | `FAQ_URL` | `https://tariffia.app/faq.json` | R0 | Publish the reviewed, versioned JSON asset | Pending |
+| APP-11 | Guides | `GUIDES_URL` | `https://tariffia.app/guides/index.json` | R0 | Publish the reviewed, versioned guide index and content | Pending |
+| APP-12 | Coin catalogue | `COINS_JSON_URL` | `https://tariffia.app/data/coins.json` | R0 | Publish a pinned, reviewed copy with a compatible schema | Pending |
+| APP-13 | Provider coin catalogue | `PROVIDER_COINS_JSON_URL` | `https://tariffia.app/data/provider-coins.json` | R0 | Publish a pinned, reviewed copy with a compatible schema | Pending |
+| APP-14 | Market data API | `MARKET_API_BASE_URL` | `https://tariffia.app/api`, `https://dev.tariffia.app/api` | R0 | Implement or disable the Tariffia market API; no HS fallback | Pending |
 | APP-15 | Market and asset CDN | Image URLs in `walletkit` screens | `cdn.blocksdecoded.com` | R2 | Self-host reviewed assets or replace the provider | Pending |
 | APP-16 | Allbridge integration | `AllBridgeTracker.kt` | `allbridge.blocksdecoded.com` | R2/R3 | Confirm ownership/license; replace or disable the feature | Pending |
-| APP-17 | USwap API | `USWAP_API_BASE_URL` | `swap-api.unstoppable.money`, `swap-dev.unstoppable.money` | R2 | Remove or hard-disable the provider and its network calls | Blocking |
-| APP-18 | USwap credentials | `USWAP_API_KEY_ANDROID`, `USWAP_API_KEY_FDROID` | Environment variables | R2 | Remove from the build after USwap is disabled | Pending |
+| APP-17 | USwap API | `USWAP_API_BASE_URL`, `SWAP_ENABLED` | `https://tariffia.app/api/v3/`; swap flag is false | R0 | Keep disabled until a Tariffia swap backend exists; no HS calls | Code disabled; runtime pending |
+| APP-18 | USwap credentials | `USWAP_API_KEY` | Empty; upstream key variables removed | R0 | Do not reintroduce HS keys; add a Tariffia key only with the new backend | Code removed |
 | APP-19 | Ethereum RPC | `BLOCKS_DECODED_ETHEREUM_RPC` | `ethereum-rpc.publicnode.com` | R1 | Rename the setting and keep the independent endpoint | Verified |
 | APP-20 | Address risk provider | `CHAINALYSIS_BASE_URL` | Chainalysis public API | R1 | Review contract, privacy impact, and key ownership | Pending |
 | APP-21 | Address risk provider | `HASH_DIT_BASE_URL` | HashDit service | R1 | Review contract, privacy impact, and key ownership | Pending |
 | APP-22 | Social API token | `TWITTER_BEARER_TOKEN` | Environment variable | R1 | Decide whether the feature ships; remove the token if not | Pending |
 | APP-23 | Provider API keys | Build config and environment | Alchemy, Etherscan, BSCScan, Blockscout, TronGrid, Jupiter, TONAPI, THORChain, FastNEAR, UDN | R1 | Use Tariffia-owned keys, rotate, and document quotas | Pending |
 | APP-24 | WalletConnect relay | `AppConfigProvider` | `relay.walletconnect.com` | R1 | Verify the Tariffia project and relay policy | Pending |
-| APP-25 | Play subscription management package | `SubscriptionServiceGooglePlay.kt` | Hardcoded `io.horizontalsystems.bankwallet` | R2 | Use the actual application ID, e.g. `context.packageName`, before Play billing ships | Pending |
-| APP-26 | Rate-app store links | `RateAppManager.kt` | Hardcoded `io.horizontalsystems.walletkit`, HTTP store URL | R2 | Use the actual application ID and HTTPS, or remove the rate prompt | Pending |
+| APP-25 | Play subscription management package | `SubscriptionServiceGooglePlay.kt` | `context.packageName` | R0 | Verify the Play build resolves `app.tariffia.wallet` | Code updated; build pending |
+| APP-26 | Rate-app store links | `RateAppManager.kt` | `context.packageName`, HTTPS Play Store URL | R0 | Verify the rate prompt opens the Tariffia listing | Code updated; build pending |
 
 ## Static Content Hosting
 

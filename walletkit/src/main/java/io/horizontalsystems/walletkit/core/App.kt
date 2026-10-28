@@ -547,7 +547,8 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
         localeAwareContext(this)
     }
 
-    override val isSwapEnabled = true
+    override val isSwapEnabled: Boolean
+        get() = appConfigProvider.swapEnabled
 
     override fun getApplicationSignatures() = try {
         val signatureList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

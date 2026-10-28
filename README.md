@@ -2,7 +2,7 @@
 
 Tariffia Wallet is an independent, non-custodial cryptocurrency wallet for Android. It is derived from Unstoppable Wallet Android `0.54.0` and is being developed as a separate application with its own identity, configuration, and release process.
 
-> **Development status:** active pre-release. The application is not ready for production use or mainnet funds. Branding, backend services, and release infrastructure are still being migrated.
+> **Development status:** active pre-release. The application is not ready for production use or mainnet funds. Branding, backend services, and release infrastructure are still being migrated. Swap and private send are disabled in the current build while their backend is replaced.
 
 > **Independence:** Tariffia Wallet is not affiliated with, endorsed by, or supported by Horizontal Systems or the Unstoppable Wallet project.
 
@@ -56,7 +56,7 @@ Tests and lint:
 
 Build outputs are written under `app/build/outputs/apk/`.
 
-Release signing is not configured for distribution yet. The `test` signing configuration is for development only and must not be used for published builds.
+Release signing is enabled only when the `TARIFFIA_KEYSTORE_FILE`, `TARIFFIA_KEYSTORE_PASSWORD`, `TARIFFIA_KEY_ALIAS`, and `TARIFFIA_KEY_PASSWORD` environment variables are present. See [docs/signing.md](docs/signing.md). The `test` signing configuration is for development only and must not be used for published builds.
 
 ## Configuration
 
@@ -80,8 +80,11 @@ Sensitive values are read from environment variables at build time. If a variabl
 | `UDN_API_KEY` | UDN API key |
 | `CHAINALYSIS_API_KEY` | Chainalysis API key |
 | `HASH_DIT_API_KEY` | HashDit API key |
-| `USWAP_API_KEY_ANDROID` | Android swap API key |
-| `USWAP_API_KEY_FDROID` | F-Droid swap API key |
+| `TARIFFIA_KEYSTORE_FILE` | Release keystore path |
+| `TARIFFIA_KEYSTORE_PASSWORD` | Release keystore password |
+| `TARIFFIA_KEY_ALIAS` | Release key alias |
+| `TARIFFIA_KEY_PASSWORD` | Release key password |
+| `TARIFFIA_REQUIRE_SIGNING` | Fail release builds when signing material is missing |
 
 Never commit API keys, signing keys, or other secrets to the repository.
 
@@ -110,7 +113,7 @@ Tor does not cover traffic from Custom Tabs or external browsers, Google Play se
 ## Security
 
 - Report vulnerabilities through the repository's GitHub Security tab. Do not open a public issue containing exploit details.
-- The repository contains a test keystore for debug builds only. It must be replaced with a protected release keystore before distribution.
+- The repository contains a test keystore for debug builds only. Distribution requires a protected release keystore supplied through the environment, as described in [docs/signing.md](docs/signing.md).
 - API keys are supplied through the build environment and are not stored in source control.
 - Treat this pre-release software as experimental. Use test wallets and test funds only.
 

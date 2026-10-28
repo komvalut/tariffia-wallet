@@ -19,6 +19,18 @@ fun com.android.build.api.dsl.VariantDimension.buildConfigFieldString(name: Stri
 
 fun secret(name: String): String = System.getenv(name).orEmpty()
 
+val releaseStoreFile = System.getenv("TARIFFIA_KEYSTORE_FILE").orEmpty()
+val releaseStorePassword = System.getenv("TARIFFIA_KEYSTORE_PASSWORD").orEmpty()
+val releaseKeyAlias = System.getenv("TARIFFIA_KEY_ALIAS").orEmpty()
+val releaseKeyPassword = System.getenv("TARIFFIA_KEY_PASSWORD").orEmpty()
+val releaseSigningComplete = listOf(
+    releaseStoreFile,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword,
+).all { it.isNotBlank() }
+val requireReleaseSigning = System.getenv("TARIFFIA_REQUIRE_SIGNING").toBoolean()
+
 android {
     namespace = "io.horizontalsystems.bankwallet"
     compileSdk = libs.versions.compileSdk.get().toInt()
@@ -50,6 +62,8 @@ android {
         buildConfigFieldString("THORCHAIN_API_KEY", secret("THORCHAIN_API_KEY"))
 
         buildConfigField("boolean", "FDROID_BUILD", "false")
+        buildConfigField("boolean", "SWAP_ENABLED", "false")
+        buildConfigFieldString("USWAP_API_KEY", "")
 
         ndk {
             abiFilters += listOf("armeabi-v7a", "arm64-v8a")
@@ -70,21 +84,27 @@ android {
         }
     }
 
-    flavorDimensions += "distribution"
+    val releaseSigningConfig = if (releaseSigningComplete) {
+        signingConfigs.create("release") {
+            storeFile = file(releaseStoreFile)
+            storePassword = releaseStorePassword
+            keyAlias = releaseKeyAlias
+            keyPassword = releaseKeyPassword
+        }
+    } else {
+        null
+    }
 
-    val uswapApiKeyAndroid = secret("USWAP_API_KEY_ANDROID")
-    val uswapApiKeyFdroid = secret("USWAP_API_KEY_FDROID")
+    flavorDimensions += "distribution"
 
     productFlavors {
         create("base") {
             dimension = "distribution"
-            buildConfigFieldString("USWAP_API_KEY", uswapApiKeyAndroid)
         }
 
         create("fdroid") {
             dimension = "distribution"
             buildConfigField("boolean", "FDROID_BUILD", "true")
-            buildConfigFieldString("USWAP_API_KEY", uswapApiKeyFdroid)
         }
 
         create("fdroidCi") {
@@ -92,7 +112,6 @@ android {
             applicationIdSuffix = ".fdroidci"
             buildConfigField("boolean", "FDROID_BUILD", "true")
             signingConfig = signingConfigs.getByName("test")
-            buildConfigFieldString("USWAP_API_KEY", uswapApiKeyFdroid)
         }
 
         create("ci") {
@@ -102,7 +121,6 @@ android {
             signingConfig = signingConfigs.getByName("test")
             buildConfigFieldString("APP_LINKS_HOST", "dev.tariffia.app")
             manifestPlaceholders["appLinksHost"] = "dev.tariffia.app"
-            buildConfigFieldString("USWAP_API_KEY", uswapApiKeyAndroid)
         }
     }
 
@@ -118,11 +136,11 @@ android {
             buildConfigFieldString("ETHERSCAN_KEY", secret("ETHERSCAN_KEY"))
             buildConfigFieldString("BSCSCAN_KEY", secret("BSCSCAN_KEY"))
             buildConfigFieldString("BLOCKSCOUT_KEY", secret("BLOCKSCOUT_KEY"))
-            buildConfigFieldString("GUIDES_URL", "https://raw.githubusercontent.com/horizontalsystems/blockchain-crypto-guides/v1.2/index.json")
-            buildConfigFieldString("FAQ_URL", "https://raw.githubusercontent.com/horizontalsystems/unstoppable.money/refs/heads/main/faq.json")
-            buildConfigFieldString("COINS_JSON_URL", "https://raw.githubusercontent.com/horizontalsystems/cryptocurrencies/master/coins.json")
-            buildConfigFieldString("PROVIDER_COINS_JSON_URL", "https://raw.githubusercontent.com/horizontalsystems/cryptocurrencies/master/provider.coins.json")
-            buildConfigFieldString("MARKET_API_BASE_URL", "https://api-dev.blocksdecoded.com")
+            buildConfigFieldString("GUIDES_URL", "https://dev.tariffia.app/guides/index.json")
+            buildConfigFieldString("FAQ_URL", "https://dev.tariffia.app/faq.json")
+            buildConfigFieldString("COINS_JSON_URL", "https://dev.tariffia.app/data/coins.json")
+            buildConfigFieldString("PROVIDER_COINS_JSON_URL", "https://dev.tariffia.app/data/provider-coins.json")
+            buildConfigFieldString("MARKET_API_BASE_URL", "https://dev.tariffia.app/api")
             buildConfigFieldString("MARKET_API_KEY", secret("MARKET_API_KEY"))
             buildConfigFieldString("ALCHEMY_API_KEY", secret("ALCHEMY_API_KEY"))
             buildConfigFieldString("SOLANA_JUPITER_API_KEY", secret("SOLANA_JUPITER_API_KEY"))
@@ -134,7 +152,7 @@ android {
             buildConfigFieldString("CHAINALYSIS_API_KEY", secret("CHAINALYSIS_API_KEY"))
             buildConfigFieldString("HASH_DIT_BASE_URL", "https://service.hashdit.io/v2/hashdit/")
             buildConfigFieldString("HASH_DIT_API_KEY", secret("HASH_DIT_API_KEY"))
-            buildConfigFieldString("USWAP_API_BASE_URL", "https://swap-dev.unstoppable.money/api/v3/")
+            buildConfigFieldString("USWAP_API_BASE_URL", "https://dev.tariffia.app/api/v3/")
             buildConfigFieldString("FASTNEAR_API_KEY", secret("FASTNEAR_API_KEY"))
         }
 
@@ -143,17 +161,27 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (requireReleaseSigning &&
+                gradle.startParameter.taskNames.any { it.contains("Release", ignoreCase = true) } &&
+                releaseSigningConfig == null
+            ) {
+                throw org.gradle.api.GradleException(
+                    "Release signing is required but TARIFFIA_KEYSTORE_FILE, TARIFFIA_KEYSTORE_PASSWORD, " +
+                        "TARIFFIA_KEY_ALIAS, or TARIFFIA_KEY_PASSWORD is missing."
+                )
+            }
+            releaseSigningConfig?.let { signingConfig = it }
             buildConfigFieldString("APP_LINKS_HOST", "tariffia.app")
             manifestPlaceholders["appLinksHost"] = "tariffia.app"
             buildConfigFieldString("TWITTER_BEARER_TOKEN", secret("TWITTER_BEARER_TOKEN"))
             buildConfigFieldString("ETHERSCAN_KEY", secret("ETHERSCAN_KEY"))
             buildConfigFieldString("BSCSCAN_KEY", secret("BSCSCAN_KEY"))
             buildConfigFieldString("BLOCKSCOUT_KEY", secret("BLOCKSCOUT_KEY"))
-            buildConfigFieldString("GUIDES_URL", "https://raw.githubusercontent.com/horizontalsystems/blockchain-crypto-guides/v1.2/index.json")
-            buildConfigFieldString("FAQ_URL", "https://raw.githubusercontent.com/horizontalsystems/unstoppable.money/refs/heads/main/faq.json")
-            buildConfigFieldString("COINS_JSON_URL", "https://raw.githubusercontent.com/horizontalsystems/cryptocurrencies/v0.21/coins.json")
-            buildConfigFieldString("PROVIDER_COINS_JSON_URL", "https://raw.githubusercontent.com/horizontalsystems/cryptocurrencies/v0.21/provider.coins.json")
-            buildConfigFieldString("MARKET_API_BASE_URL", "https://api.blocksdecoded.com")
+            buildConfigFieldString("GUIDES_URL", "https://tariffia.app/guides/index.json")
+            buildConfigFieldString("FAQ_URL", "https://tariffia.app/faq.json")
+            buildConfigFieldString("COINS_JSON_URL", "https://tariffia.app/data/coins.json")
+            buildConfigFieldString("PROVIDER_COINS_JSON_URL", "https://tariffia.app/data/provider-coins.json")
+            buildConfigFieldString("MARKET_API_BASE_URL", "https://tariffia.app/api")
             buildConfigFieldString("MARKET_API_KEY", secret("MARKET_API_KEY"))
             buildConfigFieldString("ALCHEMY_API_KEY", secret("ALCHEMY_API_KEY"))
             buildConfigFieldString("SOLANA_JUPITER_API_KEY", secret("SOLANA_JUPITER_API_KEY"))
@@ -165,7 +193,7 @@ android {
             buildConfigFieldString("CHAINALYSIS_API_KEY", secret("CHAINALYSIS_API_KEY"))
             buildConfigFieldString("HASH_DIT_BASE_URL", "https://service.hashdit.io/v2/hashdit/")
             buildConfigFieldString("HASH_DIT_API_KEY", secret("HASH_DIT_API_KEY"))
-            buildConfigFieldString("USWAP_API_BASE_URL", "https://swap-api.unstoppable.money/v3/")
+            buildConfigFieldString("USWAP_API_BASE_URL", "https://tariffia.app/api/v3/")
             buildConfigFieldString("FASTNEAR_API_KEY", secret("FASTNEAR_API_KEY"))
         }
     }

@@ -43,7 +43,7 @@ jobs:
           disable-animations: true
           script: |
             adb install app/build/outputs/apk/ci/debug/app-ci-debug.apk
-            maestro test -e APP_ID=io.horizontalsystems.bankwallet.appcenter.dev --format junit --output maestro-report.xml maestro/
+            maestro test -e APP_ID=app.tariffia.wallet.appcenter.dev --format junit --output maestro-report.xml maestro/
 
       - name: Upload test output
         if: failure()
