@@ -98,17 +98,17 @@ class RateAppManager(
 
         fun openPlayMarket(context: Context) {
             try {
-                context.startActivity(getPlayMarketAppIntent())
+                context.startActivity(getPlayMarketAppIntent(context))
             } catch (e: ActivityNotFoundException) {
                 val appPlayStoreLink =
-                    "http://play.google.com/store/apps/details?id=io.horizontalsystems.walletkit"
+                    "https://play.google.com/store/apps/details?id=${context.packageName}"
                 LinkHelper.openLinkInAppBrowser(context, appPlayStoreLink)
             }
         }
 
-        private fun getPlayMarketAppIntent(): Intent {
+        private fun getPlayMarketAppIntent(context: Context): Intent {
             val uri =
-                Uri.parse("market://details?id=io.horizontalsystems.walletkit")  //context.packageName
+                Uri.parse("market://details?id=${context.packageName}")
             val goToMarketIntent = Intent(Intent.ACTION_VIEW, uri)
             goToMarketIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_MULTIPLE_TASK or Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
             return goToMarketIntent

@@ -27,6 +27,8 @@ class SwapSyncService(
     appConfigProvider: IAppConfigProvider,
 ) : Clearable {
 
+    private val swapEnabled = appConfigProvider.swapEnabled
+
     private val unstoppableAPI = APIClient.build(
         appConfigProvider.uswapApiBaseUrl,
         mapOf("x-api-key" to appConfigProvider.uswapApiKey)
@@ -35,6 +37,8 @@ class SwapSyncService(
     private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     fun start() {
+        if (!swapEnabled) return
+
         coroutineScope.launch {
             while (isActive) {
                 syncPending()
@@ -49,6 +53,8 @@ class SwapSyncService(
      * on tracking (it discovers the deposit on its own).
      */
     fun reportInboundTxHash(provider: IMultiSwapProvider, providerSwapId: String, txHash: String) {
+        if (!swapEnabled) return
+
         coroutineScope.launch {
             try {
                 provider.reportInboundTxHash(providerSwapId, txHash)
@@ -62,6 +68,8 @@ class SwapSyncService(
 
     /** The split counterpart of [reportInboundTxHash]: one deposit hash for every output of the split. */
     fun reportSplitInboundTxHash(provider: ISplitSwapProvider, splitUuid: String, txHash: String) {
+        if (!swapEnabled) return
+
         coroutineScope.launch {
             try {
                 provider.reportSplitInboundTxHash(splitUuid, txHash)

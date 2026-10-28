@@ -18,6 +18,8 @@ class SwapProviderInfoManager(
     appConfigProvider: IAppConfigProvider,
     private val localStorage: ILocalStorage,
 ) {
+    private val swapEnabled = appConfigProvider.swapEnabled
+
     private val unstoppableAPI = APIClient.build(
         appConfigProvider.uswapApiBaseUrl,
         mapOf("x-api-key" to appConfigProvider.uswapApiKey),
@@ -47,7 +49,7 @@ class SwapProviderInfoManager(
     val splitProvidersFlow = _splitProvidersFlow.asStateFlow()
 
     fun supportsSplitSwaps(providerId: String): Boolean =
-        SwapSuspensionIndex.serverId(providerId) in _splitProvidersFlow.value
+        swapEnabled && SwapSuspensionIndex.serverId(providerId) in _splitProvidersFlow.value
 
     /**
      * Route Scores by provider, as the server last published them. A flow rather than a lookup:
@@ -63,6 +65,8 @@ class SwapProviderInfoManager(
     val suspensionsFlow = _suspensionsFlow.asStateFlow()
 
     suspend fun getInfo(providerName: String): UnstoppableAPI.Response.Provider? {
+        if (!swapEnabled) return null
+
         // Contact details are needed for whatever provider the record names, so this ignores the
         // sync interval and only asks whether this process has the response in hand yet.
         fetchIf { cache == null }
@@ -74,6 +78,8 @@ class SwapProviderInfoManager(
      * Refreshes suspensions if the cached ones are stale. Cheap to call on every swap screen open.
      */
     suspend fun sync() {
+        if (!swapEnabled) return
+
         fetchIf { !isFresh() }
     }
 

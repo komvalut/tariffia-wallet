@@ -92,13 +92,15 @@ val BalanceViewItem2.contextMenuItems: List<BalanceContextMenuViewItem>
                 BalanceContextMenuItem.CoinInfo.toDropDownItem()
             )
         } else {
-            listOf(
-                BalanceContextMenuItem.Send.toDropDownItem(),
-                BalanceContextMenuItem.CopyAddress.toDropDownItem(),
-                BalanceContextMenuItem.Swap.toDropDownItem(),
-                BalanceContextMenuItem.CoinInfo.toDropDownItem(),
-                BalanceContextMenuItem.HideToken.toDropDownItem()
-            )
+            buildList {
+                add(BalanceContextMenuItem.Send.toDropDownItem())
+                add(BalanceContextMenuItem.CopyAddress.toDropDownItem())
+                if (App.instance.isSwapEnabled) {
+                    add(BalanceContextMenuItem.Swap.toDropDownItem())
+                }
+                add(BalanceContextMenuItem.CoinInfo.toDropDownItem())
+                add(BalanceContextMenuItem.HideToken.toDropDownItem())
+            }
         }
     }
 

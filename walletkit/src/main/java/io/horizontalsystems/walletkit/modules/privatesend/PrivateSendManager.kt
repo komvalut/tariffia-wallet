@@ -42,6 +42,8 @@ class PrivateSendManager(
     appConfigProvider: IAppConfigProvider,
     private val localStorage: ILocalStorage,
 ) {
+    private val swapEnabled = appConfigProvider.swapEnabled
+
     private val unstoppableAPI = APIClient.build(
         appConfigProvider.uswapApiBaseUrl,
         mapOf("x-api-key" to appConfigProvider.uswapApiKey),
@@ -71,10 +73,13 @@ class PrivateSendManager(
      * Pure in-memory lookup over already-synced state. Called from the render path: it must
      * never trigger a fetch, block, or become suspend.
      */
-    fun isSupported(token: Token): Boolean =
-        token.blockchainType !in privateChains &&
+    fun isSupported(token: Token): Boolean {
+        if (!swapEnabled) return false
+
+        return token.blockchainType !in privateChains &&
             token.blockchainType !in payoutUnsupportedChains &&
             candidates().any { it.supportsPrivateSend(token) }
+    }
 
     /**
      * Refreshes the confidential provider list (TTL-guarded) and each candidate's token list.
@@ -82,24 +87,28 @@ class PrivateSendManager(
      * blocking Room and marketKit reads — and a successfully started provider is not
      * re-started for a whole interval.
      */
-    suspend fun sync() = withContext(Dispatchers.IO) {
-        syncMutex.withLock {
-            syncProviderIds()
+    suspend fun sync() {
+        if (!swapEnabled) return
 
-            for (provider in candidates()) {
-                val startedAt = providerStartedAt[provider.serverProviderId]
-                if (startedAt != null && System.currentTimeMillis() - startedAt in 0 until SYNC_INTERVAL) {
-                    continue
-                }
+        withContext(Dispatchers.IO) {
+            syncMutex.withLock {
+                syncProviderIds()
 
-                try {
-                    provider.start()
-                    providerStartedAt[provider.serverProviderId] = System.currentTimeMillis()
-                    _availabilityFlow.value++
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Throwable) {
-                    Log.e(TAG, "Failed to sync tokens of ${provider.serverProviderId}", e)
+                for (provider in candidates()) {
+                    val startedAt = providerStartedAt[provider.serverProviderId]
+                    if (startedAt != null && System.currentTimeMillis() - startedAt in 0 until SYNC_INTERVAL) {
+                        continue
+                    }
+
+                    try {
+                        provider.start()
+                        providerStartedAt[provider.serverProviderId] = System.currentTimeMillis()
+                        _availabilityFlow.value++
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Throwable) {
+                        Log.e(TAG, "Failed to sync tokens of ${provider.serverProviderId}", e)
+                    }
                 }
             }
         }
