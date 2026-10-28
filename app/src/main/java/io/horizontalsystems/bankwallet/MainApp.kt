@@ -59,10 +59,6 @@ class MainApp : App() {
         }
         super.attachBaseContext(base)
     }
-            previousHandler?.uncaughtException(thread, error)
-        }
-        super.attachBaseContext(base)
-    }
 
     override fun createAppConfigProvider(localStorage: ILocalStorage): IAppConfigProvider =
         AppConfigProvider(localStorage)
