@@ -1,6 +1,8 @@
 package io.horizontalsystems.bankwallet
 
+import android.content.Context
 import io.horizontalsystems.bankwallet.core.providers.AppConfigProvider
+import io.horizontalsystems.walletkit.core.StartupTrace
 import io.horizontalsystems.walletkit.chain.evm.EvmChainPlugin
 import io.horizontalsystems.walletkit.chain.tron.TronChainPlugin
 import io.horizontalsystems.walletkit.core.managers.EvmBlockchainManager
@@ -29,6 +31,17 @@ import io.horizontalsystems.walletkit.core.providers.IAppConfigProvider
  * :app only supplies the flavor/BuildConfig-backed configuration.
  */
 class MainApp : App() {
+    override fun attachBaseContext(base: Context) {
+        // Installed before anything else so that a failure in Application.onCreate is recorded.
+        StartupTrace.init(base)
+        val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, error ->
+            StartupTrace.log("UNCAUGHT exception on thread ${thread.name}", error)
+            previousHandler?.uncaughtException(thread, error)
+        }
+        super.attachBaseContext(base)
+    }
+
     override fun createAppConfigProvider(localStorage: ILocalStorage): IAppConfigProvider =
         AppConfigProvider(localStorage)
 

@@ -492,6 +492,7 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
+        StartupTrace.log("App.onCreate: managers ready, starting background tasks")
         startTasks()
     }
 

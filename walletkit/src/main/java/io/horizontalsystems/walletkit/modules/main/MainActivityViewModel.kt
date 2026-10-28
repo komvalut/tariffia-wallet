@@ -12,6 +12,7 @@ import io.horizontalsystems.walletkit.ISystemInfoManager
 import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.core.IAccountManager
 import io.horizontalsystems.walletkit.core.ILocalStorage
+import io.horizontalsystems.walletkit.core.StartupTrace
 import io.horizontalsystems.walletkit.core.ViewModelUiState
 import io.horizontalsystems.walletkit.core.managers.UserManager
 import io.horizontalsystems.walletkit.modules.walletconnect.WCDelegate
@@ -87,16 +88,22 @@ class MainActivityViewModel(
 
     fun validate() {
         if (systemInfoManager.isSystemLockOff) {
+            StartupTrace.log("validate: no system lock")
             throw MainScreenValidationError.NoSystemLock()
         }
 
         try {
             keyStoreManager.validateKeyStore()
+            StartupTrace.log("validate: keystore ok")
         } catch (e: KeyStoreValidationError.UserNotAuthenticated) {
+            StartupTrace.log("validate: user not authenticated", e)
             throw MainScreenValidationError.UserAuthentication()
         } catch (e: KeyStoreValidationError.KeyIsInvalid) {
+            StartupTrace.log("validate: key invalid", e)
             throw MainScreenValidationError.KeyInvalidated()
         } catch (e: RuntimeException) {
+            // The original exception was dropped here before; keep it in the trace.
+            StartupTrace.log("validate: keystore RuntimeException (activity will finish)", e)
             throw MainScreenValidationError.KeystoreRuntimeException()
         }
     }
