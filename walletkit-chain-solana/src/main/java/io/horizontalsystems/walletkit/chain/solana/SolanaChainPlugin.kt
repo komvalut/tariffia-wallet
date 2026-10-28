@@ -113,9 +113,10 @@ class SolanaChainPlugin(
 
     override fun blockchainSettingsItem(): BlockchainSettingsModule.BlockchainItem.Chain? {
         val blockchain = rpcSourceManager.blockchain ?: return null
+        val rpcSourceName = try { rpcSourceManager.rpcSource.name } catch (_: Throwable) { return null }
         return BlockchainSettingsModule.BlockchainItem.Chain(
             blockchain = blockchain,
-            subtitle = rpcSourceManager.rpcSource.name,
+            subtitle = rpcSourceName,
             btcLike = false,
             page = SolanaNetworkPage,
             statEvent = StatEvent.Open(StatPage.BlockchainSettingsSolana),
@@ -139,6 +140,6 @@ class SolanaChainPlugin(
     override fun addTokenBlockchainService(blockchain: Blockchain): AddTokenModule.IAddTokenBlockchainService =
         AddSolanaTokenBlockchainService.getInstance(blockchain, jupiterApiKey())
 
-    override fun backupSyncSourceName(): String = rpcSourceManager.rpcSource.name
+    override fun backupSyncSourceName(): String = try { rpcSourceManager.rpcSource.name } catch (_: Throwable) { "Solana" }
 
 }

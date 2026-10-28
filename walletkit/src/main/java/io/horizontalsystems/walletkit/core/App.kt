@@ -408,7 +408,11 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
 
         wcManager = WCManager(accountManager, pinComponent)
         ChainRegistry.all.forEach { plugin ->
-            plugin.wcHandlers().forEach(wcManager::addWcHandler)
+            try {
+                plugin.wcHandlers().forEach(wcManager::addWcHandler)
+            } catch (e: Throwable) {
+                Timber.e(e, "wcHandlers failed for %s", plugin.blockchainType.uid)
+            }
         }
         wcWalletRequestHandler = ChainRegistry.all.firstNotNullOfOrNull { it.wcWalletRequestHandler() }
 
