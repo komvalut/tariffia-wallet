@@ -2,6 +2,7 @@ package io.horizontalsystems.bankwallet
 
 import android.content.Context
 import io.horizontalsystems.bankwallet.core.providers.AppConfigProvider
+import io.horizontalsystems.walletkit.core.StartupCrashActivity
 import io.horizontalsystems.walletkit.core.StartupTrace
 import io.horizontalsystems.walletkit.chain.evm.EvmChainPlugin
 import io.horizontalsystems.walletkit.chain.tron.TronChainPlugin
@@ -37,6 +38,10 @@ class MainApp : App() {
         val previousHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, error ->
             StartupTrace.log("UNCAUGHT exception on thread ${thread.name}", error)
+            // Only the main process shows the crash screen; helper processes (e.g. LeakCanary) stay silent.
+            if (getProcessName() == base.packageName) {
+                StartupCrashActivity.show(base, "Thread: ${thread.name}\n\n${error.stackTraceToString()}")
+            }
             previousHandler?.uncaughtException(thread, error)
         }
         super.attachBaseContext(base)
