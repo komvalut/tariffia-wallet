@@ -6,6 +6,7 @@ import io.horizontalsystems.walletkit.core.chain.ChainPlugin
 import io.horizontalsystems.walletkit.core.managers.RestoreSettings
 import io.horizontalsystems.walletkit.core.managers.PirateKitManager
 import io.horizontalsystems.walletkit.entities.Account
+import io.horizontalsystems.walletkit.core.adapters.PirateAdapter
 import io.horizontalsystems.walletkit.entities.Wallet
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.Token
@@ -51,7 +52,16 @@ class PirateChainPlugin(
         }
     }
 
-    override fun createAdapter(wallet: Wallet, restoreSettings: RestoreSettings): IAdapter? = null
+    override fun createAdapter(wallet: Wallet, restoreSettings: RestoreSettings): IAdapter? {
+        return try {
+            val km = kitManager ?: return null
+            val wrapper = km.getPirateKitWrapper(wallet.account) ?: return null
+            PirateAdapter(km, wallet)
+        } catch (e: Throwable) {
+            Timber.e(e, "PirateChainPlugin.createAdapter failed")
+            null
+        }
+    }
 
     override fun unlink(account: Account) {
         try {
