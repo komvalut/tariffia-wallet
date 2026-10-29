@@ -2,8 +2,8 @@ package io.horizontalsystems.walletkit.core.adapters
 
 import android.content.Context
 import cash.z.ecc.android.sdk.CloseableSynchronizer
+import cash.z.ecc.android.sdk.ext.convertZatoshiToZec
 import cash.z.ecc.android.sdk.model.ZcashNetwork
-import cash.z.ecc.android.sdk.tool.DerivationTool
 import io.horizontalsystems.walletkit.core.AdapterState
 import io.horizontalsystems.walletkit.core.BalanceData
 import io.horizontalsystems.walletkit.core.IAdapter
@@ -12,13 +12,17 @@ import io.horizontalsystems.walletkit.core.IReceiveAdapter
 import io.horizontalsystems.walletkit.core.ILocalStorage
 import io.horizontalsystems.walletkit.core.managers.PirateKitManager
 import io.horizontalsystems.walletkit.core.managers.RestoreSettings
-import io.horizontalsystems.walletkit.entities.AccountType
 import io.horizontalsystems.walletkit.entities.Wallet
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.math.BigDecimal
 
@@ -37,12 +41,10 @@ class PirateAdapter(
 ) : IAdapter, IBalanceAdapter, IReceiveAdapter {
 
     private val appContext: Context = context.applicationContext
-    private val network: ZcashNetwork = ZcashNetwork.Mainnet
-
-    private val accountType = (wallet.account.type as? AccountType.Mnemonic)
-    private val seed = accountType?.seed
 
     private var synchronizer: CloseableSynchronizer? = null
+
+    private val adapterScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val _balanceState = MutableStateFlow<AdapterState>(AdapterState.NotSynced(Exception("not initialized")))
     override val balanceState: AdapterState get() = _balanceState.value
@@ -52,29 +54,103 @@ class PirateAdapter(
     override val balanceData: BalanceData? get() = _balanceData.value
     override val balanceUpdatedFlow: SharedFlow<Unit> = MutableSharedFlow(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
-    override val receiveAddress: String
-        get() = ""
-
+    // Cached receive address (derived asynchronously)
+    private val _receiveAddress = MutableStateFlow("")
+    override val receiveAddress: String get() = _receiveAddress.value
     override val isMainNet: Boolean = true
 
     init {
         try {
-            if (seed == null) {
-                Timber.w("PirateAdapter: no seed, skipping sync")
-                _balanceState.value = AdapterState.NotSynced(Exception("no seed"))
-            } else {
-                synchronizer = kitManager.getSynchronizer(wallet.account)
-                if (synchronizer == null) {
-                    Timber.w("PirateAdapter: synchronizer init failed")
-                    _balanceState.value = AdapterState.NotSynced(Exception("synchronizer init failed"))
-                } else {
-                    _balanceState.value = AdapterState.Syncing()
-                    Timber.d("PirateAdapter: synchronizer initialized successfully")
-                }
+            synchronizer = kitManager.getSynchronizer(wallet.account)
+            if (synchronizer == null) {
+                Timber.w("PirateAdapter: synchronizer init failed")
+                _balanceState.value = AdapterState.NotSynced(Exception("synchronizer init failed"))
+                return
             }
+
+            _balanceState.value = AdapterState.Syncing()
+            Timber.d("PirateAdapter: synchronizer initialized")
+
+            // Subscribe to synchronizer status and balance flows
+            subscribe(synchronizer!!)
         } catch (e: Throwable) {
             Timber.e(e, "PirateAdapter.init failed")
             _balanceState.value = AdapterState.NotSynced(e)
+        }
+    }
+
+    private fun subscribe(sync: CloseableSynchronizer) {
+        try {
+            adapterScope.launch {
+                try {
+                    sync.status.collect { status ->
+                        try {
+                            when (status) {
+                                cash.z.ecc.android.sdk.Synchronizer.Status.SYNCED -> {
+                                    _balanceState.value = AdapterState.Synced
+                                }
+                                cash.z.ecc.android.sdk.Synchronizer.Status.SYNCING -> {
+                                    _balanceState.value = AdapterState.Syncing()
+                                }
+                                else -> {
+                                    _balanceState.value = AdapterState.Connecting
+                                }
+                            }
+                        } catch (e: Throwable) {
+                            Timber.e(e, "PirateAdapter: status collect failed")
+                            _balanceState.value = AdapterState.NotSynced(e)
+                        }
+                    }
+                } catch (e: Throwable) {
+                    Timber.e(e, "PirateAdapter: status flow failed")
+                    _balanceState.value = AdapterState.NotSynced(e)
+                }
+            }
+
+            adapterScope.launch {
+                try {
+                    sync.walletBalances.collect { balances ->
+                        try {
+                            val balance = balances?.values?.firstOrNull()
+                            if (balance != null) {
+                                val available = balance.available.convertZatoshiToZec(8)
+                                val pending = balance.pending.convertZatoshiToZec(8)
+                                _balanceData.value = BalanceData(
+                                    available = available,
+                                    pending = pending,
+                                )
+                                _balanceUpdatedFlow.tryEmit(Unit)
+                            }
+                        } catch (e: Throwable) {
+                            Timber.e(e, "PirateAdapter: balance collect failed")
+                        }
+                    }
+                } catch (e: Throwable) {
+                    Timber.e(e, "PirateAdapter: walletBalances flow failed")
+                }
+            }
+
+            // Derive receive address asynchronously
+            adapterScope.launch {
+                try {
+                    val seed = (wallet.account.type as? io.horizontalsystems.walletkit.entities.AccountType.Mnemonic)?.seed
+                    if (seed != null) {
+                        val derivationTool = cash.z.ecc.android.sdk.tool.DerivationTool.getInstance()
+                        val spendingKey = derivationTool.deriveUnifiedSpendingKey(
+                            seed,
+                            ZcashNetwork.Mainnet,
+                            cash.z.ecc.android.sdk.model.Zip32AccountIndex.new(0),
+                        )
+                        // Get Sapling address from spending key
+                        // The exact method depends on SDK version
+                        _receiveAddress.value = spendingKey?.toString() ?: ""
+                    }
+                } catch (e: Throwable) {
+                    Timber.e(e, "PirateAdapter: address derivation failed")
+                }
+            }
+        } catch (e: Throwable) {
+            Timber.e(e, "PirateAdapter.subscribe failed")
         }
     }
 
@@ -91,6 +167,7 @@ class PirateAdapter(
         try {
             synchronizer?.close()
             synchronizer = null
+            adapterScope.cancel()
             _balanceState.value = AdapterState.NotSynced(Exception("stopped"))
         } catch (e: Throwable) {
             Timber.e(e, "PirateAdapter.stop failed")

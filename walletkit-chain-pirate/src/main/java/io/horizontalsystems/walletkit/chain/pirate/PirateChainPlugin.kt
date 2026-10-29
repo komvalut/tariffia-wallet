@@ -1,16 +1,17 @@
 package io.horizontalsystems.walletkit.chain.pirate
 
+import android.content.Context
 import io.horizontalsystems.walletkit.core.App
 import io.horizontalsystems.walletkit.core.IAdapter
+import io.horizontalsystems.walletkit.core.ILocalStorage
 import io.horizontalsystems.walletkit.core.chain.ChainPlugin
-import io.horizontalsystems.walletkit.core.managers.RestoreSettings
-import io.horizontalsystems.walletkit.core.managers.PirateKitManager
-import io.horizontalsystems.walletkit.entities.Account
 import io.horizontalsystems.walletkit.core.adapters.PirateAdapter
+import io.horizontalsystems.walletkit.core.managers.PirateKitManager
+import io.horizontalsystems.walletkit.core.managers.RestoreSettings
+import io.horizontalsystems.walletkit.entities.Account
 import io.horizontalsystems.walletkit.entities.Wallet
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.Token
-import io.horizontalsystems.walletkit.modules.walletconnect.handler.IWCHandler
 import timber.log.Timber
 
 /**
@@ -19,10 +20,10 @@ import timber.log.Timber
  * Pirate Chain is a Zcash fork (Sapling/Ironwood shielded pools). Uses lightwalletd
  * for sync. All entry points are guarded so a missing server or bad config never
  * crashes App.onCreate.
- *
- * Phase 1: registration + safe skeleton. Sync/balance/send come in later phases.
  */
 class PirateChainPlugin(
+    private val context: () -> Context,
+    private val localStorage: () -> ILocalStorage,
     private val lightwalletdEndpoint: () -> String,
 ) : ChainPlugin {
 
@@ -58,9 +59,13 @@ class PirateChainPlugin(
     override fun createAdapter(wallet: Wallet, restoreSettings: RestoreSettings): IAdapter? {
         return try {
             val km = kitManager ?: return null
-            // Phase 6: adapter creation needs context, localStorage, etc.
-            // For now, return null (adapter creation needs full SDK integration).
-            null
+            PirateAdapter(
+                context(),
+                wallet,
+                restoreSettings,
+                localStorage(),
+                km,
+            )
         } catch (e: Throwable) {
             Timber.e(e, "PirateChainPlugin.createAdapter failed")
             null
@@ -77,13 +82,13 @@ class PirateChainPlugin(
 
     override fun clearAccountData(accountId: String) = Unit
 
-    override fun wcHandlers() = emptyList<IWCHandler>()
+    override fun wcHandlers() = emptyList<io.horizontalsystems.walletkit.modules.walletconnect.handler.IWCHandler>()
 
     override fun wcWalletRequestHandler() = null
 
     override suspend fun onAppStart() {
         try {
-            // Phase 1: no-op. Sync logic comes in phase 2.
+            // Phase 7: no-op. Sync logic comes in later phases.
         } catch (e: Throwable) {
             Timber.e(e, "PirateChainPlugin.onAppStart failed")
         }
@@ -91,7 +96,7 @@ class PirateChainPlugin(
 
     override suspend fun onEnterForeground() {
         try {
-            // Phase 1: no-op.
+            // Phase 7: no-op.
         } catch (e: Throwable) {
             Timber.e(e, "PirateChainPlugin.onEnterForeground failed")
         }
