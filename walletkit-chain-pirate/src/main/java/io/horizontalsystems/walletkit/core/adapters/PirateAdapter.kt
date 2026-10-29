@@ -53,24 +53,7 @@ class PirateAdapter(
     override val balanceUpdatedFlow: SharedFlow<Unit> = MutableSharedFlow(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     override val receiveAddress: String
-        get() = try {
-            if (seed == null) return ""
-            // Derive Sapling address from seed using Zcash SDK
-            val derivationTool = cash.z.ecc.android.sdk.tool.null // DerivationTool.getInstance()
-            val spendingKey = kotlinx.coroutines.runBlocking {
-                derivationTool.deriveUnifiedSpendingKey(
-                    seed,
-                    network,
-                    cash.z.ecc.android.sdk.model.Zip32AccountIndex.new(0),
-                )
-            }
-            // Get the Sapling receiver address from the spending key
-            // The exact method may need adjustment for Pirate Chain
-            spendingKey?.toString() ?: ""
-        } catch (e: Throwable) {
-            Timber.e(e, "PirateAdapter.receiveAddress failed")
-            ""
-        }
+        get() = ""
 
     override val isMainNet: Boolean = true
 
