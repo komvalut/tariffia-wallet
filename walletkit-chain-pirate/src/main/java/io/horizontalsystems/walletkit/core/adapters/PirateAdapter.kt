@@ -22,6 +22,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
@@ -185,7 +187,7 @@ class PirateAdapter(
             val account = zcashAccount ?: run {
                 // Try to get account from synchronizer
                 try {
-                    val accounts = sync.accountsFlow.value
+                    val accounts = sync.accountsFlow.firstOrNull { it.isNotEmpty() }
                     accounts?.firstOrNull()
                 } catch (e: Throwable) {
                     Timber.e(e, "PirateAdapter.send: failed to get account")
