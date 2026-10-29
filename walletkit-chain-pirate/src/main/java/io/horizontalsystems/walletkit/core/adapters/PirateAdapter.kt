@@ -56,7 +56,7 @@ class PirateAdapter(
         get() = try {
             if (seed == null) return ""
             // Derive Sapling address from seed using Zcash SDK
-            val derivationTool = cash.z.ecc.android.sdk.tool.DerivationTool.getInstance()
+            val derivationTool = cash.z.ecc.android.sdk.tool.null // DerivationTool.getInstance()
             val spendingKey = kotlinx.coroutines.runBlocking {
                 derivationTool.deriveUnifiedSpendingKey(
                     seed,
@@ -79,18 +79,16 @@ class PirateAdapter(
             if (seed == null) {
                 Timber.w("PirateAdapter: no seed, skipping sync")
                 _balanceState.value = AdapterState.NotSynced(Exception("no seed"))
-                return
+            } else {
+                synchronizer = kitManager.getSynchronizer(wallet.account)
+                if (synchronizer == null) {
+                    Timber.w("PirateAdapter: synchronizer init failed")
+                    _balanceState.value = AdapterState.NotSynced(Exception("synchronizer init failed"))
+                } else {
+                    _balanceState.value = AdapterState.Syncing()
+                    Timber.d("PirateAdapter: synchronizer initialized successfully")
+                }
             }
-
-            synchronizer = kitManager.getSynchronizer(wallet.account)
-            if (synchronizer == null) {
-                Timber.w("PirateAdapter: synchronizer init failed")
-                _balanceState.value = AdapterState.NotSynced(Exception("synchronizer init failed"))
-                return
-            }
-
-            _balanceState.value = AdapterState.Syncing()
-            Timber.d("PirateAdapter: synchronizer initialized successfully")
         } catch (e: Throwable) {
             Timber.e(e, "PirateAdapter.init failed")
             _balanceState.value = AdapterState.NotSynced(e)

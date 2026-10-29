@@ -58,8 +58,7 @@ class PirateChainPlugin(
     override fun createAdapter(wallet: Wallet, restoreSettings: RestoreSettings): IAdapter? {
         return try {
             val km = kitManager ?: return null
-            km.getPirateKitWrapper(wallet.account) ?: return null
-            // Phase 4: createAdapter needs context, localStorage, etc.
+            // Phase 6: adapter creation needs context, localStorage, etc.
             // For now, return null (adapter creation needs full SDK integration).
             null
         } catch (e: Throwable) {

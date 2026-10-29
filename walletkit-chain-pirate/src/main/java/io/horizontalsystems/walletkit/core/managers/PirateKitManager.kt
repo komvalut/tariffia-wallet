@@ -61,7 +61,7 @@ class PirateKitManager(
                 return null
             }
 
-            val endpoint = LightWalletEndpoint(rpcSource.host, rpcSource.port)
+            val endpoint = LightWalletEndpoint(rpcSource.host, rpcSource.port, true)
 
             // Pirate Chain uses Zcash-compatible network parameters.
             // Using ZcashNetwork.Mainnet as base (Pirate is a Zcash fork).
