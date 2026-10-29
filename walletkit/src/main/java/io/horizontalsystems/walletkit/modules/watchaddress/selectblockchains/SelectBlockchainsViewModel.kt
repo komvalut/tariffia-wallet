@@ -6,6 +6,7 @@ import io.horizontalsystems.walletkit.core.alternativeImageUrl
 import io.horizontalsystems.walletkit.core.badge
 import io.horizontalsystems.walletkit.core.description
 import io.horizontalsystems.walletkit.core.imageUrl
+import io.horizontalsystems.walletkit.core.imagePlaceholder
 import io.horizontalsystems.walletkit.core.stats.StatEvent
 import io.horizontalsystems.walletkit.core.stats.StatPage
 import io.horizontalsystems.walletkit.core.stats.stat
@@ -86,7 +87,7 @@ class SelectBlockchainsViewModel(
     private fun coinViewItemForToken(token: Token, label: String?): CoinViewItem<Token> {
         return CoinViewItem(
             item = token,
-            imageSource = ImageSource.Remote(token.fullCoin.coin.imageUrl, R.drawable.coin_placeholder, token.fullCoin.coin.alternativeImageUrl),
+            imageSource = ImageSource.Remote(token.fullCoin.coin.imageUrl, token.fullCoin.coin.imagePlaceholder, token.fullCoin.coin.alternativeImageUrl),
             title = token.fullCoin.coin.code,
             subtitle = token.fullCoin.coin.name,
             enabled = false,

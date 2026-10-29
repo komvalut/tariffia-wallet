@@ -48,7 +48,10 @@ val Token.isSupported: Boolean
 val Token.iconPlaceholder: Int
     get() = when (type) {
         is TokenType.Eip20 -> blockchainType.tokenIconPlaceholder
-        else -> R.drawable.coin_placeholder
+        else -> when (blockchainType) {
+            BlockchainType.PirateChain -> R.drawable.ic_pirate_chain
+            else -> R.drawable.coin_placeholder
+        }
     }
 
 // Short label for token badges; the full chain name stays in `BlockchainType.title`.
@@ -576,7 +579,10 @@ val Coin.alternativeImageUrl: String?
     get() = image
 
 val Coin.imagePlaceholder: Int
-    get() = R.drawable.coin_placeholder
+    get() = when (uid) {
+        BlockchainType.PirateChain.uid -> R.drawable.ic_pirate_chain
+        else -> R.drawable.coin_placeholder
+    }
 
 val TopPlatform.imageUrl
     get() = TariffiaCdn.blockchainIcon(blockchain.uid)

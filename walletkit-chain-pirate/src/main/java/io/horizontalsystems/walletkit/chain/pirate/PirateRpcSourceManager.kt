@@ -26,7 +26,7 @@ class PirateRpcSourceManager(
         if (endpoint.isBlank()) {
             listOf(
                 RpcSource("Pirate lightd1", "lightd1.pirate.black", 443),
-                RpcSource("Pirate lightd2", "lightd2.pirate.black", 443),
+                RpcSource("Pirate lightd", "lightd.pirate.black", 443),
             )
         } else {
             val host = endpoint.substringBefore(":")
