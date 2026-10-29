@@ -308,7 +308,11 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
         moneroNodeManager = MoneroNodeManager(blockchainSettingsStorage, moneroNodeStorage, marketKit)
         zanoNodeStorage = ZanoNodeStorage(appDatabase)
         zanoNodeManager = ZanoNodeManager(blockchainSettingsStorage, zanoNodeStorage, marketKit)
-        registerChainPlugins()
+        try {
+            registerChainPlugins()
+        } catch (e: Throwable) {
+            Timber.e(e, "registerChainPlugins failed")
+        }
         zcashEndpointStorage = ZcashEndpointStorage(appDatabase)
         zcashEndpointManager = ZcashLightWalletEndpointManager(blockchainSettingsStorage, zcashEndpointStorage, marketKit)
         coinManager = CoinManager(marketKit, walletManager)
@@ -414,7 +418,12 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
                 Timber.e(e, "wcHandlers failed for %s", plugin.blockchainType.uid)
             }
         }
-        wcWalletRequestHandler = ChainRegistry.all.firstNotNullOfOrNull { it.wcWalletRequestHandler() }
+        wcWalletRequestHandler = try {
+            ChainRegistry.all.firstNotNullOfOrNull { it.wcWalletRequestHandler() }
+        } catch (e: Throwable) {
+            Timber.e(e, "wcWalletRequestHandler resolution failed")
+            null
+        }
 
         termsManager = TermsManager(localStorage)
         swapTermsManager = SwapTermsManager(localStorage)
@@ -592,14 +601,14 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
 
     private fun startTasks() {
         coroutineScope.launch {
-            walletManager.start(restoreSettingsManager, btcBlockchainManager, evmBlockchainManager)
-            adapterManager.startAdapterManager()
-            marketKit.sync()
-            rateAppManager.onAppLaunch()
-            pinComponent.initDefaultPinLevel()
-            accountManager.clearAccounts()
-            wcSessionManager.start()
-            swapSyncService.start()
+            try { walletManager.start(restoreSettingsManager, btcBlockchainManager, evmBlockchainManager) } catch (e: Throwable) { Timber.e(e, "walletManager.start failed") }
+            try { adapterManager.startAdapterManager() } catch (e: Throwable) { Timber.e(e, "adapterManager.startAdapterManager failed") }
+            try { marketKit.sync() } catch (e: Throwable) { Timber.e(e, "marketKit.sync failed") }
+            try { rateAppManager.onAppLaunch() } catch (e: Throwable) { Timber.e(e, "rateAppManager.onAppLaunch failed") }
+            try { pinComponent.initDefaultPinLevel() } catch (e: Throwable) { Timber.e(e, "pinComponent.initDefaultPinLevel failed") }
+            try { accountManager.clearAccounts() } catch (e: Throwable) { Timber.e(e, "accountManager.clearAccounts failed") }
+            try { wcSessionManager.start() } catch (e: Throwable) { Timber.e(e, "wcSessionManager.start failed") }
+            try { swapSyncService.start() } catch (e: Throwable) { Timber.e(e, "swapSyncService.start failed") }
             // Fire-and-forget like the neighbouring starts: nothing below depends on it, and
             // awaiting it would hold the rest of startup behind a network round trip. Guarded
             // because this scope has no SupervisorJob — a failure here would cancel the
@@ -614,22 +623,26 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
                 }
             }
 
-            AppVersionManager(systemInfoManager, localStorage).apply { storeAppVersion() }
+            try { AppVersionManager(systemInfoManager, localStorage).apply { storeAppVersion() } } catch (e: Throwable) { Timber.e(e, "storeAppVersion failed") }
 
-            if (MarketWidgetWorker.hasEnabledWidgets(instance)) {
-                MarketWidgetWorker.enqueueWork(instance)
-            } else {
-                MarketWidgetWorker.cancel(instance)
-            }
+            try {
+                if (MarketWidgetWorker.hasEnabledWidgets(instance)) {
+                    MarketWidgetWorker.enqueueWork(instance)
+                } else {
+                    MarketWidgetWorker.cancel(instance)
+                }
+            } catch (e: Throwable) { Timber.e(e, "MarketWidgetWorker failed") }
 
-            appDatabase.ocpPaymentDao().getPending().forEach { record ->
-                OcpProofSubmissionWorker.enqueue(instance, record.txHash)
-            }
+            try {
+                appDatabase.ocpPaymentDao().getPending().forEach { record ->
+                    OcpProofSubmissionWorker.enqueue(instance, record.txHash)
+                }
+            } catch (e: Throwable) { Timber.e(e, "ocpPayment enqueue failed") }
 
-            evmLabelManager.sync()
-            contactsRepository.initialize()
-            trialExpired = !UserSubscriptionManager.hasFreeTrial()
-            appIconService.validateAndFixCurrentIcon()
+            try { evmLabelManager.sync() } catch (e: Throwable) { Timber.e(e, "evmLabelManager.sync failed") }
+            try { contactsRepository.initialize() } catch (e: Throwable) { Timber.e(e, "contactsRepository.initialize failed") }
+            try { trialExpired = !UserSubscriptionManager.hasFreeTrial() } catch (e: Throwable) { Timber.e(e, "hasFreeTrial failed"); trialExpired = false }
+            try { appIconService.validateAndFixCurrentIcon() } catch (e: Throwable) { Timber.e(e, "validateAndFixCurrentIcon failed") }
         }
 
         // A node can also die mid-session, foreground or background; watch for a sync that
