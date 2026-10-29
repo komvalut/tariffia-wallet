@@ -2,7 +2,7 @@ package io.horizontalsystems.walletkit.core.adapters
 
 import android.content.Context
 import cash.z.ecc.android.sdk.CloseableSynchronizer
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZec
+import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import io.horizontalsystems.walletkit.core.AdapterState
 import io.horizontalsystems.walletkit.core.BalanceData
@@ -17,13 +17,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.math.BigDecimal
 
@@ -42,9 +41,9 @@ class PirateAdapter(
 ) : IAdapter, IBalanceAdapter, IReceiveAdapter {
 
     private val appContext: Context = context.applicationContext
+    private val network: ZcashNetwork = ZcashNetwork.Mainnet
 
     private var synchronizer: CloseableSynchronizer? = null
-
     private val adapterScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val _balanceState = MutableStateFlow<AdapterState>(AdapterState.NotSynced(Exception("not initialized")))
@@ -56,9 +55,7 @@ class PirateAdapter(
     private val _balanceUpdatedFlow = MutableSharedFlow<Unit>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     override val balanceUpdatedFlow: SharedFlow<Unit> = _balanceUpdatedFlow
 
-    // Cached receive address (derived asynchronously)
-    private val _receiveAddress = MutableStateFlow("")
-    override val receiveAddress: String get() = _receiveAddress.value
+    override val receiveAddress: String get() = ""
     override val isMainNet: Boolean = true
 
     init {
@@ -70,8 +67,6 @@ class PirateAdapter(
             } else {
                 _balanceState.value = AdapterState.Syncing()
                 Timber.d("PirateAdapter: synchronizer initialized")
-
-                // Subscribe to synchronizer status and balance flows
                 subscribe(synchronizer!!)
             }
         } catch (e: Throwable) {
@@ -112,46 +107,63 @@ class PirateAdapter(
                 try {
                     sync.walletBalances.collect { balances ->
                         try {
-                            try {
-                        val balance = balances?.values?.firstOrNull()
-                        if (balance != null) {
-                            // AccountBalance fields may differ by SDK version.
-                            // Using reflection-safe access via toString for now.
-                            Timber.d("PirateAdapter: balance received: %s", balance)
-                        }
-                    } catch (e: Throwable) {
-                        Timber.e(e, "PirateAdapter: balance parse failed")
-                    }
+                            val balance = balances?.values?.firstOrNull()
+                            if (balance != null) {
+                                Timber.d("PirateAdapter: balance received: %s", balance)
+                                // Map AccountBalance to BalanceData
+                                // AccountBalance has sapling, orchard, ironwood (each with available/pending)
+                                // and unshielded (Zatoshi). Using extension properties from ZcashAdapter pattern.
+                                val available = try {
+                                    balance.available.convertZatoshiToZec(8)
+                                } catch (e: Throwable) {
+                                    Timber.e(e, "PirateAdapter: available conversion failed")
+                                    BigDecimal.ZERO
+                                }
+                                val pending = try {
+                                    balance.pending.convertZatoshiToZec(8)
+                                } catch (e: Throwable) {
+                                    Timber.e(e, "PirateAdapter: pending conversion failed")
+                                    BigDecimal.ZERO
+                                }
+                                val unshielded = try {
+                                    balance.unshielded.convertZatoshiToZec(8)
+                                } catch (e: Throwable) {
+                                    Timber.e(e, "PirateAdapter: unshielded conversion failed")
+                                    BigDecimal.ZERO
+                                }
+                                _balanceData.value = BalanceData(
+                                    available = available,
+                                    pending = pending,
+                                    unshielded = unshielded,
+                                )
+                                _balanceUpdatedFlow.tryEmit(Unit)
+                            }
                         } catch (e: Throwable) {
-                            Timber.e(e, "PirateAdapter: balance collect failed")
+                            Timber.e(e, "PirateAdapter: balance parse failed")
                         }
                     }
                 } catch (e: Throwable) {
                     Timber.e(e, "PirateAdapter: walletBalances flow failed")
                 }
             }
-
-            // Derive receive address asynchronously
-            adapterScope.launch {
-                try {
-                    val seed = (wallet.account.type as? io.horizontalsystems.walletkit.entities.AccountType.Mnemonic)?.seed
-                    if (seed != null) {
-                        val derivationTool = cash.z.ecc.android.sdk.tool.DerivationTool.getInstance()
-                        val spendingKey = derivationTool.deriveUnifiedSpendingKey(
-                            seed,
-                            ZcashNetwork.Mainnet,
-                            cash.z.ecc.android.sdk.model.Zip32AccountIndex.new(0),
-                        )
-                        // Get Sapling address from spending key
-                        // The exact method depends on SDK version
-                        _receiveAddress.value = spendingKey?.toString() ?: ""
-                    }
-                } catch (e: Throwable) {
-                    Timber.e(e, "PirateAdapter: address derivation failed")
-                }
-            }
         } catch (e: Throwable) {
             Timber.e(e, "PirateAdapter.subscribe failed")
+        }
+    }
+
+    suspend fun send(amount: BigDecimal, address: String, memo: String): List<String> {
+        return try {
+            Timber.d("PirateAdapter.send: not yet implemented (needs account + spending key)")
+            // Phase 8: send implementation requires:
+            // 1. zcashAccount (from awaitFirstAccount)
+            // 2. spendingKey (from DerivationTool.deriveUnifiedSpendingKey)
+            // 3. sync.proposeTransfer(account, address, amount, memo)
+            // 4. sync.createProposedTransactions(proposal, spendingKey)
+            // 5. sync.submitTransactions(txIds)
+            emptyList()
+        } catch (e: Throwable) {
+            Timber.e(e, "PirateAdapter.send failed")
+            throw e
         }
     }
 
