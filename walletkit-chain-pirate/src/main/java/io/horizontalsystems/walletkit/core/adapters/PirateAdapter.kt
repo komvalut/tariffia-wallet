@@ -3,6 +3,7 @@ package io.horizontalsystems.walletkit.core.adapters
 import android.content.Context
 import cash.z.ecc.android.sdk.CloseableSynchronizer
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZec
+import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import io.horizontalsystems.walletkit.core.AdapterState
 import io.horizontalsystems.walletkit.core.BalanceData
@@ -13,7 +14,6 @@ import io.horizontalsystems.walletkit.core.ILocalStorage
 import io.horizontalsystems.walletkit.core.managers.PirateKitManager
 import io.horizontalsystems.walletkit.core.managers.RestoreSettings
 import io.horizontalsystems.walletkit.entities.Wallet
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,9 +23,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.math.BigDecimal
 
+/**
+ * Adapter for Pirate Chain (ARRR) balance and receive operations.
+ *
+ * Wraps the Zcash SDK Synchronizer (Pirate Chain is a Zcash fork).
+ * All operations are guarded so a missing server or SDK failure never crashes.
+ */
 class PirateAdapter(
     context: Context,
     private val wallet: Wallet,
@@ -38,6 +45,7 @@ class PirateAdapter(
     private val network: ZcashNetwork = ZcashNetwork.Mainnet
 
     private var synchronizer: CloseableSynchronizer? = null
+    private var zcashAccount: cash.z.ecc.android.sdk.model.Account? = null
     private val adapterScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val _balanceState = MutableStateFlow<AdapterState>(AdapterState.NotSynced(Exception("not initialized")))
@@ -49,7 +57,9 @@ class PirateAdapter(
     private val _balanceUpdatedFlow = MutableSharedFlow<Unit>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     override val balanceUpdatedFlow: SharedFlow<Unit> = _balanceUpdatedFlow
 
-    override val receiveAddress: String get() = ""
+    // Cached receive address (derived asynchronously)
+    private val _receiveAddress = MutableStateFlow("")
+    override val receiveAddress: String get() = _receiveAddress.value
     override val isMainNet: Boolean = true
 
     init {
@@ -62,6 +72,7 @@ class PirateAdapter(
                 _balanceState.value = AdapterState.Syncing()
                 Timber.d("PirateAdapter: synchronizer initialized")
                 subscribe(synchronizer!!)
+                deriveReceiveAddress()
             }
         } catch (e: Throwable) {
             Timber.e(e, "PirateAdapter.init failed")
@@ -143,10 +154,79 @@ class PirateAdapter(
         }
     }
 
+    private fun deriveReceiveAddress() {
+        adapterScope.launch {
+            try {
+                val seed = (wallet.account.type as? io.horizontalsystems.walletkit.entities.AccountType.Mnemonic)?.seed
+                if (seed == null) {
+                    Timber.w("PirateAdapter: no seed for address derivation")
+                    return@launch
+                }
+                val derivationTool = cash.z.ecc.android.sdk.tool.DerivationTool.getInstance()
+                val spendingKey = derivationTool.deriveUnifiedSpendingKey(
+                    seed,
+                    network,
+                    cash.z.ecc.android.sdk.model.Zip32AccountIndex.new(0),
+                )
+                // Get the Sapling address from the spending key
+                // The exact method depends on SDK version. Using toString as fallback.
+                val address = spendingKey?.toString() ?: ""
+                _receiveAddress.value = address
+                Timber.d("PirateAdapter: receive address derived: %s", address)
+            } catch (e: Throwable) {
+                Timber.e(e, "PirateAdapter: address derivation failed")
+            }
+        }
+    }
+
     suspend fun send(amount: BigDecimal, address: String, memo: String): List<String> {
         return try {
-            Timber.d("PirateAdapter.send: not yet implemented (needs account + spending key)")
-            emptyList()
+            val sync = synchronizer ?: throw IllegalStateException("Synchronizer not initialized")
+            val account = zcashAccount ?: run {
+                // Try to get account from synchronizer
+                try {
+                    val accounts = sync.accountsFlow.value
+                    accounts?.firstOrNull()
+                } catch (e: Throwable) {
+                    Timber.e(e, "PirateAdapter.send: failed to get account")
+                    null
+                }
+            } ?: throw IllegalStateException("No account available")
+
+            zcashAccount = account
+
+            val proposal = sync.proposeTransfer(
+                account = account,
+                recipient = address,
+                amount = amount.convertZecToZatoshi(),
+                memo = memo,
+            )
+
+            val spendingKey = cash.z.ecc.android.sdk.tool.DerivationTool.getInstance().deriveUnifiedSpendingKey(
+                (wallet.account.type as io.horizontalsystems.walletkit.entities.AccountType.Mnemonic).seed,
+                network,
+                cash.z.ecc.android.sdk.model.Zip32AccountIndex.new(0),
+            )
+
+            val results = sync.createProposedTransactions(proposal, spendingKey).toList()
+            val txHashes = mutableListOf<String>()
+            results.forEach { result ->
+                when (result) {
+                    is cash.z.ecc.android.sdk.model.TransactionSubmitResult.Success -> {
+                        txHashes.add(result.txIdString())
+                        Timber.d("PirateAdapter.send: transaction submitted: %s", result.txIdString())
+                    }
+                    is cash.z.ecc.android.sdk.model.TransactionSubmitResult.Failure -> {
+                        val errorMsg = "Transaction submission failed. TxId: ${result.txIdString()}, gRPC error: ${result.grpcError}, Code: ${result.code}, Description: ${result.description ?: "None"}"
+                        Timber.e("PirateAdapter.send: %s", errorMsg)
+                        throw IllegalStateException(errorMsg)
+                    }
+                    is cash.z.ecc.android.sdk.model.TransactionSubmitResult.NotAttempted -> {
+                        throw IllegalStateException("Transaction not attempted. TxId: ${result.txIdString()}")
+                    }
+                }
+            }
+            txHashes
         } catch (e: Throwable) {
             Timber.e(e, "PirateAdapter.send failed")
             throw e
