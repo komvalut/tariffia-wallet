@@ -81,7 +81,7 @@ class PirateKitManager(
                 null // SDK will use latest checkpoint
             } else {
                 rpcSourceManager.birthdayHeight.takeIf { it > 0 }?.let {
-                    cash.z.ecc.android.sdk.model.BlockHeight.new(it.toInt())
+                    cash.z.ecc.android.sdk.model.BlockHeight.new(it.toLong())
                 }
             }
 
