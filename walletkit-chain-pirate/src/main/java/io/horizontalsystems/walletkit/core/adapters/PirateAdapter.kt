@@ -20,7 +20,7 @@ class PirateAdapter(
     private val wallet: Wallet,
 ) : IAdapter, IBalanceAdapter, IReceiveAdapter {
 
-    private val _balanceState = MutableStateFlow<AdapterState>(AdapterState.NotSynced)
+    private val _balanceState = MutableStateFlow<AdapterState>(AdapterState.NotSynced(Exception("not initialized")))
     override val balanceState: AdapterState get() = _balanceState.value
     override val balanceStateUpdatedFlow: SharedFlow<Unit> = MutableSharedFlow()
 
@@ -43,13 +43,13 @@ class PirateAdapter(
             _balanceState.value = AdapterState.Syncing
         } catch (e: Throwable) {
             Timber.e(e, "PirateAdapter.start failed")
-            _balanceState.value = AdapterState.NotSynced
+            _balanceState.value = AdapterState.NotSynced(Exception("not initialized"))
         }
     }
 
     override fun stop() {
         try {
-            _balanceState.value = AdapterState.NotSynced
+            _balanceState.value = AdapterState.NotSynced(Exception("not initialized"))
         } catch (e: Throwable) {
             Timber.e(e, "PirateAdapter.stop failed")
         }

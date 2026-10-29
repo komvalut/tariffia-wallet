@@ -20,7 +20,7 @@ class PirateTransactionsAdapter : ITransactionsAdapter {
 
     override val explorerTitle: String = "Pirate Chain Explorer"
 
-    private val _transactionsState = AdapterState.NotSynced
+    private val _transactionsState = AdapterState.NotSynced(Exception("not initialized"))
     override val transactionsState: AdapterState get() = _transactionsState
     override val transactionsStateUpdatedFlow: Flow<Unit> = emptyFlow()
 
