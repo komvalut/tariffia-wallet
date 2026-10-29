@@ -273,6 +273,7 @@ dependencies {
     implementation(project(":walletkit-chain-thorchain"))
     implementation(project(":walletkit-chain-bitcoin"))
     implementation(project(":walletkit-chain-evm"))
+    implementation(project(":walletkit-chain-pirate"))
     implementation(libs.androidx.splashscreen) // MainActivity installs the splash screen
     debugImplementation(libs.leakcanary)
 
@@ -315,6 +316,9 @@ dependencies {
 afterEvaluate {
     dependencies {
         "baseDebugImplementation"(project(":subscriptions-dev"))
+        findProject(":walletkit-chain-pirate")?.let { "baseDebugImplementation"(it) }
+        findProject(":walletkit-chain-pirate")?.let { "baseReleaseImplementation"(it) }
+        findProject(":walletkit-chain-pirate")?.let { "ciImplementation"(it) }
         findProject(":subscriptions-google-play")?.let {
             "baseReleaseImplementation"(it)
         }
