@@ -2,7 +2,7 @@ package io.horizontalsystems.walletkit.core.adapters
 
 import android.content.Context
 import cash.z.ecc.android.sdk.CloseableSynchronizer
-import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
+import cash.z.ecc.android.sdk.ext.convertZatoshiToZec
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import io.horizontalsystems.walletkit.core.AdapterState
 import io.horizontalsystems.walletkit.core.BalanceData
@@ -13,6 +13,7 @@ import io.horizontalsystems.walletkit.core.ILocalStorage
 import io.horizontalsystems.walletkit.core.managers.PirateKitManager
 import io.horizontalsystems.walletkit.core.managers.RestoreSettings
 import io.horizontalsystems.walletkit.entities.Wallet
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -22,16 +23,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.math.BigDecimal
 
-/**
- * Adapter for Pirate Chain (ARRR) balance and receive operations.
- *
- * Wraps the Zcash SDK Synchronizer (Pirate Chain is a Zcash fork).
- * All operations are guarded so a missing server or SDK failure never crashes.
- */
 class PirateAdapter(
     context: Context,
     private val wallet: Wallet,
@@ -110,17 +104,14 @@ class PirateAdapter(
                             val balance = balances?.values?.firstOrNull()
                             if (balance != null) {
                                 Timber.d("PirateAdapter: balance received: %s", balance)
-                                // Map AccountBalance to BalanceData
-                                // AccountBalance has sapling, orchard, ironwood (each with available/pending)
-                                // and unshielded (Zatoshi). Using extension properties from ZcashAdapter pattern.
                                 val available = try {
-                                    balance.available.convertZatoshiToZec(8)
+                                    (balance.sapling.available + balance.orchard.available + balance.ironwood.available).convertZatoshiToZec(8)
                                 } catch (e: Throwable) {
                                     Timber.e(e, "PirateAdapter: available conversion failed")
                                     BigDecimal.ZERO
                                 }
                                 val pending = try {
-                                    balance.pending.convertZatoshiToZec(8)
+                                    (balance.sapling.pending + balance.orchard.pending + balance.ironwood.pending).convertZatoshiToZec(8)
                                 } catch (e: Throwable) {
                                     Timber.e(e, "PirateAdapter: pending conversion failed")
                                     BigDecimal.ZERO
@@ -137,6 +128,7 @@ class PirateAdapter(
                                     unshielded = unshielded,
                                 )
                                 _balanceUpdatedFlow.tryEmit(Unit)
+                                Timber.d("PirateAdapter: balance updated: available=%s pending=%s", available, pending)
                             }
                         } catch (e: Throwable) {
                             Timber.e(e, "PirateAdapter: balance parse failed")
@@ -154,12 +146,6 @@ class PirateAdapter(
     suspend fun send(amount: BigDecimal, address: String, memo: String): List<String> {
         return try {
             Timber.d("PirateAdapter.send: not yet implemented (needs account + spending key)")
-            // Phase 8: send implementation requires:
-            // 1. zcashAccount (from awaitFirstAccount)
-            // 2. spendingKey (from DerivationTool.deriveUnifiedSpendingKey)
-            // 3. sync.proposeTransfer(account, address, amount, memo)
-            // 4. sync.createProposedTransactions(proposal, spendingKey)
-            // 5. sync.submitTransactions(txIds)
             emptyList()
         } catch (e: Throwable) {
             Timber.e(e, "PirateAdapter.send failed")
