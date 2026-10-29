@@ -97,7 +97,8 @@ val TokenQuery.isSupported: Boolean
         }
         BlockchainType.ECash,
         BlockchainType.Dash,
-        BlockchainType.Zcash -> {
+        BlockchainType.Zcash,
+        BlockchainType.PirateChain -> {
             tokenType is TokenType.Native
         }
         BlockchainType.Ethereum,
@@ -153,6 +154,7 @@ val Blockchain.description: String
         BlockchainType.BitcoinCash -> "BCH (Legacy, CashAddress)"
         BlockchainType.ECash -> "XEC"
         BlockchainType.Zcash -> "ZEC"
+        BlockchainType.PirateChain -> "ARRR (Sapling, Ironwood)"
         BlockchainType.Litecoin -> "LTC (BIP44, BIP49, BIP84, BIP86)"
         BlockchainType.Dash -> "DASH"
         BlockchainType.Ethereum -> "ETH, ERC20 tokens"
@@ -213,7 +215,8 @@ val BlockchainType.restoreSettingTypes: List<RestoreSettingType>
     get() = when (this) {
         BlockchainType.Monero,
         BlockchainType.Zano,
-        BlockchainType.Zcash -> listOf(RestoreSettingType.BirthdayHeight)
+        BlockchainType.Zcash,
+        BlockchainType.PirateChain -> listOf(RestoreSettingType.BirthdayHeight)
         BlockchainType.Near -> listOf(RestoreSettingType.NearAccountId)
         else -> listOf()
     }
@@ -225,6 +228,7 @@ private val blockchainOrderMap: Map<BlockchainType, Int> by lazy {
         BlockchainType.Ethereum,
         BlockchainType.Monero,
         BlockchainType.Zcash,
+        BlockchainType.PirateChain,
         BlockchainType.Zano,
         BlockchainType.BinanceSmartChain,
         BlockchainType.Solana,
@@ -288,6 +292,7 @@ val BlockchainType.title: String
     BlockchainType.Litecoin -> "Litecoin"
     BlockchainType.Dash -> "Dash"
     BlockchainType.Zcash -> "Zcash"
+    BlockchainType.PirateChain -> "Pirate Chain"
     BlockchainType.Ethereum -> "Ethereum"
     BlockchainType.BinanceSmartChain -> "BNB Smart Chain"
     BlockchainType.Polygon -> "Polygon"
@@ -412,6 +417,7 @@ val BlockchainType.isEvm: Boolean
         BlockchainType.Tron,
         is BlockchainType.Unsupported,
         BlockchainType.Zcash,
+        BlockchainType.PirateChain,
         BlockchainType.Monero,
         BlockchainType.Zano,
             -> false
@@ -446,6 +452,7 @@ fun BlockchainType.supports(accountType: AccountType): Boolean {
                 BlockchainType.Ton,
                 BlockchainType.Tron,
                 BlockchainType.Zcash,
+                BlockchainType.PirateChain,
                 BlockchainType.ZkSync,
                 BlockchainType.RobinhoodChain,
                 BlockchainType.Arc -> true

@@ -22,7 +22,9 @@ import io.horizontalsystems.walletkit.chain.thorchain.MayachainChainPlugin
 import io.horizontalsystems.walletkit.chain.thorchain.ThorchainChainPlugin
 import io.horizontalsystems.walletkit.chain.ton.TonChainPlugin
 import io.horizontalsystems.walletkit.chain.zcash.ZcashChainPlugin
+import io.horizontalsystems.walletkit.chain.pirate.PirateChainPlugin
 import io.horizontalsystems.walletkit.core.App
+import timber.log.Timber
 import io.horizontalsystems.walletkit.core.chain.ChainRegistry
 import io.horizontalsystems.walletkit.core.ILocalStorage
 import io.horizontalsystems.walletkit.core.providers.IAppConfigProvider
@@ -80,6 +82,11 @@ class MainApp : App() {
         ChainRegistry.register(MoneroChainPlugin({ App.instance }, { App.moneroNodeManager }))
         ChainRegistry.register(ZanoChainPlugin({ App.zanoNodeManager }, { App.backgroundManager }))
         ChainRegistry.register(ZcashChainPlugin({ App.instance }, { App.zcashEndpointManager }, { App.localStorage }))
+        try {
+            ChainRegistry.register(PirateChainPlugin({ App.instance }, { App.localStorage }, { "lightd1.pirate.black:443" }))
+        } catch (e: Throwable) {
+            Timber.e(e, "PirateChainPlugin registration failed")
+        }
         ChainRegistry.register(SolanaChainPlugin({ BuildConfig.ALCHEMY_API_KEY }, { BuildConfig.SOLANA_JUPITER_API_KEY }))
         ChainRegistry.register(StellarChainPlugin())
         ChainRegistry.register(XrpChainPlugin())

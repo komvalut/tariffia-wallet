@@ -149,6 +149,7 @@ class BalanceViewItemFactory {
         BlockchainType.Litecoin,
         BlockchainType.Dash,
         BlockchainType.Zcash,
+        BlockchainType.PirateChain,
         BlockchainType.Monero,
         BlockchainType.Zano -> 10
 

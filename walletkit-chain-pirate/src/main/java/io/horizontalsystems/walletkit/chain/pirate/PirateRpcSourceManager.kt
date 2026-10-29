@@ -16,7 +16,7 @@ class PirateRpcSourceManager(
     private val blockchainSettingsStorage: BlockchainSettingsStorage,
     private val endpoint: String,
 ) {
-    private val blockchainType = BlockchainType.Unsupported("pirate-chain") // TODO: replace with BlockchainType.PirateChain once marketkit adds it
+    private val blockchainType = BlockchainType.PirateChain
 
     data class RpcSource(val name: String, val host: String, val port: Int)
 

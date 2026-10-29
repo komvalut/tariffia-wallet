@@ -80,7 +80,8 @@ class TransactionRecordRepository(
                 BlockchainType.ECash,
                 BlockchainType.Litecoin,
                 BlockchainType.Dash,
-                BlockchainType.Zcash -> mergedWallets.add(wallet)
+                BlockchainType.Zcash,
+                BlockchainType.PirateChain -> mergedWallets.add(wallet)
 
                 BlockchainType.Ethereum,
                 BlockchainType.BinanceSmartChain,

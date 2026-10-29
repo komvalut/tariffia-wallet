@@ -206,6 +206,8 @@ val BlockchainType.blockTime : Long?
 
         BlockchainType.Zcash -> 75
 
+        BlockchainType.PirateChain -> 60
+
         BlockchainType.Monero -> 120
 
         BlockchainType.Zano -> 60

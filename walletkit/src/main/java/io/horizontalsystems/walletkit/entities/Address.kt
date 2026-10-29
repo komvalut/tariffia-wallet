@@ -36,6 +36,7 @@ val BitcoinAddress.tokenType: TokenType
         BlockchainType.Dash -> TokenType.Native
 
         BlockchainType.Zcash,
+        BlockchainType.PirateChain,
         BlockchainType.Ethereum,
         BlockchainType.BinanceSmartChain,
         BlockchainType.Polygon,

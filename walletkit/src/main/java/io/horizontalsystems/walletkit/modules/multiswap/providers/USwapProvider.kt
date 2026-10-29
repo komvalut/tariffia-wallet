@@ -288,7 +288,8 @@ class USwapProvider(
                     }
                 }
 
-                is BlockchainType.Unsupported -> Unit
+                is BlockchainType.Unsupported,
+                BlockchainType.PirateChain -> Unit
             }
         }
 

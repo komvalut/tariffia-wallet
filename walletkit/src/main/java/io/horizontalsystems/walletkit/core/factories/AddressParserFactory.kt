@@ -16,6 +16,7 @@ val BlockchainType.uriScheme: String?
             BlockchainType.Litecoin -> "litecoin"
             BlockchainType.Dash -> "dash"
             BlockchainType.Zcash -> "zcash"
+            BlockchainType.PirateChain -> "pirate"
             BlockchainType.Ethereum -> "ethereum"
             BlockchainType.Ton -> "toncoin"
             BlockchainType.Tron -> "tron"
@@ -39,6 +40,7 @@ val BlockchainType.removeScheme: Boolean
             BlockchainType.Litecoin,
             BlockchainType.Dash,
             BlockchainType.Zcash,
+            BlockchainType.PirateChain,
             BlockchainType.Ethereum,
             BlockchainType.Ton,
             BlockchainType.Tron,

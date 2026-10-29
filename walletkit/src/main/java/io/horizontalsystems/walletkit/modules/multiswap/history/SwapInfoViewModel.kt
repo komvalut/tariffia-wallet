@@ -227,6 +227,7 @@ class SwapInfoViewModel(
             BlockchainType.Litecoin -> "https://blockchair.com/litecoin/transaction/$txHash"
             BlockchainType.Dash -> "https://blockchair.com/dash/transaction/$txHash"
             BlockchainType.Zcash -> "https://blockchair.com/zcash/transaction/$txHash"
+            BlockchainType.PirateChain -> null
             BlockchainType.Monero -> "https://blockchair.com/monero/transaction/$txHash"
             BlockchainType.Ethereum -> "https://etherscan.io/tx/$txHash"
             BlockchainType.BinanceSmartChain -> "https://bscscan.com/tx/$txHash"
