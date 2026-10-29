@@ -20,6 +20,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.toList
@@ -187,7 +188,7 @@ class PirateAdapter(
             val account = zcashAccount ?: run {
                 // Try to get account from synchronizer
                 try {
-                    val accounts = sync.accountsFlow.firstOrNull { it.isNotEmpty() }
+                    val accounts = sync.accountsFlow.filterNotNull().firstOrNull { it.isNotEmpty() }
                     accounts?.firstOrNull()
                 } catch (e: Throwable) {
                     Timber.e(e, "PirateAdapter.send: failed to get account")
