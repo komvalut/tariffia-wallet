@@ -27,10 +27,11 @@ class PirateChainPlugin(
     private val lightwalletdEndpoint: () -> String,
 ) : ChainPlugin {
 
-    // NOTE: marketkit does not yet define BlockchainType.PirateChain. Using Zcash as a
-    // placeholder so the module compiles. The plugin must NOT be registered in MainApp
-    // until marketkit adds PirateChain, otherwise it would overwrite the real Zcash plugin.
-    override val blockchainType: BlockchainType = BlockchainType.Zcash
+    // NOTE: marketkit does not yet define BlockchainType.PirateChain. Using
+    // BlockchainType.Unsupported("pirate-chain") as a unique key so the plugin can be
+    // registered in ChainRegistry without colliding with the real Zcash plugin.
+    // Replace with BlockchainType.PirateChain once marketkit adds it.
+    override val blockchainType: BlockchainType = BlockchainType.Unsupported("pirate-chain")
 
     val rpcSourceManager by lazy {
         try {

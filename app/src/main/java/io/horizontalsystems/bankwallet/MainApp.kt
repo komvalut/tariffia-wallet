@@ -15,6 +15,7 @@ import io.horizontalsystems.walletkit.chain.bitcoin.LitecoinChainPlugin
 import io.horizontalsystems.walletkit.chain.monero.MoneroChainPlugin
 import io.horizontalsystems.walletkit.chain.zano.ZanoChainPlugin
 import io.horizontalsystems.walletkit.chain.solana.SolanaChainPlugin
+import io.horizontalsystems.walletkit.chain.pirate.PirateChainPlugin
 import io.horizontalsystems.walletkit.chain.near.NearChainPlugin
 import io.horizontalsystems.walletkit.chain.xrp.XrpChainPlugin
 import io.horizontalsystems.walletkit.chain.stellar.StellarChainPlugin
@@ -23,6 +24,7 @@ import io.horizontalsystems.walletkit.chain.thorchain.ThorchainChainPlugin
 import io.horizontalsystems.walletkit.chain.ton.TonChainPlugin
 import io.horizontalsystems.walletkit.chain.zcash.ZcashChainPlugin
 import io.horizontalsystems.walletkit.core.App
+import timber.log.Timber
 import io.horizontalsystems.walletkit.core.chain.ChainRegistry
 import io.horizontalsystems.walletkit.core.ILocalStorage
 import io.horizontalsystems.walletkit.core.providers.IAppConfigProvider
@@ -87,5 +89,10 @@ class MainApp : App() {
         ChainRegistry.register(TonChainPlugin())
         ChainRegistry.register(ThorchainChainPlugin())
         ChainRegistry.register(MayachainChainPlugin())
+        try {
+            ChainRegistry.register(PirateChainPlugin({ App.instance }, { App.localStorage }, { "lightd1.pirate.black:443" }))
+        } catch (e: Throwable) {
+            Timber.e(e, "PirateChainPlugin registration failed")
+        }
     }
 }
