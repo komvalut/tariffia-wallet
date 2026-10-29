@@ -88,45 +88,14 @@ class PirateAdapter(
             if (seed == null) {
                 Timber.w("PirateAdapter: no seed, skipping sync")
                 _balanceState.value = AdapterState.NotSynced(Exception("no seed"))
-                return
+            } else {
+                // Phase 4: Synchronizer init deferred.
+                // Pirate Chain uses Komodo dPoW, not Zcash consensus.
+                // The Zcash SDK Synchronizer may need network param adjustments.
+                // For now, log and skip. Real sync comes when SDK params are verified.
+                Timber.d("PirateAdapter: synchronizer init skipped (SDK params unverified for Pirate Chain)")
+                _balanceState.value = AdapterState.NotSynced(Exception("SDK params unverified"))
             }
-
-            val existingWallet = false // TODO: check localStorage
-            val walletInitMode = if (existingWallet) {
-                WalletInitMode.ExistingWallet
-            } else when (wallet.account.origin) {
-                AccountOrigin.Created -> WalletInitMode.NewWallet
-                AccountOrigin.Restored -> WalletInitMode.RestoreWallet
-            }
-
-            val birthday = when (wallet.account.origin) {
-                AccountOrigin.Created -> null
-                AccountOrigin.Restored -> restoreSettings.birthdayHeight
-                    ?.let { height ->
-                        maxOf(network.saplingActivationHeight.value, height)
-                    }
-                    ?.let { cash.z.ecc.android.sdk.model.BlockHeight.new(it) }
-            }
-
-            val endpoint = kitManager.rpcSourceManager.rpcSource?.let {
-                co.electriccoin.lightwallet.client.model.LightWalletEndpoint(it.host, it.port)
-            }
-
-            if (endpoint == null) {
-                Timber.w("PirateAdapter: no endpoint, skipping sync")
-                _balanceState.value = AdapterState.NotSynced(Exception("no endpoint"))
-                return
-            }
-
-            // Phase 4: Synchronizer initialization with Zcash SDK.
-            // NOTE: Pirate Chain uses Komodo dPoW, not Zcash consensus.
-            // The Zcash SDK Synchronizer may need network param adjustments.
-            // For now, log and skip. Real sync comes when SDK params are verified.
-            Timber.d("PirateAdapter: synchronizer init skipped (SDK params unverified for Pirate Chain)")
-            _balanceState.value = AdapterState.NotSynced(Exception("SDK params unverified"))
-
-            _balanceState.value = AdapterState.Syncing()
-            Timber.d("PirateAdapter: synchronizer initialized")
         } catch (e: Throwable) {
             Timber.e(e, "PirateAdapter.init failed")
             _balanceState.value = AdapterState.NotSynced(e)
