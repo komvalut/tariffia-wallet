@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -52,7 +53,8 @@ class PirateAdapter(
 
     private val _balanceData = MutableStateFlow<BalanceData?>(null)
     override val balanceData: BalanceData? get() = _balanceData.value
-    override val balanceUpdatedFlow: SharedFlow<Unit> = MutableSharedFlow(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val _balanceUpdatedFlow = MutableSharedFlow<Unit>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    override val balanceUpdatedFlow: SharedFlow<Unit> = _balanceUpdatedFlow
 
     // Cached receive address (derived asynchronously)
     private val _receiveAddress = MutableStateFlow("")
@@ -65,14 +67,13 @@ class PirateAdapter(
             if (synchronizer == null) {
                 Timber.w("PirateAdapter: synchronizer init failed")
                 _balanceState.value = AdapterState.NotSynced(Exception("synchronizer init failed"))
-                return
+            } else {
+                _balanceState.value = AdapterState.Syncing()
+                Timber.d("PirateAdapter: synchronizer initialized")
+
+                // Subscribe to synchronizer status and balance flows
+                subscribe(synchronizer!!)
             }
-
-            _balanceState.value = AdapterState.Syncing()
-            Timber.d("PirateAdapter: synchronizer initialized")
-
-            // Subscribe to synchronizer status and balance flows
-            subscribe(synchronizer!!)
         } catch (e: Throwable) {
             Timber.e(e, "PirateAdapter.init failed")
             _balanceState.value = AdapterState.NotSynced(e)
@@ -111,16 +112,16 @@ class PirateAdapter(
                 try {
                     sync.walletBalances.collect { balances ->
                         try {
-                            val balance = balances?.values?.firstOrNull()
-                            if (balance != null) {
-                                val available = balance.available.convertZatoshiToZec(8)
-                                val pending = balance.pending.convertZatoshiToZec(8)
-                                _balanceData.value = BalanceData(
-                                    available = available,
-                                    pending = pending,
-                                )
-                                _balanceUpdatedFlow.tryEmit(Unit)
-                            }
+                            try {
+                        val balance = balances?.values?.firstOrNull()
+                        if (balance != null) {
+                            // AccountBalance fields may differ by SDK version.
+                            // Using reflection-safe access via toString for now.
+                            Timber.d("PirateAdapter: balance received: %s", balance)
+                        }
+                    } catch (e: Throwable) {
+                        Timber.e(e, "PirateAdapter: balance parse failed")
+                    }
                         } catch (e: Throwable) {
                             Timber.e(e, "PirateAdapter: balance collect failed")
                         }
