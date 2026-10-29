@@ -40,7 +40,7 @@ class PirateAdapter(
 
     override fun start() {
         try {
-            _balanceState.value = AdapterState.Syncing
+            _balanceState.value = AdapterState.Syncing()
         } catch (e: Throwable) {
             Timber.e(e, "PirateAdapter.start failed")
             _balanceState.value = AdapterState.NotSynced(Exception("not initialized"))
@@ -57,7 +57,7 @@ class PirateAdapter(
 
     override fun refresh() {
         try {
-            _balanceState.value = AdapterState.Syncing
+            _balanceState.value = AdapterState.Syncing()
         } catch (e: Throwable) {
             Timber.e(e, "PirateAdapter.refresh failed")
         }
