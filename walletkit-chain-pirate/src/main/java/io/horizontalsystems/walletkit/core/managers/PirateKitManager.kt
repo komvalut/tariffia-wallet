@@ -15,7 +15,7 @@ import timber.log.Timber
  */
 class PirateKitManager(
     private val backgroundManager: BackgroundManager,
-    private val rpcSourceManager: PirateRpcSourceManager,
+    val rpcSourceManager: PirateRpcSourceManager,
 ) {
     var currentAccount: WalletAccount? = null
         private set
