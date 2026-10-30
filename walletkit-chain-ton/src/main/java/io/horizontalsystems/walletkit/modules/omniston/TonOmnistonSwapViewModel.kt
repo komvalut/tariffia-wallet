@@ -17,6 +17,7 @@ import io.horizontalsystems.walletkit.core.ISendTonAdapter
 import io.horizontalsystems.walletkit.core.badge
 import io.horizontalsystems.walletkit.core.adapters.TonTransactionConverter
 import io.horizontalsystems.walletkit.core.chain.ChainRegistry
+import io.horizontalsystems.walletkit.chain.ton.TonChainPlugin
 import io.horizontalsystems.walletkit.core.managers.OmnistonQuote
 import io.horizontalsystems.walletkit.core.managers.OmnistonQuoteEvent
 import io.horizontalsystems.walletkit.core.managers.OmnistonRepository
@@ -84,29 +85,33 @@ class TonOmnistonSwapViewModel(initialToken: Token) : ViewModel() {
         val currentAccount = account
         if (currentAccount == null) {
             state = state.copy(error = "No active TON account")
-            return
+        } else {
+            val wrapper = try {
+                currentAccount.type.toTonWalletFullAccess()
+                requireNotNull(plugin).kitManager.getTonKitWrapper(currentAccount)
+            } catch (e: Exception) {
+                null
+            }
+
+            if (wrapper == null) {
+                state = state.copy(error = "A full-access TON wallet is required")
+            } else {
+                tonKitWrapper = wrapper
+                kitManagerLinked = true
+
+                val assets = App.walletManager.activeWallets
+                    .filter { it.account.id == currentAccount.id && it.token.blockchainType == BlockchainType.Ton }
+                    .mapNotNull(::assetOption)
+                    .distinctBy { it.token }
+
+                val input = assets.firstOrNull { it.token == initialToken }
+                    ?: assets.firstOrNull { it.token.type == TokenType.Native }
+                val output = assets.firstOrNull { it.token != input?.token && it.token.type == TokenType.Native }
+                    ?: assets.firstOrNull { it.token != input?.token }
+                state = state.copy(assets = assets, inputToken = input?.token, outputToken = output?.token)
+                if (assets.isEmpty()) state = state.copy(error = "No enabled TON assets are available")
+            }
         }
-
-        try {
-            currentAccount.type.toTonWalletFullAccess()
-            tonKitWrapper = requireNotNull(plugin).kitManager.getTonKitWrapper(currentAccount)
-            kitManagerLinked = true
-        } catch (e: Exception) {
-            state = state.copy(error = "A full-access TON wallet is required")
-            return
-        }
-
-        val assets = App.walletManager.activeWallets
-            .filter { it.account.id == currentAccount.id && it.token.blockchainType == BlockchainType.Ton }
-            .mapNotNull(::assetOption)
-            .distinctBy { it.token }
-
-        val input = assets.firstOrNull { it.token == initialToken }
-            ?: assets.firstOrNull { it.token.type == TokenType.Native }
-        val output = assets.firstOrNull { it.token != input?.token && it.token.type == TokenType.Native }
-            ?: assets.firstOrNull { it.token != input?.token }
-        state = state.copy(assets = assets, inputToken = input?.token, outputToken = output?.token)
-        if (assets.isEmpty()) state = state.copy(error = "No enabled TON assets are available")
     }
 
     fun setInputToken(token: Token) {
@@ -345,6 +350,7 @@ class TonOmnistonSwapViewModel(initialToken: Token) : ViewModel() {
                 amountOutMin = minimumOutput,
                 recipientAddress = traderAddress,
                 sourceAddress = traderAddress,
+                transactionHash = null,
                 providerSwapId = quote.quoteId,
                 fromAsset = assetKey(input.asset),
                 toAsset = assetKey(output.asset),
