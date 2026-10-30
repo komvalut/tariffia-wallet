@@ -31,6 +31,7 @@ import io.horizontalsystems.marketkit.models.LinkType
 import io.horizontalsystems.marketkit.models.Token
 import io.horizontalsystems.walletkit.R
 import io.horizontalsystems.walletkit.core.App
+import io.horizontalsystems.walletkit.core.chain.ChainRegistry
 import io.horizontalsystems.walletkit.core.alternativeImageUrl
 import io.horizontalsystems.walletkit.core.iconPlaceholder
 import io.horizontalsystems.walletkit.core.imageUrl
@@ -92,6 +93,7 @@ fun CoinOverviewScreen(
 
     val view = LocalView.current
     val context = LocalContext.current
+    val nativeSwapPage = coinToken?.let { ChainRegistry[it.blockchainType]?.nativeSwapPage(it) }
 
     viewModel.showHudMessage?.let {
         when (it.type) {
@@ -313,9 +315,9 @@ fun CoinOverviewScreen(
                                     Spacer(modifier = Modifier.height(32.dp))
                                     CellFooter(text = stringResource(id = R.string.Market_PoweredByApi))
                                 }
-                                if (App.instance.isSwapEnabled) {
+                                if (nativeSwapPage != null || App.instance.isSwapEnabled) {
                                     coinToken?.let {
-                                        CoinBottomButtons(coinToken, popularToken, navigation)
+                                        CoinBottomButtons(coinToken, popularToken, navigation, nativeSwapPage)
                                     }
                                 }
                             }
@@ -426,7 +428,8 @@ fun Loading() {
 private fun CoinBottomButtons(
     coinToken: Token,
     popularToken: Token?,
-    navigation: HSNavigation
+    navigation: HSNavigation,
+    nativeSwapPage: io.horizontalsystems.walletkit.modules.nav3.HSPage?,
 ) {
     ButtonsGroupWithShade {
         Row(
@@ -434,6 +437,17 @@ private fun CoinBottomButtons(
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
         ) {
+            if (nativeSwapPage != null) {
+                HSButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = stringResource(R.string.Swap),
+                    onClick = navigation.authorizedAction {
+                        navigation.slideFromRight(nativeSwapPage)
+                    },
+                )
+                return@ButtonsGroupWithShade
+            }
+
             HSButton(
                 modifier = Modifier.weight(1f),
                 title = stringResource(R.string.CoinPage_Buy),

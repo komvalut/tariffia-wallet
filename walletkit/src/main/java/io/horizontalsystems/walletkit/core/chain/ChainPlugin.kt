@@ -114,6 +114,9 @@ interface ChainPlugin {
      */
     fun accountPickerPage(accountType: AccountType): HSPage? = null
 
+    /** Native chain swap page opened from the coin overview, or null when unsupported. */
+    fun nativeSwapPage(token: Token): HSPage? = null
+
     /** Lowest accepted birthday height for the restore date picker. */
     fun minBirthdayHeight(): Long? = null
 

@@ -32,6 +32,9 @@ dependencies {
     api(project(":walletkit"))
 
     api(libs.kit.ton)
+    implementation(libs.okhttp)
+    implementation(libs.ton.kotlin.contract)
+    implementation(libs.androidx.work.runtime.ktx)
 
     testImplementation(libs.junit)
 }

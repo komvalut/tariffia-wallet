@@ -34,6 +34,8 @@ class SwapRecordManager(
         return swapRecordDao.getPending(accountId)
     }
 
+    fun getPendingTrackedAllAccounts(): List<SwapRecord> = swapRecordDao.getPendingTrackedAllAccounts()
+
     fun getById(id: Int): SwapRecord? {
         return swapRecordDao.getById(id)
     }

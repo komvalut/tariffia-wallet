@@ -39,6 +39,9 @@ import io.horizontalsystems.walletkit.modules.send.address.EnterAddressValidator
 import io.horizontalsystems.walletkit.modules.send.address.TonAddressValidator
 import io.horizontalsystems.walletkit.modules.tonconnect.TonConnectNewPage
 import io.horizontalsystems.walletkit.modules.tonconnect.TonConnectSendRequestPage
+import io.horizontalsystems.walletkit.modules.omniston.TonOmnistonSwapPage
+import io.horizontalsystems.walletkit.modules.omniston.OmnistonTonSwapTrackingWorker
+import io.horizontalsystems.walletkit.core.managers.OmnistonRepository
 import io.horizontalsystems.walletkit.modules.transactions.TransactionSource
 import io.horizontalsystems.marketkit.models.Blockchain
 import io.horizontalsystems.marketkit.models.BlockchainType
@@ -75,6 +78,8 @@ class TonChainPlugin(
 
     val kitManager by lazy { TonKitManager(App.backgroundManager) }
 
+    val omnistonRepository by lazy { OmnistonRepository() }
+
     val connectManager by lazy {
         TonConnectManager(App.instance, appName, App.appConfigProvider.appVersion)
     }
@@ -86,6 +91,10 @@ class TonChainPlugin(
     override suspend fun onAppStart() {
         accountManager.start()
         connectManager.start()
+        OmnistonTonSwapTrackingWorker.enqueuePending(
+            App.instance,
+            App.swapRecordManager.getPendingTrackedAllAccounts(),
+        )
     }
 
     override fun createAdapter(wallet: Wallet, restoreSettings: RestoreSettings): IAdapter? =
@@ -134,6 +143,8 @@ class TonChainPlugin(
 
     override fun sendTransactionService(token: Token): AbstractSendTransactionService =
         SendTransactionServiceTon(token)
+
+    override fun nativeSwapPage(token: Token) = TonOmnistonSwapPage(token)
 
     override val supportsCustomTokens: Boolean get() = true
 

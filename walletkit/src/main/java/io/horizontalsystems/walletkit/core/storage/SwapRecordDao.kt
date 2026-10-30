@@ -17,6 +17,9 @@ interface SwapRecordDao {
     @Query("SELECT * FROM SwapRecord WHERE accountId = :accountId AND status NOT IN ('Completed', 'Refunded', 'Failed', 'Expired') ORDER BY timestamp DESC")
     fun getPending(accountId: String): List<SwapRecord>
 
+    @Query("SELECT * FROM SwapRecord WHERE trackingHandle IS NOT NULL AND status NOT IN ('Completed', 'Refunded', 'Failed', 'Expired') ORDER BY timestamp DESC")
+    fun getPendingTrackedAllAccounts(): List<SwapRecord>
+
     @Query("SELECT * FROM SwapRecord WHERE id = :id")
     fun getById(id: Int): SwapRecord?
 
