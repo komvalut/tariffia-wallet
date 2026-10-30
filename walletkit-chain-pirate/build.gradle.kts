@@ -37,7 +37,7 @@ dependencies {
     implementation(libs.zcash.android.backend)
     implementation(libs.zcash.android.slipstream)
     implementation(libs.zcash.android.lightwallet.client)
-    implementation("com.google.protobuf:protobuf-java:3.25.5")
+    implementation("com.google.protobuf:protobuf-javalite:4.34.0")
 
     testImplementation(libs.junit)
 }
