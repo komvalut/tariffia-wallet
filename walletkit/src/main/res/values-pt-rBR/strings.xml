@@ -1967,4 +1967,27 @@
     <string name="SplitSwap_DuplicateAddresses_Text">Usar o mesmo endereço reduz o benefício de privacidade da divisão.</string>
     <string name="SwapInfo_StatusSwapIndexed">Swap %d</string>
     <string name="SwapInfo_StatusReceiveIndexed">Receber %1$s %2$d</string>
+    <string name="NodeProfiles_Title">Nós personalizados</string>
+    <string name="NodeProfiles_Description">Gerencie endpoints de nós personalizados para as redes compatíveis.</string>
+    <string name="NodeProfiles_BuiltIn">Padrão integrado</string>
+    <string name="NodeProfiles_Active">Ativo</string>
+    <string name="NodeProfiles_SetActive">Ativar</string>
+    <string name="NodeProfiles_UseDefault">Usar nó integrado</string>
+    <string name="NodeProfiles_TestConnection">Testar conexão</string>
+    <string name="NodeProfiles_TestSucceeded">Conexão verificada (%1$d ms)</string>
+    <string name="NodeProfiles_TestFailed">Não foi possível conectar a este nó.</string>
+    <string name="NodeProfiles_AuthUnsupported">As credenciais são armazenadas com segurança, mas este transporte ainda não pode enviá-las.</string>
+    <string name="NodeProfiles_NoProfiles">Nenhum nó personalizado configurado.</string>
+    <string name="NodeProfiles_Name">Nome do perfil</string>
+    <string name="NodeProfiles_Host">Host</string>
+    <string name="NodeProfiles_Port">Porta</string>
+    <string name="NodeProfiles_Tls">Usar TLS</string>
+    <string name="NodeProfiles_AuthType">Autenticação</string>
+    <string name="NodeProfiles_AuthNone">Nenhuma</string>
+    <string name="NodeProfiles_AuthBasic">Autenticação básica</string>
+    <string name="NodeProfiles_AuthBearer">Token Bearer</string>
+    <string name="NodeProfiles_Remove">Remover</string>
+    <string name="NodeProfiles_Edit">Editar</string>
+    <string name="NodeProfiles_ProtocolUnsupported">Este protocolo não é compatível com o cliente de carteira conectado.</string>
+    <string name="NodeProfiles_SaveFailed">Não foi possível salvar ou selecionar este perfil de nó.</string>
 </resources>

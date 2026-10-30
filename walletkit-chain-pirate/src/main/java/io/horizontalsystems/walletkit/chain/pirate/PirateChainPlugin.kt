@@ -12,6 +12,8 @@ import io.horizontalsystems.walletkit.entities.Account
 import io.horizontalsystems.walletkit.entities.Wallet
 import io.horizontalsystems.marketkit.models.BlockchainType
 import io.horizontalsystems.marketkit.models.Token
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import timber.log.Timber
 
 /**
@@ -29,9 +31,14 @@ class PirateChainPlugin(
 
     override val blockchainType: BlockchainType = BlockchainType.PirateChain
 
+    override val walletReloadTrigger: Flow<*>
+        get() = App.nodeProfileManager.profileUpdatedFlow.filter {
+            it.chainUid == blockchainType.uid && it.network == MAINNET
+        }
+
     val rpcSourceManager by lazy {
         try {
-            PirateRpcSourceManager(App.blockchainSettingsStorage, lightwalletdEndpoint())
+            PirateRpcSourceManager(App.blockchainSettingsStorage, lightwalletdEndpoint(), App.nodeProfileManager)
         } catch (e: Throwable) {
             Timber.e(e, "PirateChainPlugin: rpcSourceManager init failed")
             null
@@ -104,5 +111,9 @@ class PirateChainPlugin(
     } catch (e: Throwable) {
         Timber.e(e, "PirateChainPlugin.backupSyncSourceName failed")
         null
+    }
+
+    private companion object {
+        const val MAINNET = "mainnet"
     }
 }

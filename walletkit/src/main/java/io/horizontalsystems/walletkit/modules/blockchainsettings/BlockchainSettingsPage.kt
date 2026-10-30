@@ -26,6 +26,7 @@ import io.horizontalsystems.walletkit.core.stats.stat
 import io.horizontalsystems.walletkit.modules.evmnetwork.EvmNetworkPage
 import io.horizontalsystems.walletkit.modules.nav3.HSNavigation
 import io.horizontalsystems.walletkit.modules.nav3.HSPage
+import io.horizontalsystems.walletkit.modules.nodeprofiles.NodeProfilesPage
 import io.horizontalsystems.walletkit.ui.compose.ComposeAppTheme
 import io.horizontalsystems.walletkit.ui.compose.components.CellUniversalLawrenceSection
 import io.horizontalsystems.walletkit.ui.compose.components.RowUniversal
@@ -62,6 +63,22 @@ private fun BlockchainSettingsScreen(
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState()),
         ) {
+            VSpacer(12.dp)
+            RowUniversal(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                onClick = { navigation.slideFromRight(NodeProfilesPage()) },
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    body_leah(text = stringResource(R.string.NodeProfiles_Title))
+                    subhead2_grey(text = stringResource(R.string.NodeProfiles_Description))
+                }
+                Icon(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    painter = painterResource(id = R.drawable.ic_arrow_right),
+                    contentDescription = null,
+                    tint = ComposeAppTheme.colors.grey,
+                )
+            }
             VSpacer(12.dp)
             BlockchainSettingsBlock(
                 btcLikeChains = viewModel.btcLikeChains,

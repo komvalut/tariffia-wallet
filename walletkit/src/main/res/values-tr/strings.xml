@@ -1963,4 +1963,27 @@
     <string name="SplitSwap_DuplicateAddresses_Text">Aynı adresi kullanmak bölmenin gizlilik avantajını azaltır.</string>
     <string name="SwapInfo_StatusSwapIndexed">Swap %d</string>
     <string name="SwapInfo_StatusReceiveIndexed">%1$s %2$d Al</string>
+    <string name="NodeProfiles_Title">Özel düğümler</string>
+    <string name="NodeProfiles_Description">Desteklenen ağlar için özel düğüm uç noktalarını yönetin.</string>
+    <string name="NodeProfiles_BuiltIn">Yerleşik varsayılan</string>
+    <string name="NodeProfiles_Active">Etkin</string>
+    <string name="NodeProfiles_SetActive">Etkinleştir</string>
+    <string name="NodeProfiles_UseDefault">Yerleşik düğümü kullan</string>
+    <string name="NodeProfiles_TestConnection">Bağlantıyı test et</string>
+    <string name="NodeProfiles_TestSucceeded">Bağlantı doğrulandı (%1$d ms)</string>
+    <string name="NodeProfiles_TestFailed">Bu düğüme bağlanılamadı.</string>
+    <string name="NodeProfiles_AuthUnsupported">Kimlik bilgileri güvenli biçimde saklanır ancak bu aktarım henüz bunları gönderemez.</string>
+    <string name="NodeProfiles_NoProfiles">Yapılandırılmış özel düğüm yok.</string>
+    <string name="NodeProfiles_Name">Profil adı</string>
+    <string name="NodeProfiles_Host">Ana makine</string>
+    <string name="NodeProfiles_Port">Bağlantı noktası</string>
+    <string name="NodeProfiles_Tls">TLS kullan</string>
+    <string name="NodeProfiles_AuthType">Kimlik doğrulama</string>
+    <string name="NodeProfiles_AuthNone">Yok</string>
+    <string name="NodeProfiles_AuthBasic">Temel kimlik doğrulama</string>
+    <string name="NodeProfiles_AuthBearer">Bearer jetonu</string>
+    <string name="NodeProfiles_Remove">Kaldır</string>
+    <string name="NodeProfiles_Edit">Düzenle</string>
+    <string name="NodeProfiles_ProtocolUnsupported">Bağlı cüzdan istemcisi bu protokolü desteklemiyor.</string>
+    <string name="NodeProfiles_SaveFailed">Bu düğüm profili kaydedilemedi veya seçilemedi.</string>
 </resources>

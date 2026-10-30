@@ -260,7 +260,7 @@ class PirateAdapter(
 
     override fun stop() {
         try {
-            synchronizer?.close()
+            kitManager.unlink(wallet.account)
             synchronizer = null
             adapterScope.cancel()
             setState(AdapterState.NotSynced(Exception("stopped")))

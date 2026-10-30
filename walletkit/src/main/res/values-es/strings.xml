@@ -1962,4 +1962,27 @@
     <string name="SplitSwap_DuplicateAddresses_Text">Usar la misma dirección reduce la ventaja de privacidad de la división.</string>
     <string name="SwapInfo_StatusSwapIndexed">Swap %d</string>
     <string name="SwapInfo_StatusReceiveIndexed">Recibir %1$s %2$d</string>
+    <string name="NodeProfiles_Title">Nodos personalizados</string>
+    <string name="NodeProfiles_Description">Gestiona endpoints de nodos personalizados para las cadenas compatibles.</string>
+    <string name="NodeProfiles_BuiltIn">Predeterminado integrado</string>
+    <string name="NodeProfiles_Active">Activo</string>
+    <string name="NodeProfiles_SetActive">Activar</string>
+    <string name="NodeProfiles_UseDefault">Usar nodo integrado</string>
+    <string name="NodeProfiles_TestConnection">Probar conexión</string>
+    <string name="NodeProfiles_TestSucceeded">Conexión verificada (%1$d ms)</string>
+    <string name="NodeProfiles_TestFailed">No se pudo conectar con este nodo.</string>
+    <string name="NodeProfiles_AuthUnsupported">Las credenciales se guardan de forma segura, pero este transporte aún no puede enviarlas.</string>
+    <string name="NodeProfiles_NoProfiles">No hay nodos personalizados configurados.</string>
+    <string name="NodeProfiles_Name">Nombre del perfil</string>
+    <string name="NodeProfiles_Host">Host</string>
+    <string name="NodeProfiles_Port">Puerto</string>
+    <string name="NodeProfiles_Tls">Usar TLS</string>
+    <string name="NodeProfiles_AuthType">Autenticación</string>
+    <string name="NodeProfiles_AuthNone">Ninguna</string>
+    <string name="NodeProfiles_AuthBasic">Autenticación básica</string>
+    <string name="NodeProfiles_AuthBearer">Token Bearer</string>
+    <string name="NodeProfiles_Remove">Eliminar</string>
+    <string name="NodeProfiles_Edit">Editar</string>
+    <string name="NodeProfiles_ProtocolUnsupported">El cliente de la cartera conectada no admite este protocolo.</string>
+    <string name="NodeProfiles_SaveFailed">No se pudo guardar o seleccionar este perfil de nodo.</string>
 </resources>

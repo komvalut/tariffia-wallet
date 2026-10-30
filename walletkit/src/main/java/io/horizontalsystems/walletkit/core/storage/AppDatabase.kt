@@ -61,6 +61,7 @@ import io.horizontalsystems.walletkit.core.storage.migrations.Migration_83_84
 import io.horizontalsystems.walletkit.core.storage.migrations.Migration_84_85
 import io.horizontalsystems.walletkit.core.storage.migrations.Migration_85_86
 import io.horizontalsystems.walletkit.core.storage.migrations.Migration_86_87
+import io.horizontalsystems.walletkit.core.storage.migrations.Migration_87_88
 import io.horizontalsystems.walletkit.entities.ActiveAccount
 import io.horizontalsystems.walletkit.entities.BlockchainSettingRecord
 import io.horizontalsystems.walletkit.entities.EnabledWallet
@@ -70,6 +71,8 @@ import io.horizontalsystems.walletkit.entities.EvmMethodLabel
 import io.horizontalsystems.walletkit.entities.EvmSyncSourceRecord
 import io.horizontalsystems.walletkit.entities.LogEntry
 import io.horizontalsystems.walletkit.entities.MoneroNodeRecord
+import io.horizontalsystems.walletkit.entities.NodeCredentialRecord
+import io.horizontalsystems.walletkit.entities.NodeProfileRecord
 import io.horizontalsystems.walletkit.entities.OcpPaymentRecord
 import io.horizontalsystems.walletkit.entities.RecentAddress
 import io.horizontalsystems.walletkit.entities.RestoreSettingRecord
@@ -90,7 +93,7 @@ import io.horizontalsystems.walletkit.modules.pin.core.PinDao
 import io.horizontalsystems.walletkit.modules.walletconnect.storage.WCSessionDao
 import io.horizontalsystems.walletkit.modules.walletconnect.storage.WalletConnectV2Session
 
-@Database(version = 87, exportSchema = false, entities = [
+@Database(version = 88, exportSchema = false, entities = [
     EnabledWallet::class,
     EnabledWalletCache::class,
     AccountRecord::class,
@@ -118,6 +121,8 @@ import io.horizontalsystems.walletkit.modules.walletconnect.storage.WalletConnec
     SwapProviderChainRecord::class,
     SwapRecord::class,
     OcpPaymentRecord::class,
+    NodeProfileRecord::class,
+    NodeCredentialRecord::class,
 ])
 
 @TypeConverters(DatabaseConverters::class)
@@ -148,6 +153,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun swapProviderChainDao(): SwapProviderChainDao
     abstract fun swapRecordDao(): SwapRecordDao
     abstract fun ocpPaymentDao(): OcpPaymentDao
+    abstract fun nodeProfileDao(): NodeProfileDao
 
     companion object {
 
@@ -221,6 +227,7 @@ abstract class AppDatabase : RoomDatabase() {
                     Migration_84_85,
                     Migration_85_86,
                     Migration_86_87,
+                    Migration_87_88,
                 )
                 .build()
         }

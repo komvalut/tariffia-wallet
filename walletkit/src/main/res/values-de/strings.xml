@@ -1967,4 +1967,27 @@
     <string name="SplitSwap_DuplicateAddresses_Text">Die Verwendung derselben Adresse verringert den Datenschutzvorteil der Aufteilung.</string>
     <string name="SwapInfo_StatusSwapIndexed">Swap %d</string>
     <string name="SwapInfo_StatusReceiveIndexed">%1$s %2$d erhalten</string>
+    <string name="NodeProfiles_Title">Eigene Nodes</string>
+    <string name="NodeProfiles_Description">Eigene Node-Endpunkte für unterstützte Chains verwalten.</string>
+    <string name="NodeProfiles_BuiltIn">Integrierter Standard</string>
+    <string name="NodeProfiles_Active">Aktiv</string>
+    <string name="NodeProfiles_SetActive">Aktivieren</string>
+    <string name="NodeProfiles_UseDefault">Integrierten Node verwenden</string>
+    <string name="NodeProfiles_TestConnection">Verbindung testen</string>
+    <string name="NodeProfiles_TestSucceeded">Verbindung bestätigt (%1$d ms)</string>
+    <string name="NodeProfiles_TestFailed">Verbindung zu diesem Node nicht möglich.</string>
+    <string name="NodeProfiles_AuthUnsupported">Anmeldedaten werden sicher gespeichert, aber dieser Chain-Transport kann sie noch nicht senden.</string>
+    <string name="NodeProfiles_NoProfiles">Keine eigenen Nodes konfiguriert.</string>
+    <string name="NodeProfiles_Name">Profilname</string>
+    <string name="NodeProfiles_Host">Host</string>
+    <string name="NodeProfiles_Port">Port</string>
+    <string name="NodeProfiles_Tls">TLS verwenden</string>
+    <string name="NodeProfiles_AuthType">Authentifizierung</string>
+    <string name="NodeProfiles_AuthNone">Keine</string>
+    <string name="NodeProfiles_AuthBasic">Basisauthentifizierung</string>
+    <string name="NodeProfiles_AuthBearer">Bearer-Token</string>
+    <string name="NodeProfiles_Remove">Entfernen</string>
+    <string name="NodeProfiles_Edit">Bearbeiten</string>
+    <string name="NodeProfiles_ProtocolUnsupported">Dieses Protokoll wird vom verbundenen Wallet-Client nicht unterstützt.</string>
+    <string name="NodeProfiles_SaveFailed">Dieses Node-Profil konnte nicht gespeichert oder ausgewählt werden.</string>
 </resources>

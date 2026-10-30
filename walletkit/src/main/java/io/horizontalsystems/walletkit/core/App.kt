@@ -40,6 +40,7 @@ import io.horizontalsystems.walletkit.core.managers.MarketFavoritesManager
 import io.horizontalsystems.walletkit.core.managers.MarketKitWrapper
 import io.horizontalsystems.walletkit.core.managers.MigrationManager
 import io.horizontalsystems.walletkit.core.managers.MoneroNodeManager
+import io.horizontalsystems.walletkit.core.managers.NodeProfileManager
 import io.horizontalsystems.walletkit.core.managers.NetworkManager
 import io.horizontalsystems.walletkit.core.managers.NumberFormatter
 import io.horizontalsystems.walletkit.core.managers.PaidActionSettingsManager
@@ -75,6 +76,7 @@ import io.horizontalsystems.walletkit.core.storage.BlockchainSettingsStorage
 import io.horizontalsystems.walletkit.core.storage.EnabledWalletsStorage
 import io.horizontalsystems.walletkit.core.storage.EvmSyncSourceStorage
 import io.horizontalsystems.walletkit.core.storage.MoneroNodeStorage
+import io.horizontalsystems.walletkit.core.storage.NodeProfileStorage
 import io.horizontalsystems.walletkit.core.storage.RestoreSettingsStorage
 import io.horizontalsystems.walletkit.core.storage.ScannedTransactionStorage
 import io.horizontalsystems.walletkit.core.storage.ZanoNodeStorage
@@ -105,6 +107,7 @@ import io.horizontalsystems.walletkit.modules.walletconnect.IWCWalletRequestHand
 import io.horizontalsystems.walletkit.modules.walletconnect.storage.WCSessionStorage
 import io.horizontalsystems.walletkit.security.EncryptionManager
 import io.horizontalsystems.walletkit.security.KeyStoreManager
+import io.horizontalsystems.walletkit.security.NodeCredentialCipher
 import io.horizontalsystems.walletkit.widgets.MarketWidgetManager
 import io.horizontalsystems.walletkit.widgets.MarketWidgetRepository
 import io.horizontalsystems.walletkit.widgets.MarketWidgetWorker
@@ -186,6 +189,8 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
         lateinit var evmSyncSourceManager: EvmSyncSourceManager
         lateinit var evmBlockchainManager: EvmBlockchainManager
         lateinit var moneroNodeManager: MoneroNodeManager
+        lateinit var nodeProfileStorage: NodeProfileStorage
+        lateinit var nodeProfileManager: NodeProfileManager
         lateinit var moneroNodeStorage: MoneroNodeStorage
         lateinit var zanoNodeStorage: ZanoNodeStorage
         lateinit var zanoNodeManager: ZanoNodeManager
@@ -282,6 +287,9 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
 
         appDatabase = AppDatabase.getInstance(this)
 
+        nodeProfileStorage = NodeProfileStorage(appDatabase)
+        nodeProfileManager = NodeProfileManager(nodeProfileStorage, NodeCredentialCipher())
+
         blockchainSettingsStorage = BlockchainSettingsStorage(appDatabase)
         evmSyncSourceStorage = EvmSyncSourceStorage(appDatabase)
         evmSyncSourceManager = EvmSyncSourceManager(appConfigProvider, blockchainSettingsStorage, evmSyncSourceStorage)
@@ -314,7 +322,12 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
             Timber.e(e, "registerChainPlugins failed")
         }
         zcashEndpointStorage = ZcashEndpointStorage(appDatabase)
-        zcashEndpointManager = ZcashLightWalletEndpointManager(blockchainSettingsStorage, zcashEndpointStorage, marketKit)
+        zcashEndpointManager = ZcashLightWalletEndpointManager(
+            blockchainSettingsStorage,
+            zcashEndpointStorage,
+            marketKit,
+            nodeProfileManager,
+        )
         coinManager = CoinManager(marketKit, walletManager)
 
 

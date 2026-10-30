@@ -1957,4 +1957,27 @@
     <string name="SplitSwap_DuplicateAddresses_Text">같은 주소를 사용하면 분할의 프라이버시 이점이 줄어듭니다.</string>
     <string name="SwapInfo_StatusSwapIndexed">스왑 %d</string>
     <string name="SwapInfo_StatusReceiveIndexed">%1$s %2$d 받기</string>
+    <string name="NodeProfiles_Title">사용자 지정 노드</string>
+    <string name="NodeProfiles_Description">지원되는 체인의 사용자 지정 노드 엔드포인트를 관리합니다.</string>
+    <string name="NodeProfiles_BuiltIn">내장 기본값</string>
+    <string name="NodeProfiles_Active">활성</string>
+    <string name="NodeProfiles_SetActive">활성화</string>
+    <string name="NodeProfiles_UseDefault">내장 노드 사용</string>
+    <string name="NodeProfiles_TestConnection">연결 테스트</string>
+    <string name="NodeProfiles_TestSucceeded">연결 확인됨 (%1$d ms)</string>
+    <string name="NodeProfiles_TestFailed">이 노드에 연결할 수 없습니다.</string>
+    <string name="NodeProfiles_AuthUnsupported">인증 정보는 안전하게 저장되지만 이 전송 방식은 아직 인증 정보를 보낼 수 없습니다.</string>
+    <string name="NodeProfiles_NoProfiles">구성된 사용자 지정 노드가 없습니다.</string>
+    <string name="NodeProfiles_Name">프로필 이름</string>
+    <string name="NodeProfiles_Host">호스트</string>
+    <string name="NodeProfiles_Port">포트</string>
+    <string name="NodeProfiles_Tls">TLS 사용</string>
+    <string name="NodeProfiles_AuthType">인증</string>
+    <string name="NodeProfiles_AuthNone">없음</string>
+    <string name="NodeProfiles_AuthBasic">기본 인증</string>
+    <string name="NodeProfiles_AuthBearer">Bearer 토큰</string>
+    <string name="NodeProfiles_Remove">삭제</string>
+    <string name="NodeProfiles_Edit">수정</string>
+    <string name="NodeProfiles_ProtocolUnsupported">연결된 지갑 클라이언트가 이 프로토콜을 지원하지 않습니다.</string>
+    <string name="NodeProfiles_SaveFailed">노드 프로필을 저장하거나 선택할 수 없습니다.</string>
 </resources>

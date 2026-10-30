@@ -35,6 +35,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -109,13 +112,18 @@ class ZcashChainPlugin(
     private val shieldedRefundAddressCache = ConcurrentHashMap<String, String>()
     private val shieldedRefundAddressMutex = Mutex()
 
+    private fun activeEndpoint(): ZcashLightWalletEndpointManager.ZcashEndpoint =
+        App.nodeProfileManager.activeProfile(BlockchainType.Zcash.uid, MAINNET)?.let { profile ->
+            ZcashLightWalletEndpointManager.ZcashEndpoint(profile.endpoint, profile.name)
+        } ?: endpointManager().currentEndpoint
+
     override fun createAdapter(wallet: Wallet, restoreSettings: RestoreSettings): IAdapter =
         ZcashAdapter(
             context(),
             wallet,
             restoreSettings,
             localStorage(),
-            endpointManager().currentEndpoint.toLightWalletEndpoint(),
+            activeEndpoint().toLightWalletEndpoint(),
         )
 
     override suspend fun onAppStart() {
@@ -125,7 +133,9 @@ class ZcashChainPlugin(
                 ZcashLightWalletEndpointManager.ZcashEndpoint(url, url).toLightWalletEndpoint()
             }
         }
-        manager.autoSelectFastestEndpointOnStartup()
+        if (App.nodeProfileManager.activeProfile(BlockchainType.Zcash.uid, MAINNET) == null) {
+            manager.autoSelectFastestEndpointOnStartup()
+        }
     }
 
     override suspend fun onEnterForeground() = reselectFastestIfUnsynced(retryIfNoSwitch = false)
@@ -145,6 +155,7 @@ class ZcashChainPlugin(
      * so a dead phone network is not mistaken for a dead server.
      */
     private fun reselectFastestIfUnsynced(retryIfNoSwitch: Boolean) {
+        if (App.nodeProfileManager.activeProfile(BlockchainType.Zcash.uid, MAINNET) != null) return
         if (!App.connectivityManager.isConnected) return
         if (!hasUnsyncedWallet()) return
 
@@ -204,7 +215,12 @@ class ZcashChainPlugin(
         ZcashAdapter.estimateBirthdayHeight(context(), date)
 
     override val walletReloadTrigger: Flow<*>
-        get() = endpointManager().currentEndpointUpdatedFlow
+        get() = merge(
+            endpointManager().currentEndpointUpdatedFlow.map { Unit },
+            App.nodeProfileManager.profileUpdatedFlow
+                .filter { it.chainUid == BlockchainType.Zcash.uid && it.network == MAINNET }
+                .map { Unit },
+        )
 
     override fun statusInfo(): Map<String, Any>? {
         val wallet = App.walletManager.activeWallets
@@ -219,7 +235,7 @@ class ZcashChainPlugin(
         val blockchain = manager.blockchain ?: return null
         return BlockchainSettingsModule.BlockchainItem.Chain(
             blockchain = blockchain,
-            subtitle = manager.currentEndpoint.name,
+            subtitle = activeEndpoint().name,
             btcLike = true,
             page = ZcashNetworkPage,
             statEvent = StatEvent.OpenBlockchainSettingsCryptoNote(blockchain.uid),
@@ -256,7 +272,7 @@ class ZcashChainPlugin(
 
     override suspend fun swapDestinationAddress(account: Account): String =
         cachedAddress(account.id, transparentAddressCache, transparentAddressMutex) {
-            ZcashAdapter.getTransparentAddress(account, endpointManager().currentEndpoint.toLightWalletEndpoint())
+            ZcashAdapter.getTransparentAddress(account, activeEndpoint().toLightWalletEndpoint())
         }
 
     override suspend fun swapUnifiedReceiveAddress(token: Token): String {
@@ -267,7 +283,7 @@ class ZcashChainPlugin(
         val account = App.accountManager.activeAccount ?: throw NoActiveAccount()
 
         return cachedAddress(account.id, unifiedAddressCache, unifiedAddressMutex) {
-            ZcashAdapter.getUnifiedAddress(account, endpointManager().currentEndpoint.toLightWalletEndpoint())
+            ZcashAdapter.getUnifiedAddress(account, activeEndpoint().toLightWalletEndpoint())
         }
     }
 
@@ -307,6 +323,10 @@ class ZcashChainPlugin(
         return cache[accountId] ?: mutex.withLock {
             cache[accountId] ?: withContext(NonCancellable + Dispatchers.IO) { derive() }.also { cache[accountId] = it }
         }
+    }
+
+    private companion object {
+        const val MAINNET = "mainnet"
     }
 }
 

@@ -1964,4 +1964,27 @@
     <string name="SplitSwap_DuplicateAddresses_Text">Utiliser la même adresse réduit l\'avantage de confidentialité de la répartition.</string>
     <string name="SwapInfo_StatusSwapIndexed">Swap %d</string>
     <string name="SwapInfo_StatusReceiveIndexed">Recevoir %1$s %2$d</string>
+    <string name="NodeProfiles_Title">Nœuds personnalisés</string>
+    <string name="NodeProfiles_Description">Gérez les points de terminaison personnalisés pour les chaînes prises en charge.</string>
+    <string name="NodeProfiles_BuiltIn">Valeur par défaut intégrée</string>
+    <string name="NodeProfiles_Active">Actif</string>
+    <string name="NodeProfiles_SetActive">Activer</string>
+    <string name="NodeProfiles_UseDefault">Utiliser le nœud intégré</string>
+    <string name="NodeProfiles_TestConnection">Tester la connexion</string>
+    <string name="NodeProfiles_TestSucceeded">Connexion vérifiée (%1$d ms)</string>
+    <string name="NodeProfiles_TestFailed">Impossible de se connecter à ce nœud.</string>
+    <string name="NodeProfiles_AuthUnsupported">Les identifiants sont stockés de manière sécurisée, mais ce transport ne peut pas encore les envoyer.</string>
+    <string name="NodeProfiles_NoProfiles">Aucun nœud personnalisé configuré.</string>
+    <string name="NodeProfiles_Name">Nom du profil</string>
+    <string name="NodeProfiles_Host">Hôte</string>
+    <string name="NodeProfiles_Port">Port</string>
+    <string name="NodeProfiles_Tls">Utiliser TLS</string>
+    <string name="NodeProfiles_AuthType">Authentification</string>
+    <string name="NodeProfiles_AuthNone">Aucune</string>
+    <string name="NodeProfiles_AuthBasic">Authentification de base</string>
+    <string name="NodeProfiles_AuthBearer">Jeton Bearer</string>
+    <string name="NodeProfiles_Remove">Supprimer</string>
+    <string name="NodeProfiles_Edit">Modifier</string>
+    <string name="NodeProfiles_ProtocolUnsupported">Ce protocole n’est pas pris en charge par le client du portefeuille connecté.</string>
+    <string name="NodeProfiles_SaveFailed">Impossible d’enregistrer ou de sélectionner ce profil de nœud.</string>
 </resources>

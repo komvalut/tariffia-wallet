@@ -3,6 +3,10 @@ package io.horizontalsystems.walletkit.core.managers
 import io.horizontalsystems.walletkit.core.storage.BlockchainSettingsStorage
 import io.horizontalsystems.walletkit.core.storage.ZcashEndpointStorage
 import io.horizontalsystems.walletkit.entities.ZcashEndpointRecord
+import io.horizontalsystems.walletkit.entities.NodeAuthType
+import io.horizontalsystems.walletkit.entities.NodeProfile
+import io.horizontalsystems.walletkit.entities.NodeProtocol
+import io.horizontalsystems.walletkit.entities.NodeTlsMode
 import io.horizontalsystems.marketkit.models.Blockchain
 import io.horizontalsystems.marketkit.models.BlockchainType
 import kotlinx.coroutines.CancellationException
@@ -12,11 +16,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration.Companion.seconds
+import java.net.URI
+import java.util.UUID
 
 class ZcashLightWalletEndpointManager(
     private val blockchainSettingsStorage: BlockchainSettingsStorage,
     private val endpointStorage: ZcashEndpointStorage,
     private val marketKitWrapper: MarketKitWrapper,
+    private val nodeProfileManager: NodeProfileManager? = null,
 ) {
     private val reselectMutex = Mutex()
 
@@ -41,9 +48,15 @@ class ZcashLightWalletEndpointManager(
     val customEndpoints: List<ZcashEndpoint>
         get() {
             val defaultUrls = defaultEndpointsInitial.map { it.url }
-            return endpointStorage.getAll()
+            val storedEndpoints = endpointStorage.getAll()
                 .filterNot { defaultUrls.contains(it.url) }
                 .map { ZcashEndpoint(it.url, it.url) }
+            val profileEndpoints = nodeProfileManager?.profiles(BlockchainType.Zcash.uid, MAINNET)
+                .orEmpty()
+                .filter { it.authType == NodeAuthType.NONE || nodeProfileManager?.isAuthenticationSupported(it) == true }
+                .filterNot { defaultUrls.contains(it.endpoint) }
+                .map { ZcashEndpoint(it.endpoint, it.name) }
+            return (storedEndpoints + profileEndpoints).distinctBy { it.url }
         }
 
     val allEndpoints: List<ZcashEndpoint>
@@ -51,6 +64,9 @@ class ZcashLightWalletEndpointManager(
 
     val currentEndpoint: ZcashEndpoint
         get() {
+            nodeProfileManager?.activeProfile(BlockchainType.Zcash.uid, MAINNET)?.let { profile ->
+                return ZcashEndpoint(profile.endpoint, profile.name)
+            }
             val url = blockchainSettingsStorage.zcashEndpointUrl()
             return allEndpoints.firstOrNull { it.url == url } ?: defaultEndpoints.first()
         }
@@ -149,11 +165,35 @@ class ZcashLightWalletEndpointManager(
     }
 
     private fun persist(endpoint: ZcashEndpoint) {
+        val profile = nodeProfileManager?.profiles(BlockchainType.Zcash.uid, MAINNET)
+            ?.firstOrNull { it.endpoint == endpoint.url }
+        if (profile == null) {
+            nodeProfileManager?.clearActive(BlockchainType.Zcash.uid, MAINNET, notify = false)
+        } else {
+            nodeProfileManager?.setActive(BlockchainType.Zcash.uid, MAINNET, profile.profileId, notify = false)
+        }
         blockchainSettingsStorage.saveZcashEndpoint(endpoint.url)
     }
 
     fun addCustomEndpoint(url: String) {
         endpointStorage.save(ZcashEndpointRecord(url))
+        if (nodeProfileManager?.profiles(BlockchainType.Zcash.uid, MAINNET)?.none { it.endpoint == url } == true) {
+            val uri = URI(url)
+            nodeProfileManager.save(
+                NodeProfile(
+                    chainUid = BlockchainType.Zcash.uid,
+                    network = MAINNET,
+                    profileId = UUID.nameUUIDFromBytes(url.toByteArray()).toString(),
+                    name = uri.host ?: url,
+                    endpoint = url,
+                    protocol = NodeProtocol.LIGHTWALLETD_GRPC,
+                    tlsMode = NodeTlsMode.REQUIRED,
+                    authType = NodeAuthType.NONE,
+                    credentialRef = null,
+                    isSelected = false,
+                ),
+            )
+        }
         customEndpoints.firstOrNull { it.url == url }?.let { save(it) }
         _endpointsUpdatedFlow.tryEmit(url)
     }
@@ -161,6 +201,7 @@ class ZcashLightWalletEndpointManager(
     fun delete(endpoint: ZcashEndpoint) {
         val isCurrent = endpoint == currentEndpoint
         endpointStorage.delete(endpoint.url)
+        nodeProfileManager?.deleteByEndpoint(BlockchainType.Zcash.uid, MAINNET, endpoint.url, notify = false)
         if (isCurrent) {
             save(defaultEndpoints.first())
         }
@@ -178,5 +219,6 @@ class ZcashLightWalletEndpointManager(
 
     companion object {
         private val STARTUP_PING_TIMEOUT = 8.seconds
+        private const val MAINNET = "mainnet"
     }
 }

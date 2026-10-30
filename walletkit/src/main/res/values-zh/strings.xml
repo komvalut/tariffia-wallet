@@ -1961,4 +1961,27 @@
     <string name="SplitSwap_DuplicateAddresses_Text">使用相同的地址会降低拆分带来的隐私优势。</string>
     <string name="SwapInfo_StatusSwapIndexed">兑换 %d</string>
     <string name="SwapInfo_StatusReceiveIndexed">接收 %1$s %2$d</string>
+    <string name="NodeProfiles_Title">自定义节点</string>
+    <string name="NodeProfiles_Description">管理受支持链的自定义节点端点。</string>
+    <string name="NodeProfiles_BuiltIn">内置默认节点</string>
+    <string name="NodeProfiles_Active">已启用</string>
+    <string name="NodeProfiles_SetActive">设为活动节点</string>
+    <string name="NodeProfiles_UseDefault">使用内置节点</string>
+    <string name="NodeProfiles_TestConnection">测试连接</string>
+    <string name="NodeProfiles_TestSucceeded">连接已验证（%1$d 毫秒）</string>
+    <string name="NodeProfiles_TestFailed">无法连接到此节点。</string>
+    <string name="NodeProfiles_AuthUnsupported">凭据已安全存储，但此传输方式目前无法发送凭据。</string>
+    <string name="NodeProfiles_NoProfiles">尚未配置自定义节点。</string>
+    <string name="NodeProfiles_Name">配置名称</string>
+    <string name="NodeProfiles_Host">主机</string>
+    <string name="NodeProfiles_Port">端口</string>
+    <string name="NodeProfiles_Tls">使用 TLS</string>
+    <string name="NodeProfiles_AuthType">身份验证</string>
+    <string name="NodeProfiles_AuthNone">无</string>
+    <string name="NodeProfiles_AuthBasic">基本身份验证</string>
+    <string name="NodeProfiles_AuthBearer">Bearer 令牌</string>
+    <string name="NodeProfiles_Remove">删除</string>
+    <string name="NodeProfiles_Edit">编辑</string>
+    <string name="NodeProfiles_ProtocolUnsupported">当前连接的钱包客户端不支持此协议。</string>
+    <string name="NodeProfiles_SaveFailed">无法保存或选择此节点配置。</string>
 </resources>

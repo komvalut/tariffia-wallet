@@ -2300,4 +2300,27 @@
     <string name="SplitSwap_DuplicateAddresses_Text">Using the same address reduces the privacy benefit of splitting.</string>
     <string name="SwapInfo_StatusSwapIndexed">Swap %d</string>
     <string name="SwapInfo_StatusReceiveIndexed">Receive %1$s %2$d</string>
+    <string name="NodeProfiles_Title">Custom Nodes</string>
+    <string name="NodeProfiles_Description">Manage custom node endpoints for supported chains.</string>
+    <string name="NodeProfiles_BuiltIn">Built-in default</string>
+    <string name="NodeProfiles_Active">Active</string>
+    <string name="NodeProfiles_SetActive">Set active</string>
+    <string name="NodeProfiles_UseDefault">Use built-in node</string>
+    <string name="NodeProfiles_TestConnection">Test connection</string>
+    <string name="NodeProfiles_TestSucceeded">Connection verified (%1$d ms)</string>
+    <string name="NodeProfiles_TestFailed">Could not connect to this node.</string>
+    <string name="NodeProfiles_AuthUnsupported">Credentials are stored securely, but this chain transport cannot send them yet.</string>
+    <string name="NodeProfiles_NoProfiles">No custom nodes configured.</string>
+    <string name="NodeProfiles_Name">Profile name</string>
+    <string name="NodeProfiles_Host">Host</string>
+    <string name="NodeProfiles_Port">Port</string>
+    <string name="NodeProfiles_Tls">Use TLS</string>
+    <string name="NodeProfiles_AuthType">Authentication</string>
+    <string name="NodeProfiles_AuthNone">None</string>
+    <string name="NodeProfiles_AuthBasic">Basic authentication</string>
+    <string name="NodeProfiles_AuthBearer">Bearer token</string>
+    <string name="NodeProfiles_Remove">Remove</string>
+    <string name="NodeProfiles_Edit">Edit</string>
+    <string name="NodeProfiles_ProtocolUnsupported">This protocol is not supported by the connected wallet client.</string>
+    <string name="NodeProfiles_SaveFailed">Could not save or select this node profile.</string>
 </resources>

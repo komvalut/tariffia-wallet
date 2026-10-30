@@ -1950,4 +1950,27 @@
     <string name="SplitSwap_DuplicateAddresses_Text">استفاده از یک آدرس یکسان مزیت حریم خصوصی تقسیم را کاهش می‌دهد.</string>
     <string name="SwapInfo_StatusSwapIndexed">سواپ %d</string>
     <string name="SwapInfo_StatusReceiveIndexed">دریافت %1$s %2$d</string>
+    <string name="NodeProfiles_Title">گره‌های سفارشی</string>
+    <string name="NodeProfiles_Description">نشانی گره‌های سفارشی برای زنجیره‌های پشتیبانی‌شده را مدیریت کنید.</string>
+    <string name="NodeProfiles_BuiltIn">پیش‌فرض داخلی</string>
+    <string name="NodeProfiles_Active">فعال</string>
+    <string name="NodeProfiles_SetActive">فعال‌سازی</string>
+    <string name="NodeProfiles_UseDefault">استفاده از گره داخلی</string>
+    <string name="NodeProfiles_TestConnection">آزمایش اتصال</string>
+    <string name="NodeProfiles_TestSucceeded">اتصال تأیید شد (%1$d ms)</string>
+    <string name="NodeProfiles_TestFailed">اتصال به این گره برقرار نشد.</string>
+    <string name="NodeProfiles_AuthUnsupported">اعتبارنامه‌ها امن ذخیره می‌شوند، اما این انتقال هنوز نمی‌تواند آن‌ها را ارسال کند.</string>
+    <string name="NodeProfiles_NoProfiles">گره سفارشی پیکربندی نشده است.</string>
+    <string name="NodeProfiles_Name">نام پروفایل</string>
+    <string name="NodeProfiles_Host">میزبان</string>
+    <string name="NodeProfiles_Port">درگاه</string>
+    <string name="NodeProfiles_Tls">استفاده از TLS</string>
+    <string name="NodeProfiles_AuthType">احراز هویت</string>
+    <string name="NodeProfiles_AuthNone">هیچ‌کدام</string>
+    <string name="NodeProfiles_AuthBasic">احراز هویت پایه</string>
+    <string name="NodeProfiles_AuthBearer">توکن Bearer</string>
+    <string name="NodeProfiles_Remove">حذف</string>
+    <string name="NodeProfiles_Edit">ویرایش</string>
+    <string name="NodeProfiles_ProtocolUnsupported">پروتکل در کلاینت کیف پول متصل پشتیبانی نمی‌شود.</string>
+    <string name="NodeProfiles_SaveFailed">ذخیره یا انتخاب این پروفایل گره انجام نشد.</string>
 </resources>

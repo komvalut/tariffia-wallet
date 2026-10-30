@@ -36,21 +36,14 @@ class PirateKitManager(
     var synchronizer: CloseableSynchronizer? = null
         private set
 
+    private var currentRpcSource: PirateRpcSourceManager.RpcSource? = null
+
     /**
      * Creates or returns a synchronizer for the given account.
      * Returns null if initialization fails. Never throws.
      */
     fun getSynchronizer(account: WalletAccount): CloseableSynchronizer? {
         return try {
-            if (synchronizer != null && currentAccount == account) {
-                return synchronizer
-            }
-
-            // Stop existing synchronizer if account changed
-            synchronizer?.close()
-            synchronizer = null
-            currentAccount = null
-
             val accountType = (account.type as? AccountType.Mnemonic) ?: run {
                 Timber.w("PirateKitManager: unsupported account type")
                 return null
@@ -61,7 +54,16 @@ class PirateKitManager(
                 return null
             }
 
-            val endpoint = LightWalletEndpoint(rpcSource.host, rpcSource.port, true)
+            if (synchronizer != null && currentAccount == account && currentRpcSource == rpcSource) {
+                return synchronizer
+            }
+
+            synchronizer?.close()
+            synchronizer = null
+            currentAccount = null
+            currentRpcSource = null
+
+            val endpoint = LightWalletEndpoint(rpcSource.host, rpcSource.port, rpcSource.isSecure)
 
             // Pirate Chain uses Zcash-compatible network parameters.
             // Using ZcashNetwork.Mainnet as base (Pirate is a Zcash fork).
@@ -106,12 +108,14 @@ class PirateKitManager(
 
             synchronizer = synchronizerInstance
             currentAccount = account
+            currentRpcSource = rpcSource
             synchronizerInstance
         } catch (e: Throwable) {
             Timber.e(e, "PirateKitManager.getSynchronizer failed")
             synchronizer?.close()
             synchronizer = null
             currentAccount = null
+            currentRpcSource = null
             null
         }
     }
@@ -122,6 +126,7 @@ class PirateKitManager(
                 synchronizer?.close()
                 synchronizer = null
                 currentAccount = null
+                currentRpcSource = null
             }
         } catch (e: Throwable) {
             Timber.e(e, "PirateKitManager.unlink failed")
