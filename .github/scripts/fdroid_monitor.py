@@ -67,7 +67,7 @@ def latest_tag(token):
             break
         page += 1
     if not names:
-        sys.exit("No version tags found")
+        return None
     return max(names, key=lambda name: tuple(int(part) for part in name.split(".")))
 
 
@@ -145,11 +145,19 @@ def main():
     token = os.environ.get("GITHUB_TOKEN")
     now = datetime.now(timezone.utc)
 
+    previous = load_state(os.environ.get("PREVIOUS_STATE", ""))
     tag = latest_tag(token)
+    if tag is None:
+        write_outputs({
+            "state": json.dumps(previous),
+            "changed": "false",
+            "message": "",
+        })
+        return
+
     code = version_code(tag)
     stage = current_stage(code)
 
-    previous = load_state(os.environ.get("PREVIOUS_STATE", ""))
     same_version = previous.get("version") == tag
     same_stage = same_version and previous.get("stage") == stage
 
