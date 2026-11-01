@@ -2,18 +2,17 @@ name: Build APK
 
 on:
   push:
+    # GitHub globs, not regex: no way to force leading-zero-free numbers here.
+    # Strict vX.Y.Z validation happens in a dedicated step below.
     tags:
-      - '[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+'
+      - 'v*.*.*'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    # Protection rules for this environment are set in the repository settings
-    environment: release
     permissions:
       contents: write
     container:
@@ -26,82 +25,93 @@ jobs:
       - name: Fix git safe directory
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      - name: Decode keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Build Base Release
-        run: ./gradlew :app:assembleBaseRelease
-
-      - name: Build F-Droid Release
-        run: ./gradlew :app:assembleFdroidRelease
-
-      - name: Sign Base APK
-        env:
-          KS_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
-        run: |
-          apksigner sign --ks keystore.jks --ks-pass env:KS_PASS \
-            app/build/outputs/apk/base/release/app-base-release-unsigned.apk
-
-      - name: Sign F-Droid APK
-        env:
-          KS_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
-        run: |
-          apksigner sign --ks keystore.jks --ks-pass env:KS_PASS \
-            app/build/outputs/apk/fdroid/release/app-fdroid-release-unsigned.apk
-
-      # The tag goes through an environment variable, never straight into the
-      # script, so a crafted tag name cannot run shell commands
-      - name: Rename APKs
+      # Strict filter for v1.0.0 and upward only. The tag is validated once
+      # here and the result is trusted by every later step (including Gradle).
+      - name: Validate tag
         shell: bash
         env:
           TAG: ${{ github.ref_name }}
         run: |
-          [[ "$TAG" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?$ ]] || { echo "Unexpected tag: $TAG"; exit 1; }
-          cp app/build/outputs/apk/base/release/app-base-release-unsigned.apk "unstoppable_wallet_google_play_${TAG}.apk"
-          cp app/build/outputs/apk/fdroid/release/app-fdroid-release-unsigned.apk "unstoppable_wallet_github_${TAG}.apk"
+          [[ "$TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] \
+            || { echo "Tag '$TAG' is not a canonical vX.Y.Z"; exit 1; }
 
-      - name: Upload to GitHub Release
+      # The tag goes through an environment variable, never straight into the
+      # script, so a crafted tag name cannot run shell commands
+      - name: Print validated tag
+        shell: bash
+        env:
+          TAG: ${{ github.ref_name }}
+        run: echo "Building $TAG"
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # No keystore on the runner: TARIFFIA_* signing variables are absent, so
+      # :app:assembleBaseRelease emits an unsigned APK. The owner signs locally.
+      - name: Build unsigned Base Release
+        env:
+          TARIFFIA_TAG: ${{ github.ref_name }}
+        run: ./gradlew :app:assembleBaseRelease --stacktrace --no-daemon --console=plain
+
+      # Exactly one APK must exist; anything else means end (no renames, no release), keeping the
+      # rest of the job trivial to reason about.
+      - name: Locate built APK
+        shell: bash
+        run: |
+          mapfile -t APKs < <(find app/build/outputs/apk/base/release -name '*.apk')
+          [[ ${#APKs[@]} -eq 1 ]] || {
+            echo "Expected exactly 1 APK in base/release, found ${#APKs[@]}"; exit 1;
+          }
+          echo "APK=${APKs[0]}" >> "$GITHUB_ENV"
+
+      # Fail closed: if either check passes where it should fail, stop before
+      # any release is created.
+      - name: Verify APK is unsigned and version matches tag
+        shell: bash
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          if apksigner verify "$APK" 2>/dev/null; then
+            echo "Supposedly unsigned APK carries a signature"; exit 1
+          fi
+          SIG="$(unzip -l "$APK" | grep -cE 'META-INF/.*\.(RSA|DSA|EC|SF)$' || true)"
+          [[ "$SIG" -eq 0 ]] || { echo "v1 signature block found"; exit 1; }
+          AAPT2_VERSION="${AAPT2_VERSION:-}"
+          BUILD_TOOLS="$ANDROID_HOME/build-tools"
+          if [[ -n "$AAPT2_VERSION" && -x "$BUILD_TOOLS/$AAPT2_VERSION/aapt2" ]]; then
+            AAPT2="$BUILD_TOOLS/$AAPT2_VERSION/aapt2"
+          else
+            # If a future image ships several Build Tools versions, sort their
+            # directory names with version-aware sorting (handles 33.0.1 vs
+            # 10.0.0-style comparisons that a lexical sort gets wrong) and take
+            # the highest deterministically. If versions are equal, the last
+            # sorted line wins — the same candidate either way.
+            AAPT2="$(
+              find "$BUILD_TOOLS" -mindepth 2 -maxdepth 2 -name aapt2 |
+                while IFS= read -r a; do
+                  printf '%s %s\n' "$(basename "$(dirname "$a")")" "$a"
+                done |
+                sort -V |
+                tail -n 1 |
+                cut -d ' ' -f2-
+            )"
+          fi
+          [[ -n "$AAPT2" && -x "$AAPT2" ]] || { echo "aapt2 not found in container"; exit 1; }
+          "$AAPT2" dump badging "$APK" | grep -F "versionName='${TAG}'" >/dev/null \
+            || { echo "versionName mismatch"; exit 1; }
+
+      - name: Rename APK
+        shell: bash
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          cp "$APK" "tariffia-wallet-${TAG}-unsigned.apk"
+
+      - name: Create draft GitHub Release
         uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
-          prerelease: true
+          draft: true
+          prerelease: false
+          make_latest: false
           files: |
-            unstoppable_wallet_google_play_*.apk
-            unstoppable_wallet_github_*.apk
-
-  # Runs in a separate job so the third-party action never shares a workspace
-  # with the decoded keystore or the checked-out repo credentials
-  notify:
-    needs: build
-    if: ${{ always() }}
-    runs-on: ubuntu-latest
-    permissions: {}
-
-    steps:
-      - name: Notify Telegram on success
-        if: needs.build.result == 'success'
-        uses: appleboy/telegram-action@221e6b684967abe813051ee4a37dd61770a83ad3 # v1.0.1
-        with:
-          to: ${{ secrets.TELEGRAM_TO }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          disable_web_page_preview: true
-          message: |
-            ✅ Release build succeeded
-            Tag: ${{ github.ref_name }}
-            Author: @${{ github.actor }}
-            ${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ github.ref_name }}
-
-      - name: Notify Telegram on failure
-        if: needs.build.result == 'failure'
-        uses: appleboy/telegram-action@221e6b684967abe813051ee4a37dd61770a83ad3 # v1.0.1
-        with:
-          to: ${{ secrets.TELEGRAM_TO }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          disable_web_page_preview: true
-          message: |
-            ❌ Release build failed
-            Tag: ${{ github.ref_name }}
-            Author: @${{ github.actor }}
-            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            tariffia-wallet-*.apk
