@@ -17,3 +17,9 @@ gradle/gradle-daemon-jvm.properties
 # Python tooling
 __pycache__/
 *.pyc
+
+# Signing material must never be committed (app/test.keystore remains tracked;
+# it is public and debug-only)
+*.p12
+*.jks
+keystore.properties
