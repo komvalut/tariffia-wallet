@@ -1,5 +1,13 @@
 # Tariffia Wallet
 
+## Download APK (development build)
+
+> **Latest development APK — v1.0.0-dev (debug/pre-release):**
+> [Download tariffia-wallet-v1.0.0-dev.apk](https://github.com/komvalut/tariffia-wallet/releases/download/v1.0.0-dev/tariffia-wallet-v1.0.0-dev.apk)
+> · [SHA-256 checksum](https://github.com/komvalut/tariffia-wallet/releases/download/v1.0.0-dev/tariffia-wallet-v1.0.0-dev.apk.sha256)
+
+**This is a development build and NOT a stable official release — not for mainnet funds.**
+
 Tariffia Wallet is an independent, non-custodial cryptocurrency wallet for Android. It is derived from Unstoppable Wallet Android `0.54.0` and is being developed as a separate application with its own identity, configuration, and release process.
 
 > **Development status:** active pre-release. The application is not ready for production use or mainnet funds. Branding, backend services, and release infrastructure are still being migrated. Swap, private send, and CrossPay are disabled in the current build while their backend is replaced.
