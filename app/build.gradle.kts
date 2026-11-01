@@ -39,8 +39,22 @@ android {
         applicationId = "app.tariffia.wallet"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.compileSdk.get().toInt()
-        versionCode = 185
-        versionName = "1.0.0-rc1"
+        // Only the tag-triggered release workflow sets TARIFFIA_TAG, so local
+        // builds keep the pre-existing fallback values untouched.
+        val releaseTag = System.getenv("TARIFFIA_TAG").orEmpty()
+        val releaseTagMatch = Regex("^v(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$").find(releaseTag)
+        versionCode = releaseTagMatch?.destructured?.let { (maj, min, pat) ->
+            val major = maj.toInt()
+            val minor = min.toInt()
+            val patch = pat.toInt()
+            require(major in 1..209_999) { "tag $releaseTag: major out of range" }
+            require(minor < 100 && patch < 100) { "tag $releaseTag breaks X.Y.Z versionCode math" }
+            (major * 10000 + minor * 100 + patch).also { code ->
+                require(code > 185) { "tag $releaseTag: versionCode $code must exceed the existing 185" }
+                require(code <= 2_099_999_999) { "tag $releaseTag: versionCode exceeds the Android limit" }
+            }
+        } ?: 185
+        versionName = releaseTagMatch?.value ?: "1.0.0-rc1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         resourceConfigurations += listOf("de", "es", "en", "fa", "fr", "ko", "pt", "pt-rBR", "ru", "tr", "zh")
