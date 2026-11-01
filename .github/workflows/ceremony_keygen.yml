@@ -1,0 +1,305 @@
+name: Ceremony keygen (one-time)
+
+on:
+  workflow_dispatch:
+
+# Minimum permissions: GITHUB_TOKEN granted NOTHING. upload-artifact@4.6.2 authenticates via the
+# runner's ACTIONS_RUNTIME_TOKEN, not GITHUB_TOKEN; any 403 is a review finding first, never a
+# silent escalation.
+permissions: {}
+
+jobs:
+  ceremony:
+    name: Generate the permanent signing key (one-time)
+    runs-on: ubuntu-latest
+    env:
+      CEREMONY_DIR: ${{ runner.temp }}/ceremony
+
+    steps:
+      # -------------------------------------------------------------------
+      # HARD GUARD — main only. First step binds NO secrets; other refs die
+      # before anything secret-related is even mounted.
+      # -------------------------------------------------------------------
+      - name: Guard — allow only refs/heads/main
+        run: |
+          set -euo pipefail
+          echo "Dispatched ref: $GITHUB_REF"
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "FATAL: this workflow may ONLY be dispatched from 'main'." >&2
+            echo "Dispatched instead from: $GITHUB_REF. Nothing was touched; no secrets bound." >&2
+            exit 1
+          fi
+          echo "Ref is main; proceeding."
+
+      - name: Preflight — tooling, secrets, repo-secret collision, PAT permission
+        env:
+          CEREMONY_KS_PASS: ${{ secrets.CEREMONY_KS_PASS }}
+          CEREMONY_BK_PASS: ${{ secrets.CEREMONY_BK_PASS }}
+          GH_TOKEN: ${{ secrets.CEREMONY_PAT }}
+        run: |
+          set -euo pipefail
+          if ! command -v gh >/dev/null 2>&1; then
+            echo "FATAL: gh CLI not found on runner." >&2; exit 1
+          fi
+          if ! command -v 7z >/dev/null 2>&1; then
+            echo "FATAL: 7z not found on runner (p7zip-full is expected preinstalled)." >&2; exit 1
+          fi
+          if ! command -v keytool >/dev/null 2>&1; then
+            if [ -n "${JAVA_HOME:-}" ] && [ -x "$JAVA_HOME/bin/keytool" ]; then
+              PATH="$JAVA_HOME/bin:$PATH"; export PATH
+            else
+              echo "FATAL: keytool not found on the runner (no PATH keytool, no JAVA_HOME/bin/keytool)." >&2
+              exit 1
+            fi
+          fi
+          echo "Tools present: gh, 7z, keytool."
+
+          [ -n "$CEREMONY_KS_PASS" ] || { echo "FATAL: CEREMONY_KS_PASS missing." >&2; exit 1; }
+          [ -n "$CEREMONY_BK_PASS" ] || { echo "FATAL: CEREMONY_BK_PASS missing." >&2; exit 1; }
+          [ "${#CEREMONY_KS_PASS}" -ge 16 ] || { echo "FATAL: CEREMONY_KS_PASS shorter than 16 chars." >&2; exit 1; }
+          [ "${#CEREMONY_BK_PASS}" -ge 16 ] || { echo "FATAL: CEREMONY_BK_PASS shorter than 16 chars." >&2; exit 1; }
+
+          # Exact-name checks: awk isolates the NAME column; grep -x matches WHOLE lines only
+          # (a secret named e.g. KEYSTORE_BASE64_OLD can NOT satisfy this); no -q anywhere, so
+          # grep still consumes the ENTIRE gh output (no early exit, no SIGPIPE, pipefail-safe):
+          if gh secret list -R "$GITHUB_REPOSITORY" 2>/dev/null | awk '{print $1}' | grep -x 'KEYSTORE_BASE64' >/dev/null; then
+            echo "FATAL: the secret named exactly KEYSTORE_BASE64 already exists. Delete both" >&2
+            echo "KEYSTORE_BASE64 and KEYSTORE_PASSWORD in Settings > Secrets and re-dispatch" >&2
+            echo "(a fresh ceremony, never a mix)." >&2
+            exit 1
+          fi
+          if gh secret list -R "$GITHUB_REPOSITORY" 2>/dev/null | awk '{print $1}' | grep -x 'KEYSTORE_PASSWORD' >/dev/null; then
+            echo "FATAL: the secret named exactly KEYSTORE_PASSWORD already exists (see above)." >&2; exit 1
+          fi
+
+          if ! gh secret list -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "FATAL: the temporary PAT was REJECTED by the repository secrets API." >&2
+            echo "Required token (fine-grained ONLY; do NOT substitute a classic PAT):" >&2
+            echo "  - Repository access: ONLY komvalut/tariffia-wallet" >&2
+            echo "  - Repository permission 'Secrets': Read and write" >&2
+            echo "    (Read = list secrets; write = create/update repository Actions secrets" >&2
+            echo "     — the ceremony needs BOTH, nothing else)" >&2
+            echo "  - Metadata (repository) : Read (auto-granted minimum)" >&2
+            echo "  - NOTHING else; expiration <= 7 days; revoke immediately after the ceremony." >&2
+            exit 1
+          fi
+          echo "Preflight OK: tools, secrets (exact-match), no collisions, PAT accepted for secrets access."
+
+      - name: Generate the PKCS12 signing key (explicit options)
+        env:
+          CEREMONY_KS_PASS: ${{ secrets.CEREMONY_KS_PASS }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$CEREMONY_DIR"
+          # Honest residual #1: password IS on argv of this command (keytool has no stdin/file
+          # password input); container is process-namespaced; never logged/echoed.
+          keytool -genkeypair -v \
+            -storetype PKCS12 \
+            -keystore "$CEREMONY_DIR/tariffia-direct-release.p12" \
+            -alias tariffia-direct-release \
+            -keyalg RSA -keysize 4096 -sigalg SHA256withRSA \
+            -validity 10000 \
+            -dname "CN=Tariffia Wallet Release, O=Tariffia" \
+            -storepass "$CEREMONY_KS_PASS" \
+            -keypass "$CEREMONY_KS_PASS"
+          # PKCS12 requires key password == keystore password (both args hold the same value).
+          echo "Generation complete."
+
+      - name: Extract + validate the certificate fingerprint (fail-fast, canonical output)
+        env:
+          CEREMONY_KS_PASS: ${{ secrets.CEREMONY_KS_PASS }}
+        id: fingerprint
+        run: |
+          set -euo pipefail
+          KS="$CEREMONY_DIR/tariffia-direct-release.p12"
+
+          # Capture output ONCE per invocation into a variable (no live downstream consumers ->
+          # no SIGPIPE class of failure; grep -q / head -1 are NOT used anywhere).
+          if ! OUT1="$(keytool -list -v \
+                -keystore "$KS" -storetype PKCS12 \
+                -storepass "$CEREMONY_KS_PASS" 2>/dev/null)"; then
+            echo "FATAL: keytool could not read the generated keystore (nonzero exit). Ceremony aborted." >&2
+            exit 1
+          fi
+
+          extract_hex_from_output() {
+            # args: $1 = full keytool -v output. Extracts the SHA-256 fingerprint label, then
+            # accumulates the COMPLETE fingerprint block: label remainder + all wrapped continuation
+            # lines, stopping only at the next labeled field (or end of output). Normalization:
+            # whitespace AND colons both stripped; full capture, NO length-based early break.
+            local input="$1" line stripped acc="" in_fp=0
+            while IFS= read -r line || [ -n "$line" ]; do
+              if [ "$in_fp" -eq 0 ]; then
+                case "$line" in
+                  *"SHA-256)"*)
+                    in_fp=1
+                    line="${line##*SHA-256):}"
+                    ;;
+                  *"SHA256:"*)
+                    in_fp=1
+                    line="${line##*SHA256:}"
+                    ;;
+                  *)
+                    continue
+                    ;;
+                esac
+              else
+                stripped="$(printf '%s' "$line" | tr -d '[:space:]:')"
+                case "$stripped" in
+                  '' ) continue ;;
+                  # A labeled field begins -> the fingerprint block has ENDED (full capture done):
+                  *[!0-9A-Fa-f:]*) break ;;
+                esac
+              fi
+              stripped="$(printf '%s' "$line" | tr -d '[:space:]:')"
+              acc="$acc$stripped"
+            done <<< "$input"
+            printf '%s' "$acc"
+          }
+
+          FP1="$(extract_hex_from_output "$OUT1")"
+          if [ -z "$FP1" ]; then
+            echo "FATAL: no SHA-256 fingerprint found in keytool output. Ceremony ABORTED; nothing recorded." >&2
+            exit 1
+          fi
+          if [ "${#FP1}" -ne 64 ]; then
+            echo "FATAL: collected fingerprint has the WRONG LENGTH: ${#FP1} hex chars (need exactly" >&2
+            echo "64 = SHA-256 digest = 32 bytes). Collected stream (audit): '$FP1'" >&2
+            echo "Ceremony ABORTED — overlong/incomplete captures are NEVER truncated or salvaged." >&2
+            exit 1
+          fi
+          if ! [[ "$FP1" =~ ^[0-9A-Fa-f]{64}$ ]]; then
+            echo "FATAL: collected fingerprint contains non-hex characters ('$FP1'). Ceremony ABORTED." >&2
+            exit 1
+          fi
+
+          # SECOND independent invocation + the identical extraction; any verbatim disagreement
+          # between the two is fatal. Nothing continues unless both agree exactly:
+          if ! OUT2="$(keytool -list -v \
+                -keystore "$KS" -storetype PKCS12 \
+                -storepass "$CEREMONY_KS_PASS" 2>/dev/null)"; then
+            echo "FATAL: second keytool invocation exited nonzero. Ceremony ABORTED." >&2
+            exit 1
+          fi
+          FP2="$(extract_hex_from_output "$OUT2")"
+          CANON1="${FP1^^}"
+          CANON2="${FP2^^}"
+          if [ "$CANON2" != "$CANON1" ]; then
+            echo "FATAL: two independent keytool invocations DISAGREE ('$CANON1' vs '$CANON2')."
+            echo "Ceremony ABORTED — unstable crypto state; nothing recorded/published." >&2
+            exit 1
+          fi
+
+          PAIRS=""
+          for ((i=0; i<${#CANON1}; i+=2)); do
+            PAIRS+="${CANON1:i:2}:"
+          done
+          PAIRS="${PAIRS%:}"  # strip the trailing colon
+
+          # The ONLY intentionally printed data of this run, canonical form:
+          echo "===================================================================="
+          echo "CERTIFICATE FINGERPRINT (public; record this in the password manager):"
+          echo "SHA256: $PAIRS"
+          echo "===================================================================="
+          echo "Validation summary: complete-block capture (no early break), normalization = whitespace"
+          echo "+ colons stripped, exactly 64 hex chars (32 bytes) required, two independent agree."
+
+      - name: Encrypt the keystore into a backup archive
+        id: encrypt
+        env:
+          CEREMONY_BK_PASS: ${{ secrets.CEREMONY_BK_PASS }}
+        run: |
+          set -euo pipefail
+          # Honest residual #2: CEREMONY_BK_PASS IS on argv in -p (p7zip has no stdin/file password
+          # input). Documented safer alternative: 'openssl enc -aes-256-cbc -pbkdf2 -pass env:...' —
+          # not applied by default because its output is NOT openable on Android file managers.
+          7z a -p"$CEREMONY_BK_PASS" -mhe=on -mx=9 \
+            "$CEREMONY_DIR/tariffia-direct-release-backup.7z" \
+            "$CEREMONY_DIR/tariffia-direct-release.p12" >/dev/null
+          7z t -p"$CEREMONY_BK_PASS" \
+            "$CEREMONY_DIR/tariffia-direct-release-backup.7z" >/dev/null
+          echo "Encrypted backup produced and self-tested."
+
+      - name: Upload ONLY the encrypted backup artifact
+        if: always() && steps.encrypt.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2 (VERIFIED SHA)
+        with:
+          name: tariffia-direct-release-backup
+          path: ${{ runner.temp }}/ceremony/tariffia-direct-release-backup.7z
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Install the two permanent CI secrets
+        env:
+          CEREMONY_KS_PASS: ${{ secrets.CEREMONY_KS_PASS }}
+          GH_TOKEN: ${{ secrets.CEREMONY_PAT }}
+        run: |
+          set -euo pipefail
+          install_secret_stdin() {
+            local name="$1" file="$2" attempt
+            for attempt in 1 2; do
+              if gh secret set "$name" -R "$GITHUB_REPOSITORY" < "$file" >/dev/null 2>&1; then
+                return 0
+              fi
+              if [ "$attempt" -lt 2 ]; then
+                echo "Transient error installing $name — retrying once in 10s..." >&2
+                sleep 10
+              fi
+            done
+            echo "FATAL: failed to install secret '$name'." >&2
+            echo "Do NOT blindly re-dispatch: check Settings > Secrets > Actions; delete ANY KEYSTORE_*" >&2
+            echo "secrets there and dispatch a FRESH ceremony (never mix a half-installed one)." >&2
+            exit 1
+          }
+
+          # KEYSTORE_PASSWORD: value passed via STDIN FILE (never argv, never echoed, never printed).
+          printf '%s' "$CEREMONY_KS_PASS" > "$CEREMONY_DIR/kspass.tmp"
+          install_secret_stdin KEYSTORE_PASSWORD "$CEREMONY_DIR/kspass.tmp"
+          echo "KEYSTORE_PASSWORD installed (value NOT recoverable by design)."
+
+          # NOTE (accuracy): GitHub log auto-masking reliably covers values known to Actions at run
+          # start; the base64 becomes a secret MID-run, so we do NOT rely on masking for it — we
+          # simply never print it anywhere.
+          base64 -w 76 "$CEREMONY_DIR/tariffia-direct-release.p12" > "$CEREMONY_DIR/ks.b64"
+          install_secret_stdin KEYSTORE_BASE64 "$CEREMONY_DIR/ks.b64"
+          echo "KEYSTORE_BASE64 installed (value NOT recoverable by design)."
+
+      - name: Post-install check (presence ONLY — values cannot be read back)
+        env:
+          GH_TOKEN: ${{ secrets.CEREMONY_PAT }}
+        run: |
+          set -euo pipefail
+          # Exact-name checks (same awk-isolated column + whole-line match, WITHOUT -q —
+          # full-input grep consumption keeps the SIGPIPE fix of v3.6):
+          if ! gh secret list -R "$GITHUB_REPOSITORY" 2>/dev/null | awk '{print $1}' | grep -x 'KEYSTORE_BASE64' >/dev/null; then
+            echo "FATAL: the secret named exactly KEYSTORE_BASE64 is missing after install success." >&2
+            echo "Ceremony INVALID." >&2
+            exit 1
+          fi
+          if ! gh secret list -R "$GITHUB_REPOSITORY" 2>/dev/null | awk '{print $1}' | grep -x 'KEYSTORE_PASSWORD' >/dev/null; then
+            echo "FATAL: the secret named exactly KEYSTORE_PASSWORD is missing after install success." >&2
+            echo "Ceremony INVALID." >&2
+            exit 1
+          fi
+          echo "Post-check: both required secrets EXIST under those exact names (value correctness of"
+          echo "the PAIR is proven fully only at first real CI signing, which fails loudly on mismatch)."
+          echo "CEREMONY_* entries remain until you delete them after your phone-side backup."
+
+      - name: Cleanup plaintext (ALWAYS on normal end, failure, or cancel)
+        if: always()
+        run: |
+          set -euo pipefail
+          # HONEST LIMITS (no overstated promises):
+          #  1. Best-effort unlink of named files; NOT a secure or forensic wipe; no guarantee about
+          #     the underlying disk image, page cache or memory.
+          #  2. `if: always()` covers failure/cancel of the job but NOT host/machine death mid-step.
+          #  3. Plaintext may persist in the ephemeral runner's temp storage until GitHub tears down
+          #     that environment — the same residual class as any CI secret use on hosted runners.
+          #  4. Residual #1/#2 (argv) persists only for the container's lifetime.
+          rm -f -- \
+            "$CEREMONY_DIR/tariffia-direct-release.p12" \
+            "$CEREMONY_DIR/tariffia-direct-release-backup.7z" \
+            "$CEREMONY_DIR/kspass.tmp" \
+            "$CEREMONY_DIR/ks.b64"
+          rmdir "$CEREMONY_DIR" 2>/dev/null || true
+          echo "Best-effort plaintext removal complete."
