@@ -14,8 +14,9 @@ class ReleaseNotesManager(
         systemInfoManager.appVersion
     }
 
+    // GitHub release tags are v-prefixed ("v1.0.0") while versionName is not
     val releaseNotesUrl =
-        "${appConfigProvider.releaseNotesUrl}${Version(currentAppVersion).versionForUrl}"
+        "${appConfigProvider.releaseNotesUrl}v${Version(currentAppVersion).versionForUrl}"
 
     fun shouldShowChangeLog(): Boolean {
         val shownForVersion = localStorage.changelogShownForAppVersion
