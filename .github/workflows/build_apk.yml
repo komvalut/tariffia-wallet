@@ -6,6 +6,10 @@ on:
     # Strict vX.Y.Z validation happens in a dedicated step below.
     tags:
       - 'v*.*.*'
+  # Manual signed TEST build. Runs only from main (guard below), verifies the signature and prints
+  # the certificate fingerprint and APK SHA-256 in the log. It uploads nothing and never creates a
+  # tag, a release or a versioned official build.
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -19,6 +23,19 @@ jobs:
       image: hsdao/android-release-build:java-17-update
 
     steps:
+      # FIRST step: a manual run from any branch other than main stops here, before any
+      # signing secret is read by any later step.
+      - name: Guard manual builds to refs/heads/main
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          if [[ "$REF" != "refs/heads/main" ]]; then
+            echo "Manual signed test builds are allowed only from refs/heads/main (got $REF)"; exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
@@ -28,6 +45,7 @@ jobs:
       # Strict filter for v1.0.0 and upward only. The tag is validated once
       # here and the result is trusted by every later step (including Gradle).
       - name: Validate tag
+        if: github.event_name == 'push'
         shell: bash
         env:
           TAG: ${{ github.ref_name }}
@@ -38,6 +56,7 @@ jobs:
       # The tag goes through an environment variable, never straight into the
       # script, so a crafted tag name cannot run shell commands
       - name: Print validated tag
+        if: github.event_name == 'push'
         shell: bash
         env:
           TAG: ${{ github.ref_name }}
@@ -61,9 +80,10 @@ jobs:
           echo "TARIFFIA_KEYSTORE_FILE=$KS" >> "$GITHUB_ENV"
 
       # TARIFFIA_REQUIRE_SIGNING makes Gradle fail instead of emitting an unsigned release.
+      # A manual build passes an empty TARIFFIA_TAG, so Gradle uses its existing fallback version.
       - name: Build signed Base Release
         env:
-          TARIFFIA_TAG: ${{ github.ref_name }}
+          TARIFFIA_TAG: ${{ github.event_name == 'push' && github.ref_name || '' }}
           TARIFFIA_REQUIRE_SIGNING: "true"
           TARIFFIA_KEY_ALIAS: tariffia-direct-release
           TARIFFIA_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -82,10 +102,12 @@ jobs:
           echo "APK=${APKs[0]}" >> "$GITHUB_ENV"
 
       # Fail closed: the APK must carry a valid v2 or v3 signature from exactly one signer whose
-      # certificate SHA-256 equals the pinned Tariffia release key, and its versionName must match.
-      - name: Verify release signature and version matches tag
+      # certificate SHA-256 equals the pinned Tariffia release key. Tag builds must also match the
+      # tag's versionName; manual test builds print their version instead.
+      - name: Verify release signature and version
         shell: bash
         env:
+          EVENT: ${{ github.event_name }}
           TAG: ${{ github.ref_name }}
           EXPECTED_CERT_SHA256: "F0:55:31:B8:15:6A:27:F9:86:48:A2:52:92:11:16:31:87:C7:CC:21:85:36:DC:B0:DF:26:26:C4:05:32:76:2A"
         run: |
@@ -102,6 +124,7 @@ jobs:
           EXPECTED="${EXPECTED,,}"
           ACTUAL="${ACTUAL,,}"
           [[ "$ACTUAL" == "$EXPECTED" ]] || { echo "Signer certificate SHA-256 does not match the pinned release key"; exit 1; }
+          echo "Signer certificate SHA-256 (verified): $ACTUAL"
           echo "Signature verified: one signer, certificate SHA-256 matches the pinned Tariffia release key."
           AAPT2_VERSION="${AAPT2_VERSION:-}"
           BUILD_TOOLS="$ANDROID_HOME/build-tools"
@@ -124,20 +147,39 @@ jobs:
             )"
           fi
           [[ -n "$AAPT2" && -x "$AAPT2" ]] || { echo "aapt2 not found in container"; exit 1; }
-          # Git tags are vX.Y.Z but the manifest versionName is X.Y.Z (the
-          # leading "v" is stripped in Gradle), so the check strips it here too
-          VERSION="${TAG#v}"
-          "$AAPT2" dump badging "$APK" | grep -F "versionName='${VERSION}'" >/dev/null \
-            || { echo "versionName mismatch"; exit 1; }
+          BADGING="$("$AAPT2" dump badging "$APK")"
+          grep -E '^package:' <<< "$BADGING"
+          if [[ "$EVENT" == "push" ]]; then
+            # Git tags are vX.Y.Z but the manifest versionName is X.Y.Z (the
+            # leading "v" is stripped in Gradle), so the check strips it here too
+            VERSION="${TAG#v}"
+            grep -F "versionName='${VERSION}'" <<< "$BADGING" >/dev/null \
+              || { echo "versionName mismatch"; exit 1; }
+          else
+            echo "Manual test build: versionName is not checked against a tag."
+          fi
 
-      - name: Rename APK
+      # Tag builds keep the existing release file name; manual builds get a test name bound to
+      # the commit. Both paths print the SHA-256 of the exact file. A manual test APK stays on the
+      # runner and is not uploaded or published anywhere.
+      - name: Rename APK and print its SHA-256
         shell: bash
         env:
+          EVENT: ${{ github.event_name }}
           TAG: ${{ github.ref_name }}
         run: |
-          cp "$APK" "tariffia-wallet-${TAG}.apk"
+          set -euo pipefail
+          if [[ "$EVENT" == "push" ]]; then
+            OUT="tariffia-wallet-${TAG}.apk"
+          else
+            OUT="tariffia-wallet-test-${GITHUB_SHA:0:7}.apk"
+          fi
+          cp "$APK" "$OUT"
+          echo "Output APK: $OUT"
+          sha256sum "$OUT"
 
       - name: Create draft GitHub Release
+        if: github.event_name == 'push'
         uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
           draft: true
