@@ -12,8 +12,6 @@ jobs:
   ceremony:
     name: Generate the permanent signing key (one-time)
     runs-on: ubuntu-latest
-    env:
-      CEREMONY_DIR: ${{ runner.temp }}/ceremony
 
     steps:
       # -------------------------------------------------------------------
@@ -90,6 +88,7 @@ jobs:
           CEREMONY_KS_PASS: ${{ secrets.CEREMONY_KS_PASS }}
         run: |
           set -euo pipefail
+          CEREMONY_DIR="$RUNNER_TEMP/ceremony"
           mkdir -p "$CEREMONY_DIR"
           # Honest residual #1: password IS on argv of this command (keytool has no stdin/file
           # password input); container is process-namespaced; never logged/echoed.
@@ -111,6 +110,7 @@ jobs:
         id: fingerprint
         run: |
           set -euo pipefail
+          CEREMONY_DIR="$RUNNER_TEMP/ceremony"
           KS="$CEREMONY_DIR/tariffia-direct-release.p12"
 
           # Capture output ONCE per invocation into a variable (no live downstream consumers ->
@@ -210,6 +210,7 @@ jobs:
           CEREMONY_BK_PASS: ${{ secrets.CEREMONY_BK_PASS }}
         run: |
           set -euo pipefail
+          CEREMONY_DIR="$RUNNER_TEMP/ceremony"
           # Honest residual #2: CEREMONY_BK_PASS IS on argv in -p (p7zip has no stdin/file password
           # input). Documented safer alternative: 'openssl enc -aes-256-cbc -pbkdf2 -pass env:...' —
           # not applied by default because its output is NOT openable on Android file managers.
@@ -235,6 +236,7 @@ jobs:
           GH_TOKEN: ${{ secrets.CEREMONY_PAT }}
         run: |
           set -euo pipefail
+          CEREMONY_DIR="$RUNNER_TEMP/ceremony"
           install_secret_stdin() {
             local name="$1" file="$2" attempt
             for attempt in 1 2; do
@@ -289,6 +291,7 @@ jobs:
         if: always()
         run: |
           set -euo pipefail
+          CEREMONY_DIR="$RUNNER_TEMP/ceremony"
           # HONEST LIMITS (no overstated promises):
           #  1. Best-effort unlink of named files; NOT a secure or forensic wipe; no guarantee about
           #     the underlying disk image, page cache or memory.
