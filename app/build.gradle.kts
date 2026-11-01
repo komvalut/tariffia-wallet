@@ -54,7 +54,7 @@ android {
                 require(code <= 2_099_999_999) { "tag $releaseTag: versionCode exceeds the Android limit" }
             }
         } ?: 185
-        versionName = releaseTagMatch?.value ?: "1.0.0-rc1"
+        versionName = releaseTagMatch?.value?.removePrefix("v") ?: "1.0.0-rc1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         resourceConfigurations += listOf("de", "es", "en", "fa", "fr", "ko", "pt", "pt-rBR", "ru", "tr", "zh")

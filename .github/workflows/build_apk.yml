@@ -97,7 +97,10 @@ jobs:
             )"
           fi
           [[ -n "$AAPT2" && -x "$AAPT2" ]] || { echo "aapt2 not found in container"; exit 1; }
-          "$AAPT2" dump badging "$APK" | grep -F "versionName='${TAG}'" >/dev/null \
+          # Git tags are vX.Y.Z but the manifest versionName is X.Y.Z (the
+          # leading "v" is stripped in Gradle), so the check strips it here too
+          VERSION="${TAG#v}"
+          "$AAPT2" dump badging "$APK" | grep -F "versionName='${VERSION}'" >/dev/null \
             || { echo "versionName mismatch"; exit 1; }
 
       - name: Rename APK
