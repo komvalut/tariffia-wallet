@@ -54,10 +54,19 @@ jobs:
         run: |
           set -euo pipefail
           echo "ANDROID_HOME=${ANDROID_HOME:-<unset>}"
-          if [ -z "${ANDROID_HOME:-}" ] || [ ! -d "$ANDROID_HOME/platforms/android-37" ]; then
-            echo "Android platform 37 not found. Stopping; this workflow installs nothing." >&2
+          if [ -z "${ANDROID_HOME:-}" ]; then
+            echo "ANDROID_HOME is not set. Stopping; this workflow installs nothing." >&2
             exit 1
           fi
+          shopt -s nullglob
+          platforms=("$ANDROID_HOME"/platforms/android-37*)
+          if [ ${#platforms[@]} -eq 0 ]; then
+            echo "No API 37 platform under $ANDROID_HOME/platforms. Stopping; this workflow installs nothing." >&2
+            ls "$ANDROID_HOME/platforms" >&2 || true
+            exit 1
+          fi
+          printf 'API 37 platforms found:\n'
+          printf '  %s\n' "${platforms[@]}"
 
       - name: Run unit tests
         shell: bash
