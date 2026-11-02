@@ -28,7 +28,8 @@ class SwapSyncService(
     appConfigProvider: IAppConfigProvider,
 ) : Clearable {
 
-    private val swapEnabled = appConfigProvider.swapEnabled
+    // Shared USwap tracking: Swap, CrossPay and Private Send records are all tracked here.
+    private val swapEnabled = appConfigProvider.uswapClientEnabled
 
     private val unstoppableAPI = APIClient.build(
         appConfigProvider.uswapApiBaseUrl,

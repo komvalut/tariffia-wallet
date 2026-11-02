@@ -59,7 +59,16 @@ interface IAppConfigProvider {
     val uswapApiBaseUrl: String
     val uswapApiKey: String
     val swapEnabled: Boolean
+    val crossPayEnabled: Boolean
+    val privateSendEnabled: Boolean
     val tonApiKey: String
+
+    /**
+     * Whether the shared USwap client (order tracking, provider info) runs at all. Swap, CrossPay
+     * and Private Send records are all tracked by it, so it is on when any of the three is on.
+     */
+    val uswapClientEnabled: Boolean
+        get() = swapEnabled || crossPayEnabled || privateSendEnabled
 
     /** FastNEAR API key for NEAR history and token lists; null uses the keyless tier. */
     val fastNearApiKey: String?

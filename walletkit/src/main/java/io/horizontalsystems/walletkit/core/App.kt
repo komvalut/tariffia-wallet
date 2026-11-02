@@ -586,6 +586,12 @@ abstract class App : CoreApp(), WorkConfiguration.Provider, ImageLoaderFactory {
     override val isSwapEnabled: Boolean
         get() = appConfigProvider.swapEnabled
 
+    override val isCrossPayEnabled: Boolean
+        get() = appConfigProvider.crossPayEnabled
+
+    override val isPrivateSendEnabled: Boolean
+        get() = appConfigProvider.privateSendEnabled
+
     override fun getApplicationSignatures() = try {
         val signatureList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val signingInfo = packageManager.getPackageInfo(

@@ -42,7 +42,7 @@ class PrivateSendManager(
     appConfigProvider: IAppConfigProvider,
     private val localStorage: ILocalStorage,
 ) {
-    private val swapEnabled = appConfigProvider.swapEnabled
+    private val privateSendEnabled = appConfigProvider.privateSendEnabled
 
     private val unstoppableAPI = APIClient.build(
         appConfigProvider.uswapApiBaseUrl,
@@ -74,7 +74,7 @@ class PrivateSendManager(
      * never trigger a fetch, block, or become suspend.
      */
     fun isSupported(token: Token): Boolean {
-        if (!swapEnabled) return false
+        if (!privateSendEnabled) return false
 
         return token.blockchainType !in privateChains &&
             token.blockchainType !in payoutUnsupportedChains &&
@@ -88,7 +88,7 @@ class PrivateSendManager(
      * re-started for a whole interval.
      */
     suspend fun sync() {
-        if (!swapEnabled) return
+        if (!privateSendEnabled) return
 
         withContext(Dispatchers.IO) {
             syncMutex.withLock {
@@ -124,6 +124,8 @@ class PrivateSendManager(
      * Throws [PrivateSendError] only — raw server text never leaves this method.
      */
     suspend fun preview(request: PrivateSendRequest): PrivateSendPreview {
+        if (!privateSendEnabled) throw PrivateSendError.TokenUnsupported
+
         val token = request.token
 
         if (token.blockchainType in privateChains || token.blockchainType in payoutUnsupportedChains) {
@@ -217,6 +219,8 @@ class PrivateSendManager(
      * [PrivateSendError]; the token is never retried.
      */
     suspend fun commit(preview: PrivateSendPreview): PrivateSendOrder {
+        if (!privateSendEnabled) throw PrivateSendError.TokenUnsupported
+
         val token = preview.request.token
 
         val commit = try {

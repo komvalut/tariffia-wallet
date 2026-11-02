@@ -18,7 +18,8 @@ class SwapProviderInfoManager(
     appConfigProvider: IAppConfigProvider,
     private val localStorage: ILocalStorage,
 ) {
-    private val swapEnabled = appConfigProvider.swapEnabled
+    // Shared USwap provider info: Swap, CrossPay and Private Send records all read it.
+    private val swapEnabled = appConfigProvider.uswapClientEnabled
 
     private val unstoppableAPI = APIClient.build(
         appConfigProvider.uswapApiBaseUrl,

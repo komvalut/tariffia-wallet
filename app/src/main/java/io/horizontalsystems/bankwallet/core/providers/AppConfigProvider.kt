@@ -113,6 +113,11 @@ class AppConfigProvider(localStorage: ILocalStorage) : IAppConfigProvider {
 
     override val swapEnabled = BuildConfig.SWAP_ENABLED
 
+    // Independent of Swap: each flag gates only its own feature. Constants until remote config.
+    override val crossPayEnabled = false
+
+    override val privateSendEnabled = false
+
     override val fastNearApiKey = BuildConfig.FASTNEAR_API_KEY.ifBlank { null }
 
     override val tonApiKey = BuildConfig.TONAPI_KEY

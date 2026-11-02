@@ -124,7 +124,7 @@ fun SendV2Screen(
             when (it) {
                 SendTab.Standard -> true
                 SendTab.Private -> uiState.privateSendSupported
-                SendTab.CrossPay -> App.instance.isSwapEnabled
+                SendTab.CrossPay -> App.instance.isCrossPayEnabled
             }
         }
 
