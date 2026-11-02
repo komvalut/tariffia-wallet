@@ -97,6 +97,13 @@ jobs:
             exit 1
           }
 
+          # 0. Gradle must not have created untracked, non-ignored files. Paths are reported, never
+          #    deleted or ignored automatically.
+          UNTRACKED="$(git ls-files --others --exclude-standard)"
+          if [ -n "$UNTRACKED" ]; then
+            fail "untracked, non-ignored files were created: $(echo "$UNTRACKED" | tr '\n' ' ')"
+          fi
+
           # 1. Only the fixture may change among tracked files. Build outputs are git-ignored.
           CHANGED="$(git diff --name-only -- . | sort)"
           if [ -z "$CHANGED" ]; then
@@ -112,7 +119,8 @@ jobs:
           fi
 
           # 3. Every changed content line must be an order= line. Diff headers start with "---"/"+++".
-          NONORDER="$(git diff --unified=0 -- "$FIXTURE" | grep -E '^[-+][^-+]' | grep -v -E '^[-+]  order=[0-9]+$' || true)"
+          #    Bare "-" and "+" lines (blank-line changes) are included and therefore rejected.
+          NONORDER="$(git diff --unified=0 -- "$FIXTURE" | grep -E '^[-+]' | grep -v -E '^(---|\+\+\+)' | grep -v -E '^[-+]  order=[0-9]+$' || true)"
           if [ -n "$NONORDER" ]; then
             fail "changed lines other than order= values were found"
           fi
