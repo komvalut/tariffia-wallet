@@ -79,6 +79,16 @@ jobs:
             echo "- Direct download: $DOWNLOAD_URL"
           } >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Upload base debug APK artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tariffia-wallet-base-debug
+          path: |
+            ${{ env.DEV_APK_NAME }}
+            ${{ env.DEV_APK_NAME }}.sha256
+          if-no-files-found: error
+
       - name: Publish public development release
         if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
